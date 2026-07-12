@@ -124,12 +124,36 @@ if not bed.exists() or dur(bed) < TOTAL:
     assert r.success, r.error
 
 from faster_whisper import WhisperModel
+from tools.subtitle.caption_align import align_words_to_reference
 model = WhisperModel("base", device="cpu", compute_type="int8")
-segments, _ = model.transcribe(str(narr), word_timestamps=True, language="en")
+
+# Per-line, not one pass over the full mix: Whisper's own transcribed TEXT is
+# only used to recover per-word TIMING (via align_words_to_reference below).
+# The caption WORDS themselves always come from the line's own script text —
+# already correct by construction, since it's what was fed to TTS — so a
+# brand/product term Whisper mis-hears (e.g. "MembersIntel") can never land
+# in a caption misspelled; the timing estimate for it just gets interpolated
+# from its neighbors instead.
 captions = []
-for seg in segments:
-    for w in seg.words or []:
-        captions.append({"word": w.word.strip(), "startMs": int(w.start * 1000), "endMs": int(w.end * 1000)})
+for i, ln in enumerate(LINES):
+    key = hashlib.md5((ln["s"] + "|" + ln["text"]).encode()).hexdigest()[:8]
+    clip = P / f"assets/narration/{OUTNAME}-line-{i:02d}-{key}.mp3"
+    reference_words = re.sub(r"\[[^\]]+\]\s*", "", ln["text"]).split()
+    if not reference_words:
+        continue
+    segments, _ = model.transcribe(str(clip), word_timestamps=True, language="en")
+    whisper_words = [(w.word.strip(), w.start, w.end) for seg in segments for w in (seg.words or [])]
+    if whisper_words:
+        aligned = align_words_to_reference(whisper_words, reference_words)
+    else:
+        # No usable ASR signal for this clip (silent/failed) — spread the
+        # line's own known duration evenly. Still spelling-correct, just
+        # without natural per-word pacing.
+        step = ln["dur"] / len(reference_words)
+        aligned = [(w, k * step, (k + 1) * step) for k, w in enumerate(reference_words)]
+    for word, start_s, end_s in aligned:
+        captions.append({"word": word, "startMs": int((ln["t0"] + start_s) * 1000),
+                          "endMs": int((ln["t0"] + end_s) * 1000)})
 print(len(captions), "caption words")
 
 # cuts: one avatar scene per line; punch cards take the back ~55% of flagged
