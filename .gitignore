@@ -25,8 +25,18 @@ output/
 pipeline/
 tests/qa/output/
 
-# Project workspaces (generated assets, renders — all regenerable)
-projects/
+# Project workspaces (generated assets, renders, episode/ADR source data,
+# event logs — all regenerable or ephemeral). Exception: scripts/ holds
+# hand-authored pipeline code (build_short.py and friends), which must stay
+# tracked so edits survive. Every parent dir along the path needs its own
+# negation too — gitignore never descends into an excluded directory to check
+# for exceptions inside it — so each level re-ignores its OTHER children right
+# back down before re-allowing the next level of scripts/.
+projects/*
+!projects/*/
+projects/*/*
+!projects/*/scripts/
+!projects/*/scripts/**
 
 # Corpus directories (downloaded stock clips, thumbnails, embeddings —
 # regenerable from source APIs via corpus_builder). Explicit rule even
