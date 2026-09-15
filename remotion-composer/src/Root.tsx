@@ -16,6 +16,11 @@ import { ProductReveal, ProductRevealProps } from "./components/ProductReveal";
 import { CaptionOverlay, WordCaption } from "./components/CaptionOverlay";
 import { CollageBurst, CollageBurstProps } from "./CollageBurst";
 import { LyricOverlay, LyricOverlayProps } from "./LyricOverlay";
+import {
+  OhmsvilleLesson,
+  OhmsvilleLessonProps,
+  calculateOhmsvilleLessonMetadata,
+} from "./OhmsvilleLesson";
 
 // ---------------------------------------------------------------------------
 // Theme System — prevents every video from looking like dark fintech
@@ -311,6 +316,33 @@ export const Root: React.FC = () => {
           holdSeconds: 4.3,
           fadeOutSeconds: 0.6,
         } as EndTagProps}
+      />
+      <Composition
+        id="OhmsvilleLesson"
+        component={OhmsvilleLesson}
+        durationInFrames={30 * 90}
+        fps={30}
+        width={1920}
+        height={1080}
+        defaultProps={{
+          themeConfig: {
+            primaryColor: "#a03020",
+            accentColor: "#ffd21f",
+            backgroundColor: "#241c10",
+            surfaceColor: "#f6eed8",
+            textColor: "#f0e2c0",
+            mutedTextColor: "#8a7a58",
+            headingFont: "Oswald",
+            bodyFont: "Georgia",
+            captionHighlightColor: "#ffd21f",
+            captionBackgroundColor: "rgba(36,28,16,0.82)",
+          },
+          cuts: [],
+          captions: [],
+          audio: {},
+          endCard: { url: "ohmsville.com", seconds: 6 },
+        } as OhmsvilleLessonProps}
+        calculateMetadata={calculateOhmsvilleLessonMetadata}
       />
       <Composition
         id="EndTagOverlay"
