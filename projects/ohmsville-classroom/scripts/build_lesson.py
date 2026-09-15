@@ -48,13 +48,35 @@ ART_DIRECTION = (
     "(#ffd21f), oxide-red accent (#a03020), parchment surface (#f6eed8) for "
     "schematic cards, Oswald headings over Georgia body text."
 )
-# record-shots.ts (the Ohmsville repo) advances its own `running.t` by
-# `clip.seconds + 0.4` per section — shotlist.json's `startSeconds` assumes a
-# 0.4s gap after every clip, including the last. To keep that assumption true
-# of the actual audio we render against, the narration bed below inserts real
-# 0.4s silence between clips rather than concatenating them gapless — matching
-# the upstream repo's math instead of second-guessing it.
+# A trailing gap after every narration clip, including the last — a stylistic
+# choice (breathing room between lines), not something derived from the
+# shotlist. record-shots.ts's own `startSeconds`/`totalSeconds` assume this
+# same 0.4s gap, but its per-clip *duration* (`audioSeconds`, from a hand-rolled
+# MPEG frame-header walker in build-narration.ts) measures every real
+# ElevenLabs clip ~0.055-0.075s LONGER than what ffmpeg actually decodes —
+# confirmed against all 9 real Lesson 1 clips. Accumulating startSeconds
+# therefore accumulates that per-clip error too (-0.55s by section 9 on real
+# data). Rather than trust either repo's precomputed number, this script
+# derives the whole timeline from each clip's OWN locally-measured (ffprobe)
+# duration once it's staged — see main()'s loop.
 SECTION_GAP_SECONDS = 0.4
+
+
+def run_ffmpeg(cmd: list[str]) -> None:
+    """subprocess.run wrapper that prints stderr before re-raising on failure —
+    check=True + capture_output=True alone buries a real ffmpeg error inside
+    an unprinted CalledProcessError.stderr, leaving only "exited 1" to debug."""
+    try:
+        subprocess.run(cmd, check=True, capture_output=True, text=True)
+    except subprocess.CalledProcessError as e:
+        print(e.stderr, file=sys.stderr)
+        raise
+
+
+def ffprobe_duration(path: Path) -> float:
+    return float(subprocess.check_output(
+        ["ffprobe", "-v", "quiet", "-show_entries", "format=duration", "-of", "csv=p=0", str(path)]
+    ).strip())
 
 
 def stage(lesson: str) -> Path:
@@ -104,20 +126,23 @@ def main(lesson: str) -> None:
 
     cuts, words = [], []
     sections = shotlist["sections"]
+    t = 0.0
     for i, s in enumerate(sections):
         audio = out / "narration" / f"{s['id']}.mp3"
         shutil.copy(s["audio"], audio)
 
-        # Cut boundaries come from the shotlist's OWN startSeconds, not a
-        # second, independently recomputed timeline — but startSeconds itself
-        # already bakes in a 0.4s gap after every clip (record-shots.ts:
-        # `running.t = running.t + clip.seconds + 0.4`). That's only true of
-        # the actual narration audio if the bed we build actually has those
-        # gaps in it — see the real silence splicing below, not a gapless
-        # concat, which is what made an earlier version of this fix a relocation
-        # of the same drift rather than a real one.
-        start = s["startSeconds"]
-        end = sections[i + 1]["startSeconds"] if i + 1 < len(sections) else start + s["audioSeconds"] + SECTION_GAP_SECONDS
+        # Timeline comes from THIS clip's own locally-measured duration, not
+        # shotlist.json's startSeconds/audioSeconds (both computed upstream by
+        # record-shots.ts/build-narration.ts's mp3Seconds(), which measures
+        # every real ElevenLabs clip ~0.06s longer than ffmpeg actually decodes
+        # it — verified against all 9 real Lesson 1 clips). Deriving start/end
+        # from the exact bytes we're about to concatenate means the timeline
+        # and the audio bed can't disagree, regardless of what either upstream
+        # tool computed.
+        real_dur = ffprobe_duration(audio)
+        start = t
+        end = start + real_dur
+        t = end + SECTION_GAP_SECONDS
         for w in captions(s, audio, transcript_dir):
             words.append({"word": w["word"], "startMs": int(start * 1000) + w["startMs"], "endMs": int(start * 1000) + w["endMs"]})
 
@@ -145,22 +170,23 @@ def main(lesson: str) -> None:
                          "url": shotlist["lessonUrl"], "label": s["label"]})
 
     # One narration bed: each clip followed by a real SECTION_GAP_SECONDS of
-    # silence (including after the last clip, matching record-shots.ts's own
-    # running.t, which folds the final +0.4 into totalSeconds too). Built with
-    # ffmpeg's `concat` audio FILTER (decode-and-re-encode once), not the
-    # concat DEMUXER's `-c copy` — stream-copying several independently
-    # LAME-encoded MP3s introduces ~20-50ms of encoder priming/padding at
-    # EVERY splice point (verified empirically: 3 clips + 3 gaps came out
-    # ~0.19s long against nominal), which silently reintroduces the same
-    # class of drift this fix exists to remove. The filter graph decodes
-    # every input to PCM and re-encodes the whole bed as one continuous
-    # stream, so there's no per-file boundary left to drift at (verified:
-    # exact match against nominal duration to the millisecond).
-    silence = out / "narration" / "_silence.mp3"
-    subprocess.run(
+    # silence (including after the last clip, matching the `t` accumulation
+    # above). Built with ffmpeg's `concat` audio FILTER (decode-and-re-encode
+    # once), not the concat DEMUXER's `-c copy` — stream-copying several
+    # independently LAME-encoded MP3s introduces ~20-50ms of encoder
+    # priming/padding at EVERY splice point (verified empirically: 3 clips +
+    # 3 gaps came out ~0.19s long against nominal), which would reintroduce a
+    # smaller version of the same class of drift this fix exists to remove.
+    # The filter graph decodes every input to PCM and re-encodes the whole bed
+    # as one continuous stream, so there's no per-file boundary left to drift
+    # at (verified: exact match against nominal duration to the millisecond,
+    # and 0.000s drift against the real 9-clip Lesson 1 narration).
+    # _silence.mp3 lives under artifacts/, not the Remotion public/ tree — it's
+    # a build-time fixture, never referenced by any composition prop.
+    silence = art / "_silence.mp3"
+    run_ffmpeg(
         ["ffmpeg", "-y", "-f", "lavfi", "-i", "anullsrc=r=44100:cl=mono",
-         "-t", str(SECTION_GAP_SECONDS), "-c:a", "libmp3lame", "-q:a", "6", str(silence)],
-        check=True, capture_output=True,
+         "-t", str(SECTION_GAP_SECONDS), "-c:a", "libmp3lame", "-q:a", "6", str(silence)]
     )
     concat = out / "narration" / "full.mp3"
     inputs = []
@@ -168,26 +194,27 @@ def main(lesson: str) -> None:
         inputs += ["-i", str(out / "narration" / f"{s['id']}.mp3"), "-i", str(silence)]
     n = len(sections) * 2
     filter_graph = "".join(f"[{i}:a]" for i in range(n)) + f"concat=n={n}:v=0:a=1[out]"
-    subprocess.run(
+    run_ffmpeg(
         ["ffmpeg", "-y", *inputs, "-filter_complex", filter_graph, "-map", "[out]",
-         "-c:a", "libmp3lame", "-q:a", "4", str(concat)],
-        check=True, capture_output=True,
+         "-c:a", "libmp3lame", "-q:a", "4", str(concat)]
     )
 
-    # Sanity check: the bed we just built should land within ~150ms of the
-    # shotlist's own totalSeconds (same running.t this section's
-    # startSeconds/gap math is derived from) — the filter_complex concat
-    # above measured exact to the millisecond in testing, so anything beyond
-    # a small margin means this arithmetic has drifted again.
-    full_duration = float(subprocess.check_output(
-        ["ffprobe", "-v", "quiet", "-show_entries", "format=duration", "-of", "csv=p=0", str(concat)]
-    ).strip())
-    expected = shotlist.get("totalSeconds")
-    if expected is not None and abs(full_duration - expected) > 0.15:
+    # Sanity check: compare the bed we just built against `t` — OUR OWN
+    # running total, accumulated from the same locally-measured per-clip
+    # durations and the same SECTION_GAP_SECONDS used to build it — not
+    # shotlist.json's totalSeconds (which is itself computed from the
+    # upstream repo's inflated audioSeconds and legitimately disagrees with
+    # the real audio by design, see the comment above the loop). This checks
+    # that the concat construction itself is self-consistent (e.g. no
+    # off-by-one in `inputs`/`filter_graph`), not that it matches a number
+    # this script has already established is unreliable.
+    full_duration = ffprobe_duration(concat)
+    if abs(full_duration - t) > 0.15:
         raise RuntimeError(
-            f"narration bed duration {full_duration:.2f}s does not match "
-            f"shotlist totalSeconds {expected:.2f}s — startSeconds/cut timing "
-            f"would be wrong against the actual audio"
+            f"narration bed duration {full_duration:.3f}s does not match "
+            f"this script's own computed timeline total {t:.3f}s — the concat "
+            f"construction has a bug, cut/caption placement would be wrong "
+            f"against the actual audio"
         )
 
     total_seconds = max(c["out_seconds"] for c in cuts) if cuts else 0.0
