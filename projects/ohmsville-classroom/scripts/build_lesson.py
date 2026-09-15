@@ -50,6 +50,10 @@ ART_DIRECTION = (
     "(#ffd21f), oxide-red accent (#a03020), parchment surface (#f6eed8) for "
     "schematic cards, Oswald headings over Georgia body text."
 )
+# One music bed under every lesson in the series (the lead's ruling, 2026-09-15 —
+# see main()'s music section below for the full reasoning). Generated once, saved
+# here as a permanent series asset following this repo's own convention.
+SERIES_MUSIC = PROJECT / "assets" / "music" / "background_music.mp3"
 # A trailing gap after every narration clip, including the last — a stylistic
 # choice (breathing room between lines), not something derived from the
 # shotlist. record-shots.ts's own `startSeconds`/`totalSeconds` assume this
@@ -326,29 +330,33 @@ def main(lesson: str) -> None:
         )
 
     total_seconds = max(c["out_seconds"] for c in cuts) if cuts else 0.0
-    music_result = registry.get("pixabay_music").execute({
-        "query": "calm workshop instrumental", "min_duration": int(total_seconds), "max_duration": int(total_seconds) + 90,
-        "output_path": str(out / "music.mp3"),
-    })
-    if not music_result.success:
-        # pixabay_music scrapes Pixabay's website (no API key) and is marked
-        # EXPERIMENTAL for exactly this reason — its own class declares
-        # fallback_tools = ["freesound_music", "music_gen"]. freesound_music
-        # needs FREESOUND_API_KEY, which isn't configured here;
-        # ELEVENLABS_API_KEY is (this repo's .env), so music_gen is the real
-        # fallback. Not a silent swap: the render_report below records which
-        # provider actually produced the bed, and this prints to stdout too.
-        print(f"pixabay_music failed ({music_result.error}); falling back to music_gen", file=sys.stderr)
-        music_result = registry.get("music_gen").execute({
-            "prompt": "calm workshop instrumental, unobtrusive, loops well, no vocals",
-            "duration_seconds": min(600, int(total_seconds) + 10),
-            "output_path": str(out / "music.mp3"),
-            "force_instrumental": True,
-        })
-        if not music_result.success:
-            raise RuntimeError(
-                f"both pixabay_music and its music_gen fallback failed: {music_result.error}"
-            )
+
+    # Music: the series' one shared bed, by the lead's explicit ruling
+    # (2026-09-15) — this is a deliberate identity choice for the whole
+    # classroom series, not just a cost saving. Generated once, for
+    # what-electricity-is's v3 render ($0.2983, ElevenLabs music_gen,
+    # calm-workshop instrumental prompt), and saved permanently at
+    # SERIES_MUSIC (following this repo's own convention for a project's
+    # reusable background track — see projects/neural-networks-learn/assets/
+    # music/background_music.mp3 and every projects/memberintel-*/assets/
+    # music/background_music.mp3, same path shape). No pixabay_music call
+    # here at all: a per-lesson pixabay success would hand some lessons a
+    # *different* track than the rest, which is exactly what the ruling
+    # says not to do, and pixabay_music's scrape already proved unreliable
+    # (a real HTTP 403 during this project). Every lesson loops/trims this
+    # same file to its own runtime, so marginal music cost per lesson is
+    # $0 and there is no network dependency for music at all.
+    if not SERIES_MUSIC.exists():
+        raise RuntimeError(
+            f"series music bed missing at {SERIES_MUSIC} — it must be generated once "
+            f"(see the fix report for how) and saved there before any lesson can render"
+        )
+    run_ffmpeg([
+        "ffmpeg", "-y", "-stream_loop", "-1", "-i", str(SERIES_MUSIC),
+        "-t", f"{total_seconds:.3f}", "-c:a", "libmp3lame", "-q:a", "4",
+        str(out / "music.mp3"),
+    ])
+    music_cost_usd = 0.0
 
     # Exactly the Remotion component's props — no tool-routing keys (those go
     # in `edit_decisions` below, passed separately to video_compose). Doubles
@@ -400,7 +408,7 @@ def main(lesson: str) -> None:
     ))
     if not result.success:
         raise RuntimeError(f"video_compose render failed: {result.error}")
-    print(f"{lesson}: {render / 'final.mp4'}  music_cost={music_result.cost_usd}  narration={round(total_seconds, 1)}s")
+    print(f"{lesson}: {render / 'final.mp4'}  music_cost={music_cost_usd}  narration={round(total_seconds, 1)}s")
 
 
 if __name__ == "__main__":
