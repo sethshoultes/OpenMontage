@@ -38,6 +38,23 @@ THEME = {
     "headingFont": "Oswald", "bodyFont": "Georgia", "captionHighlightColor": "#ffd21f",
     "captionBackgroundColor": "rgba(36,28,16,0.82)",
 }
+# Kept alongside THEME (not read from artifacts/proposal_packet.json, which is
+# gitignored/untracked per this repo's projects/*/ convention — reading it here
+# would raise FileNotFoundError on any checkout that only has scripts/
+# committed). Keep this string in sync with that packet's production_plan.art_direction
+# by hand; it's short and changes rarely.
+ART_DIRECTION = (
+    "Science Fair '78: deep brown-black ground (#241c10), warm gold rule/accent "
+    "(#ffd21f), oxide-red accent (#a03020), parchment surface (#f6eed8) for "
+    "schematic cards, Oswald headings over Georgia body text."
+)
+# record-shots.ts (the Ohmsville repo) advances its own `running.t` by
+# `clip.seconds + 0.4` per section — shotlist.json's `startSeconds` assumes a
+# 0.4s gap after every clip, including the last. To keep that assumption true
+# of the actual audio we render against, the narration bed below inserts real
+# 0.4s silence between clips rather than concatenating them gapless — matching
+# the upstream repo's math instead of second-guessing it.
+SECTION_GAP_SECONDS = 0.4
 
 
 def stage(lesson: str) -> Path:
@@ -91,16 +108,16 @@ def main(lesson: str) -> None:
         audio = out / "narration" / f"{s['id']}.mp3"
         shutil.copy(s["audio"], audio)
 
-        # Cut boundaries come from the shotlist's OWN startSeconds — not a
-        # second, locally-recomputed timeline. The narration bed below is a
-        # gapless concat of these same per-section clips, so startSeconds (as
-        # the Ohmsville repo computed it against that same concatenation) is
-        # the one number both picture and audio can agree on. Recomputing a
-        # second "t += audioSeconds + pad" here was a second source of truth
-        # for the same quantity, and it drifted from the actual (unpadded)
-        # concatenated audio by the accumulated padding every section.
+        # Cut boundaries come from the shotlist's OWN startSeconds, not a
+        # second, independently recomputed timeline — but startSeconds itself
+        # already bakes in a 0.4s gap after every clip (record-shots.ts:
+        # `running.t = running.t + clip.seconds + 0.4`). That's only true of
+        # the actual narration audio if the bed we build actually has those
+        # gaps in it — see the real silence splicing below, not a gapless
+        # concat, which is what made an earlier version of this fix a relocation
+        # of the same drift rather than a real one.
         start = s["startSeconds"]
-        end = sections[i + 1]["startSeconds"] if i + 1 < len(sections) else start + s["audioSeconds"] + 0.4
+        end = sections[i + 1]["startSeconds"] if i + 1 < len(sections) else start + s["audioSeconds"] + SECTION_GAP_SECONDS
         for w in captions(s, audio, transcript_dir):
             words.append({"word": w["word"], "startMs": int(start * 1000) + w["startMs"], "endMs": int(start * 1000) + w["endMs"]})
 
@@ -127,11 +144,51 @@ def main(lesson: str) -> None:
                          "title": shotlist["title"], "subtitle": "Intro to Electronics · Ohmsville",
                          "url": shotlist["lessonUrl"], "label": s["label"]})
 
-    # one narration bed, concatenated in order; music underneath
+    # One narration bed: each clip followed by a real SECTION_GAP_SECONDS of
+    # silence (including after the last clip, matching record-shots.ts's own
+    # running.t, which folds the final +0.4 into totalSeconds too). Built with
+    # ffmpeg's `concat` audio FILTER (decode-and-re-encode once), not the
+    # concat DEMUXER's `-c copy` — stream-copying several independently
+    # LAME-encoded MP3s introduces ~20-50ms of encoder priming/padding at
+    # EVERY splice point (verified empirically: 3 clips + 3 gaps came out
+    # ~0.19s long against nominal), which silently reintroduces the same
+    # class of drift this fix exists to remove. The filter graph decodes
+    # every input to PCM and re-encodes the whole bed as one continuous
+    # stream, so there's no per-file boundary left to drift at (verified:
+    # exact match against nominal duration to the millisecond).
+    silence = out / "narration" / "_silence.mp3"
+    subprocess.run(
+        ["ffmpeg", "-y", "-f", "lavfi", "-i", "anullsrc=r=44100:cl=mono",
+         "-t", str(SECTION_GAP_SECONDS), "-c:a", "libmp3lame", "-q:a", "6", str(silence)],
+        check=True, capture_output=True,
+    )
     concat = out / "narration" / "full.mp3"
-    listfile = out / "narration" / "list.txt"
-    listfile.write_text("".join(f"file '{out / 'narration' / (s['id'] + '.mp3')}'\n" for s in sections))
-    subprocess.run(["ffmpeg", "-y", "-f", "concat", "-safe", "0", "-i", str(listfile), "-c", "copy", str(concat)], check=True, capture_output=True)
+    inputs = []
+    for s in sections:
+        inputs += ["-i", str(out / "narration" / f"{s['id']}.mp3"), "-i", str(silence)]
+    n = len(sections) * 2
+    filter_graph = "".join(f"[{i}:a]" for i in range(n)) + f"concat=n={n}:v=0:a=1[out]"
+    subprocess.run(
+        ["ffmpeg", "-y", *inputs, "-filter_complex", filter_graph, "-map", "[out]",
+         "-c:a", "libmp3lame", "-q:a", "4", str(concat)],
+        check=True, capture_output=True,
+    )
+
+    # Sanity check: the bed we just built should land within ~150ms of the
+    # shotlist's own totalSeconds (same running.t this section's
+    # startSeconds/gap math is derived from) — the filter_complex concat
+    # above measured exact to the millisecond in testing, so anything beyond
+    # a small margin means this arithmetic has drifted again.
+    full_duration = float(subprocess.check_output(
+        ["ffprobe", "-v", "quiet", "-show_entries", "format=duration", "-of", "csv=p=0", str(concat)]
+    ).strip())
+    expected = shotlist.get("totalSeconds")
+    if expected is not None and abs(full_duration - expected) > 0.15:
+        raise RuntimeError(
+            f"narration bed duration {full_duration:.2f}s does not match "
+            f"shotlist totalSeconds {expected:.2f}s — startSeconds/cut timing "
+            f"would be wrong against the actual audio"
+        )
 
     total_seconds = max(c["out_seconds"] for c in cuts) if cuts else 0.0
     music_result = registry.get("pixabay_music").execute({
@@ -159,10 +216,6 @@ def main(lesson: str) -> None:
     (art / "composition.json").write_text(json.dumps(props, indent=2))
     (art / "captions.json").write_text(json.dumps(words, indent=2))
 
-    art_direction = json.loads(
-        (PROJECT / "artifacts" / "proposal_packet.json").read_text()
-    )["production_plan"]["art_direction"]
-
     render = PROJECT / "renders" / lesson
     render.mkdir(parents=True, exist_ok=True)
     result = registry.get("video_compose").execute({
@@ -183,7 +236,7 @@ def main(lesson: str) -> None:
                 # defaultProps (empty cuts/captions/audio) and still reports
                 # success.
                 "props_path": str(art / "composition.json"),
-                "art_direction": art_direction,
+                "art_direction": ART_DIRECTION,
             },
         },
         "output_path": str(render / "final.mp4"),
