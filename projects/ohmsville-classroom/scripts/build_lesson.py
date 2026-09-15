@@ -14,6 +14,7 @@ import re
 import shutil
 import subprocess
 import sys
+import time
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -163,13 +164,51 @@ def captions(section, audio_path, transcript_dir):
 
 
 def main(lesson: str) -> None:
-    shots = OHMSVILLE / "client" / ".shots" / lesson
-    shotlist = json.loads((shots / "shotlist.json").read_text())
-    out = stage(lesson)
-
     art = PROJECT / "artifacts" / lesson
     transcript_dir = art / "transcripts"
     art.mkdir(parents=True, exist_ok=True)
+
+    # Snapshot the Ohmsville repo's shot output immediately, before any slow
+    # work (transcription, ffmpeg, the render itself) — that directory is
+    # actively written by the shot recorder, which was observed re-running
+    # and replacing its own output out from under this exact script while
+    # iterating on a fill-policy/crop fix. A plain shutil.copytree() is NOT
+    # enough on its own: it snapshots the directory LISTING at the instant it
+    # starts, so if the recorder had already deleted shotlist.json (writing
+    # it last, after all shot files, per its own cycle) but not yet
+    # recreated it, copytree raises nothing — it just never attempted to
+    # copy a file that, from its point of view, was never there. That
+    # silently produced a snapshot missing shotlist.json with no exception
+    # at all (caught only because the very next line failed to read it).
+    # So: copy, then explicitly VALIDATE the copy (shotlist.json exists and
+    # parses, and every section's shot file is present and non-trivial in
+    # size) before trusting it, retrying the whole snapshot if not.
+    live_shots = OHMSVILLE / "client" / ".shots" / lesson
+    shots = art / "_source_snapshot"
+    shotlist = None
+    for attempt in range(5):
+        try:
+            if shots.exists():
+                shutil.rmtree(shots)
+            shutil.copytree(live_shots, shots)
+            shotlist = json.loads((shots / "shotlist.json").read_text())
+            missing = [
+                s["shot"]["file"] for s in shotlist["sections"]
+                if s.get("shot") and not (shots / s["shot"]["file"]).is_file()
+            ]
+            if missing:
+                raise FileNotFoundError(f"snapshot missing shot file(s): {missing}")
+            break
+        except (FileNotFoundError, json.JSONDecodeError, shutil.Error, KeyError) as e:
+            shotlist = None
+            if attempt == 4:
+                raise RuntimeError(
+                    f"could not get a complete, stable snapshot of {live_shots} after "
+                    f"5 tries — the shot recorder is still actively rewriting it: {e}"
+                ) from e
+            print(f"snapshot attempt {attempt + 1} caught the recorder mid-write ({e}); retrying in 5s", file=sys.stderr)
+            time.sleep(5)
+    out = stage(lesson)
 
     hover_ids = hover_sections(lesson)
 
@@ -292,7 +331,24 @@ def main(lesson: str) -> None:
         "output_path": str(out / "music.mp3"),
     })
     if not music_result.success:
-        raise RuntimeError(f"pixabay_music failed: {music_result.error}")
+        # pixabay_music scrapes Pixabay's website (no API key) and is marked
+        # EXPERIMENTAL for exactly this reason — its own class declares
+        # fallback_tools = ["freesound_music", "music_gen"]. freesound_music
+        # needs FREESOUND_API_KEY, which isn't configured here;
+        # ELEVENLABS_API_KEY is (this repo's .env), so music_gen is the real
+        # fallback. Not a silent swap: the render_report below records which
+        # provider actually produced the bed, and this prints to stdout too.
+        print(f"pixabay_music failed ({music_result.error}); falling back to music_gen", file=sys.stderr)
+        music_result = registry.get("music_gen").execute({
+            "prompt": "calm workshop instrumental, unobtrusive, loops well, no vocals",
+            "duration_seconds": min(600, int(total_seconds) + 10),
+            "output_path": str(out / "music.mp3"),
+            "force_instrumental": True,
+        })
+        if not music_result.success:
+            raise RuntimeError(
+                f"both pixabay_music and its music_gen fallback failed: {music_result.error}"
+            )
 
     # Exactly the Remotion component's props — no tool-routing keys (those go
     # in `edit_decisions` below, passed separately to video_compose). Doubles
