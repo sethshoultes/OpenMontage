@@ -10,6 +10,7 @@ the space in "Local Sites" makes absolute URIs fragile (neural-networks-learn hi
 """
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -60,6 +61,52 @@ ART_DIRECTION = (
 # derives the whole timeline from each clip's OWN locally-measured (ffprobe)
 # duration once it's staged — see main()'s loop.
 SECTION_GAP_SECONDS = 0.4
+
+# Extra caption-box clearance (px, on a 1920x1080 frame) for sections whose
+# recorded footage includes a `hover` step (client/src/classroom/videoScript.ts's
+# ShotStep) — the bench's own hover-reading card renders as a fixed-position
+# overlay along the bottom of the frame, baked into the video pixels, which
+# the compositor can't move or hide. Measured directly against a real frame
+# from the current (2026-09-15 framing-fix) recording: the card spans roughly
+# y=884-966 of 1080; the default caption box (paddingBottom 80, ~90px tall)
+# sits at y~910-1000, squarely on top of it. +140px moves the caption's
+# bottom edge to y~860, clearing the card with margin. Cross-checked at two
+# different hover moments (s3's "hover led-red", s4's "hover battery") — same
+# card position both times, confirming it's fixed regardless of which part
+# is hovered, so one measured constant covers every hover-bearing section.
+HOVER_CAPTION_LIFT_PX = 140
+
+
+def hover_sections(lesson: str) -> set[str]:
+    """Which section ids have a `hover` step in their on-screen (post `>>`) take.
+
+    shotlist.json (the recorder's OUTPUT) only keeps the final trimmed clip
+    file per section — none of the individual ShotStep detail (press/hold/
+    hover/linger) survives into it. The only place that detail still exists
+    is the human-authored source script this section's shot was recorded
+    from, content/videos/<lesson>.md, parsed structurally by videoScript.ts
+    into ShotStep objects. Reading it directly here (not modifying it, and
+    not reimplementing its Zod-adjacent validation, just checking for the
+    `hover` token after a section's `>>`) is the only way to know which
+    sections' visible footage carries a hover card, without changing
+    record-shots.ts to propagate that flag into shotlist.json itself.
+    """
+    md_path = OHMSVILLE / "content" / "videos" / f"{lesson}.md"
+    if not md_path.exists():
+        return set()
+    hover_ids: set[str] = set()
+    current_id = None
+    for line in md_path.read_text().splitlines():
+        heading = re.match(r"^##\s+(s\d+)\s*[·:]", line)
+        if heading:
+            current_id = heading.group(1)
+            continue
+        if current_id and line.startswith("shot:"):
+            take = line.split(">>", 1)[1] if ">>" in line else ""
+            if re.search(r"\bhover\b", take):
+                hover_ids.add(current_id)
+            current_id = None
+    return hover_ids
 
 
 def run_ffmpeg(cmd: list[str]) -> None:
@@ -124,12 +171,15 @@ def main(lesson: str) -> None:
     transcript_dir = art / "transcripts"
     art.mkdir(parents=True, exist_ok=True)
 
+    hover_ids = hover_sections(lesson)
+
     cuts, words = [], []
     sections = shotlist["sections"]
     t = 0.0
     for i, s in enumerate(sections):
         audio = out / "narration" / f"{s['id']}.mp3"
         shutil.copy(s["audio"], audio)
+        lift = HOVER_CAPTION_LIFT_PX if s["id"] in hover_ids else 0
 
         # Timeline comes from THIS clip's own locally-measured duration, not
         # shotlist.json's startSeconds/audioSeconds (both computed upstream by
@@ -144,7 +194,8 @@ def main(lesson: str) -> None:
         end = start + real_dur
         t = end + SECTION_GAP_SECONDS
         for w in captions(s, audio, transcript_dir):
-            words.append({"word": w["word"], "startMs": int(start * 1000) + w["startMs"], "endMs": int(start * 1000) + w["endMs"]})
+            words.append({"word": w["word"], "startMs": int(start * 1000) + w["startMs"],
+                          "endMs": int(start * 1000) + w["endMs"], "liftPx": lift})
 
         if s["shot"]:
             shutil.copy(shots / s["shot"]["file"], out / "shots" / s["shot"]["file"])

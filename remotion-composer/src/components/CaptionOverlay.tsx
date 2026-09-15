@@ -12,6 +12,12 @@ export interface WordCaption {
   word: string;
   startMs: number;
   endMs: number;
+  // Optional extra bottom clearance (px) for this word's caption page, on top
+  // of the component's normal paddingBottom. Lets a caller keep the caption
+  // off something baked into the footage itself at this moment (e.g. a
+  // recorded UI overlay) that the compositor has no way to move or hide.
+  // Omitted/0 for every existing caller — additive, no behavior change.
+  liftPx?: number;
 }
 
 interface CaptionOverlayProps {
@@ -29,6 +35,7 @@ interface CaptionPage {
   words: WordCaption[];
   startMs: number;
   endMs: number;
+  liftPx: number;
 }
 
 function buildPages(words: WordCaption[], wordsPerPage: number): CaptionPage[] {
@@ -40,6 +47,9 @@ function buildPages(words: WordCaption[], wordsPerPage: number): CaptionPage[] {
       words: pageWords,
       startMs: pageWords[0].startMs,
       endMs: pageWords[pageWords.length - 1].endMs,
+      // Max, not first word's — a page landing exactly on a cut boundary
+      // should still clear whichever half of it needs the lift.
+      liftPx: Math.max(0, ...pageWords.map((w) => w.liftPx ?? 0)),
     });
   }
   return pages;
@@ -70,7 +80,7 @@ const PageRenderer: React.FC<{
       style={{
         justifyContent: "flex-end",
         alignItems: "center",
-        paddingBottom: 80,
+        paddingBottom: 80 + page.liftPx,
       }}
     >
       <div
