@@ -160,10 +160,28 @@ def main(lesson: str) -> None:
             cuts.append({"id": s["id"], "type": "card", "layer": 0,
                          "src": f"ohmsville/{lesson}/cards/{s['card']['file']}",
                          "in_seconds": round(start, 2), "out_seconds": round(end, 2), "label": s["label"]})
+        elif s["card"]["kind"] == "end" and cuts:
+            # The shotlist's final section is card:end with no shot of its own —
+            # its narration ("...waiting for you at ohmsville.com/classroom...")
+            # is meant as the end card's voiceover, but rendering the end-card
+            # PLATE for the full length of that narration puts the plate up
+            # while a voice is still mid-sentence, with no silent beat
+            # afterward to actually read it (caught by watching the real
+            # render, not by any timing arithmetic — every number here is
+            # frame-accurate; this is an ordering/pacing choice, not a
+            # rounding bug). Fix: hold the PREVIOUS visual (last real shot)
+            # through this section's own narration instead of cutting to the
+            # end card yet, then let OhmsvilleLesson.tsx's own synthesis (see
+            # its hasEndCut check) add the actual end-card plate — silent,
+            # after narration ends — using endCard.seconds below. This also
+            # restores the original spec's calculateMetadata behavior
+            # (max(cuts.out_seconds) + endCard.seconds), which an earlier
+            # round's hasEndCut fix had zeroed out for every real lesson that
+            # ends this way.
+            cuts[-1]["out_seconds"] = round(end, 2)
         else:
-            # Covers the remaining CardKind values (title, end, ...) — including
-            # the shotlist's own final "end" section, which is a real end-typed
-            # cut, not something OhmsvilleLesson.tsx needs to synthesize.
+            # Covers the remaining CardKind values (title, none-with-no-shot,
+            # or "end" with no prior cut to hold on — first-section edge case).
             cuts.append({"id": s["id"], "type": s["card"]["kind"], "layer": 0,
                          "in_seconds": round(start, 2), "out_seconds": round(end, 2),
                          "title": shotlist["title"], "subtitle": "Intro to Electronics · Ohmsville",
