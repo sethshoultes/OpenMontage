@@ -50,6 +50,9 @@ export interface OhmsvilleCut {
 }
 
 export interface OhmsvilleLessonProps {
+  fps?: number;
+  width?: number;
+  height?: number;
   themeConfig: OhmsvilleTheme;
   cuts: OhmsvilleCut[];
   captions: WordCaption[];
@@ -238,32 +241,42 @@ const EndPlate: React.FC<{ cut: OhmsvilleCut; theme: OhmsvilleTheme; url: string
   );
 };
 
+// Explicit dispatch — anything not in the four known cut types renders only
+// the ground color rather than silently falling through to the end card.
+// CardKind on the Ohmsville side includes 'none', so a no-shot/no-card
+// section must NOT be mistaken for the lesson's actual end plate.
 const CutRenderer: React.FC<{ cut: OhmsvilleCut; theme: OhmsvilleTheme; endUrl: string }> = ({ cut, theme, endUrl }) => {
   if (cut.type === "video") return <VideoCut cut={cut} theme={theme} />;
   if (cut.type === "card") return <CardCut cut={cut} theme={theme} />;
   if (cut.type === "title") return <TitlePlate cut={cut} theme={theme} />;
-  return <EndPlate cut={cut} theme={theme} url={cut.url || endUrl} />;
+  if (cut.type === "end") return <EndPlate cut={cut} theme={theme} url={cut.url || endUrl} />;
+  return null;
 };
 
 export const OhmsvilleLesson: React.FC<OhmsvilleLessonProps> = (props) => {
   const { cuts, captions, audio, endCard, themeConfig: theme } = props;
   const { fps, durationInFrames } = useVideoConfig();
 
-  // build_lesson.py never puts a "end"-typed cut in `cuts` — endCard is a
-  // separate top-level field (url + a trailing hold in seconds) that
-  // calculateOhmsvilleLessonMetadata already reserves room for. Synthesize
-  // the end-plate Sequence here so that reserved time actually shows
-  // something, rather than requiring every caller to append its own cut.
+  // A section whose card.kind is "end" (the shotlist's own final section)
+  // already comes through as a real "end"-typed cut in `cuts` — build_lesson.py's
+  // fallback branch emits `{"type": s["card"]["kind"]}}`, and "end" is one of
+  // the four CardKind values (client/src/classroom/videoScript.ts). Only
+  // synthesize a second one from the top-level `endCard` field (url + a
+  // trailing hold in seconds) when `cuts` doesn't already have one — otherwise
+  // the lesson would show the real end plate followed by an identical
+  // duplicate reserved by calculateOhmsvilleLessonMetadata's padding.
+  const hasEndCut = cuts.some((c) => c.type === "end");
   const lastCutEnd = cuts.length > 0 ? Math.max(...cuts.map((c) => c.out_seconds || 0)) : 0;
-  const endCut: OhmsvilleCut | null = endCard
-    ? {
-        id: "end-card",
-        type: "end",
-        in_seconds: lastCutEnd,
-        out_seconds: lastCutEnd + (endCard.seconds ?? 0),
-        url: endCard.url,
-      }
-    : null;
+  const endCut: OhmsvilleCut | null =
+    endCard && !hasEndCut
+      ? {
+          id: "end-card",
+          type: "end",
+          in_seconds: lastCutEnd,
+          out_seconds: lastCutEnd + (endCard.seconds ?? 0),
+          url: endCard.url,
+        }
+      : null;
 
   return (
     <AbsoluteFill style={{ background: theme.backgroundColor, fontFamily: theme.bodyFont || BODY_FONT }}>
@@ -330,8 +343,16 @@ export const calculateOhmsvilleLessonMetadata: CalculateMetadataFunction<
   OhmsvilleLessonProps
 > = async ({ props }) => {
   const cuts = props.cuts || [];
+  const hasEndCut = cuts.some((c) => c.type === "end");
   const lastCutEnd = cuts.length > 0 ? Math.max(...cuts.map((c) => c.out_seconds || 0)) : 0;
-  const endSeconds = props.endCard?.seconds ?? 0;
-  const durationInFrames = Math.max(1, Math.ceil((lastCutEnd + endSeconds) * 30));
-  return { durationInFrames, fps: 30, width: 1920, height: 1080 };
+  // Only reserve time for the synthesized end plate when `cuts` doesn't
+  // already carry a real "end"-typed cut (the shotlist's own final section) —
+  // must match OhmsvilleLesson's own hasEndCut check, or this pads a blank
+  // hold onto the tail of a lesson that already ends on its own end plate.
+  const endSeconds = hasEndCut ? 0 : props.endCard?.seconds ?? 0;
+  const fps = props.fps ?? 30;
+  const width = props.width ?? 1920;
+  const height = props.height ?? 1080;
+  const durationInFrames = Math.max(1, Math.ceil((lastCutEnd + endSeconds) * fps));
+  return { durationInFrames, fps, width, height };
 };
