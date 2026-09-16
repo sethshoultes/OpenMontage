@@ -69,6 +69,16 @@ SPOOKY_THEME = {
     "captionHighlightColor": "#ffb347", "captionBackgroundColor": "rgba(20,12,28,0.9)",
     "scrimColor": "20,12,28",
     "captionFont": "Georgia, 'Times New Roman', serif",
+    # Fix round 6: the lead asked for "about 88 percent". The geometry doesn't support that figure
+    # at the same time as the hard, measured requirement (a corner prop's own visible area 3-9% of
+    # the FRAME, fully inside the margin, never touching the board) — at 0.88 the side margin is
+    # only 6% of frame width (~115px at 1920), and even a bare, undistorted square prop filling it
+    # edge to edge tops out under 0.6% of frame area, an order of magnitude short of the 3% floor.
+    # 0.65 (336px margin) cleared the floor for three of the four props but still couldn't, even at
+    # the side margin's full available height, get jack-o-lantern.png (the darkest — see PROP_FOR's
+    # own comment) above ~2.8%. 0.55 (432px margin, PROP_FOR's box-width ceiling) is the smallest
+    # scale that clears the floor for every prop, measured — see measure_props.py's report.
+    "videoScale": 0.55,
 }
 
 # Six transparent PNGs cut from Seth's Canva deck, copied once into this project's own assets
@@ -80,11 +90,22 @@ PROPS_DIR = PROJECT / "assets" / "props"
 # board's busiest, most readable row — the zombie hand over springs 11/12, the ghost over the
 # battery), alternated left/right purely for visual variety across four consecutive beats;
 # CornerProp itself keeps whichever corner clear of both the top row and the caption.
+#
+# Fix round 6: box height is tuned per prop, not shared. Measured against the source PNGs at a
+# common box width (measure_props.py, before this tuning pass), how much of each box actually reads
+# as "ink" (color meaningfully different from plum) varies enormously — jack-o-lantern.png's dark
+# carved body barely lifts off a dark-plum ground at all (~18% of its own box measured as ink),
+# zombie-hand.png (~34%) and ghost.png (~67%) sit in between, mummy.png's pale wrap reads almost
+# immediately (~76%). One box size clears the 3% floor for the palest prop only by blowing the 9%
+# ceiling on the others, or clears the darkest only by going taller than any one size the others
+# could share — so each prop's height is its own, aimed at the middle of [3,9]% given its own
+# measured density, width always at the same margin-capped maximum (extra board margin costs
+# nothing; only height was ever the scarce dimension).
 PROP_FOR = {
-    "s2": ("jack-o-lantern.png", "bottom-right"),
-    "s3": ("mummy.png", "bottom-left"),
-    "s4": ("zombie-hand.png", "bottom-right"),
-    "s5": ("ghost.png", "bottom-left"),
+    "s2": ("jack-o-lantern.png", "bottom-right", 1040),
+    "s3": ("mummy.png", "bottom-left", 330),
+    "s4": ("zombie-hand.png", "bottom-right", 750),
+    "s5": ("ghost.png", "bottom-left", 380),
 }
 # The trailer's own title card (fix round 4), carved out of s1's front: the same witch-hat.png the
 # lead's original prop pairing named for "the title", now as the card's own art rather than a
@@ -146,7 +167,7 @@ def main(trailer_id: str) -> None:
 
     # Stage the corner props (permanent asset) and the end card's art (fresh from the live site
     # each render — see END_CARD_ART's own comment).
-    for filename, _corner in PROP_FOR.values():
+    for filename, _corner, _height in PROP_FOR.values():
         shutil.copy(PROPS_DIR / filename, out / "props" / filename)
     shutil.copy(PROPS_DIR / "witch-hat.png", out / "props" / "witch-hat.png")
     card_jpg = OHMSVILLE / "client" / "public" / "halloween" / "card.jpg"
@@ -189,14 +210,17 @@ def main(trailer_id: str) -> None:
                 })
                 video_start = start + TITLE_CARD_SECONDS
                 source_start += TITLE_CARD_SECONDS
-            prop, prop_corner = PROP_FOR.get(s["id"], (None, None))
+            prop, prop_corner, prop_height = PROP_FOR.get(s["id"], (None, None, None))
             cuts.append({
                 "id": s["id"], "type": "video", "layer": 0,
                 "src": f"ohmsville-trailers/{trailer_id}/shots/{s['shot']['file']}",
                 "in_seconds": round(video_start, 2), "out_seconds": round(end, 2),
                 "sourceStartSeconds": source_start,
                 "label": None,  # no lower-third: a trailer names nothing the narration hasn't already said
-                **({"prop": f"ohmsville-trailers/{trailer_id}/props/{prop}", "propCorner": prop_corner} if prop else {}),
+                **({
+                    "prop": f"ohmsville-trailers/{trailer_id}/props/{prop}",
+                    "propCorner": prop_corner, "propHeight": prop_height,
+                } if prop else {}),
             })
         elif s["card"]["kind"] == "end" and cuts:
             # The trailer's closing section (kind: end, shot: none) has no footage of its own —

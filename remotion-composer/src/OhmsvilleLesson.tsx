@@ -44,6 +44,10 @@ export interface OhmsvilleTheme {
   scrimColor?: string;
   /** Caption font; falls back to HEADING_FONT when unset, matching every existing lesson. */
   captionFont?: string;
+  /** Fix round 6: a board cut scaled to this fraction (centered, on `backgroundColor`) instead of
+   *  filling the frame — the margin a corner prop lives in, never on top of the board. Falls back
+   *  to 1 (full-bleed, `transform: scale(1)` is a no-op) when unset — every existing lesson. */
+  videoScale?: number;
 }
 
 export interface OhmsvilleCut {
@@ -68,6 +72,9 @@ export interface OhmsvilleCut {
   prop?: string;
   /** Which top corner `prop` bleeds off of; defaults to "top-right". */
   propCorner?: "bottom-left" | "bottom-right";
+  /** Box height in px, overriding CornerProp's own default aspect — tuned per source image so its
+   *  own measured visible area lands in the required range (see measure_props.py). */
+  propHeight?: number;
 }
 
 export interface OhmsvilleLessonProps {
@@ -153,31 +160,52 @@ const CardArt: React.FC<{ art?: string; theme: OhmsvilleTheme }> = ({ art, theme
 // itself (anchored flush to a bottom corner, no horizontal bleed) is sized to stay inside the outer
 // quarter of the frame width — comfortably clear of the caption, which docks bottom-CENTER and, in
 // practice, never reaches within 25% of either edge.
-const CornerProp: React.FC<{ src: string; corner: "bottom-left" | "bottom-right"; theme: OhmsvilleTheme }> = ({ src, corner, theme }) => {
+// Fix round 6: rounds 4 and 5 both fought the same underlying problem — a full-bleed board cut
+// leaves nowhere for a prop to live that isn't on top of the board, so it was either over a part
+// (round 4's top corners) or shrunk to invisibility trying to dodge one (round 5's 8%-of-height
+// sliver, which measured out under the lead's own 3% floor on more than one beat). Giving the
+// board a margin (VideoCut's `videoScale`) fixes the cause: the side margin is real plum ground,
+// nothing else is ever drawn there, so a prop placed inside it is geometrically guaranteed clear of
+// the board — no per-shot content to graze, unlike the old corner-of-the-video approach.
+//
+// PROP_MARGIN_INSET is exported so the measurement script (measure_props.py) can recompute the
+// same box in Python rather than re-eyeball it from a PNG.
+export const PROP_MARGIN_INSET = 12; // px clear of both the frame edge and the board edge
+// Default box aspect (width:height) when a cut doesn't name its own `propHeight` — close to
+// several source PNGs' own ratio. Width is ALWAYS capped to the margin (never the board's fault to
+// negotiate); height is the free dimension, since the side margin runs the full frame height.
+const DEFAULT_BOX_ASPECT = 300 / 360;
+
+const CornerProp: React.FC<{ src: string; corner: "bottom-left" | "bottom-right"; theme: OhmsvilleTheme; propHeight?: number }> = ({
+  src, corner, theme, propHeight,
+}) => {
   const { width, height } = useVideoConfig();
-  const size = Math.min(Math.round(height * 0.35), Math.round(width * 0.22)); // square box, clear of the outer-quarter width cap either way
-  // < 22% of frame height (the lead's cap) — sized well under it, not up to it: the board's own
-  // last row of parts (springs 56-59-ish, the tail of most Spooky Shack wirings) sits only about
-  // 12-13% of frame height up from the bottom on several of these recipes, verified by frame
-  // (ghost/s5 covered 1N4001 outright at 20%; mummy/s3 covered a spring at 20%; both still within
-  // single-digit pixels of it at 10%). 8% clears every beat checked with real margin, not a graze.
-  const visible = Math.round(height * 0.08);
-  const hidden = size - visible; // pushed below the frame, so only `visible` rises into it
-  const side = corner === "bottom-left" ? { left: 0 } : { right: 0 };
+  const scale = theme.videoScale ?? 1;
+  const marginX = width * (1 - scale) / 2; // the side margin's own width — the prop's hard ceiling
+  const boxWidth = Math.max(0, Math.round(marginX - PROP_MARGIN_INSET * 2));
+  // Source images vary hugely in how much of their own canvas is actual ink vs. transparent
+  // padding (jack-o-lantern.png's dark body barely lifts off the plum ground at all; mummy.png is
+  // pale and reads at a glance) — a single box size can't put all four in one measured range, so
+  // `propHeight` lets build_trailer.py's PROP_FOR tune each one from what measure_props.py actually
+  // reports, rather than everything sharing one guess. Falls back to DEFAULT_BOX_ASPECT when unset.
+  const boxHeight = Math.round(propHeight ?? boxWidth / DEFAULT_BOX_ASPECT);
+  const side = corner === "bottom-left" ? { left: PROP_MARGIN_INSET } : { right: PROP_MARGIN_INSET };
   return (
     <Img
       src={resolveAsset(src)}
       style={{
         position: "absolute",
-        bottom: -hidden,
+        bottom: PROP_MARGIN_INSET,
         ...side,
-        width: size,
-        height: size,
-        objectFit: "contain",
+        width: boxWidth,
+        height: boxHeight,
+        // `cover`, not `contain`: the box is the prop's whole visible extent now (round 5's
+        // off-frame bleed is gone), so filling it predictably is what makes the measured area
+        // land in range rather than depend on how much of each source PNG's own canvas is empty.
+        objectFit: "cover",
         opacity: 0.38,
         // Toward the plum ground, not just faded: darkened and slightly desaturated so it reads as
-        // set back rather than a bright sticker laid on top — a plain lower opacity alone still
-        // looks bright against Night Shift's own near-black board.
+        // set back rather than a bright sticker laid on top.
         filter: "brightness(0.55) saturate(0.7)",
         pointerEvents: "none",
       }}
@@ -188,15 +216,22 @@ const CornerProp: React.FC<{ src: string; corner: "bottom-left" | "bottom-right"
 const VideoCut: React.FC<{ cut: OhmsvilleCut; theme: OhmsvilleTheme }> = ({ cut, theme }) => {
   const { fps, durationInFrames } = useVideoConfig();
   const opacity = useFade(durationInFrames);
+  const scale = theme.videoScale ?? 1;
   return (
-    <AbsoluteFill style={{ background: "#000" }}>
-      <OffthreadVideo
-        src={resolveAsset(cut.src || "")}
-        startFrom={Math.round((cut.sourceStartSeconds || 0) * fps)}
-        muted
-        style={{ width: "100%", height: "100%", objectFit: "cover", opacity }}
-      />
-      {cut.prop && <CornerProp src={cut.prop} corner={cut.propCorner || "bottom-right"} theme={theme} />}
+    // Fix round 6: `background` was a hardcoded "#000", invisible at scale 1 (the video always
+    // covers it) — now the theme's own ground, which matters once a `videoScale` < 1 leaves a
+    // margin around the video. The video sits in its own inner AbsoluteFill so the transform
+    // scales only it, never the corner prop (a sibling, positioned in frame-absolute coordinates).
+    <AbsoluteFill style={{ background: theme.backgroundColor }}>
+      <AbsoluteFill style={{ transform: `scale(${scale})` }}>
+        <OffthreadVideo
+          src={resolveAsset(cut.src || "")}
+          startFrom={Math.round((cut.sourceStartSeconds || 0) * fps)}
+          muted
+          style={{ width: "100%", height: "100%", objectFit: "cover", opacity }}
+        />
+      </AbsoluteFill>
+      {cut.prop && <CornerProp src={cut.prop} corner={cut.propCorner || "bottom-right"} theme={theme} propHeight={cut.propHeight} />}
       {cut.label && <LowerThird label={cut.label} theme={theme} />}
     </AbsoluteFill>
   );
