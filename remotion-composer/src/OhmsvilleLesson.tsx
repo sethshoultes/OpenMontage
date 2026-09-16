@@ -67,7 +67,7 @@ export interface OhmsvilleCut {
    *  theme's ground — never over a live part or the caption (see CornerProp). */
   prop?: string;
   /** Which top corner `prop` bleeds off of; defaults to "top-right". */
-  propCorner?: "top-left" | "top-right";
+  propCorner?: "bottom-left" | "bottom-right";
 }
 
 export interface OhmsvilleLessonProps {
@@ -145,17 +145,31 @@ const CardArt: React.FC<{ art?: string; theme: OhmsvilleTheme }> = ({ art, theme
  *  board. Top corners only: captions dock bottom-center (CaptionOverlay's own paddingBottom), so a
  *  top corner can never cover one, and it stays clear of the board's dense lower rows where the
  *  parts a shot actually cares about tend to sit once focus mode's crop kicks in. */
-const CornerProp: React.FC<{ src: string; corner: "top-left" | "top-right"; theme: OhmsvilleTheme }> = ({ src, corner, theme }) => {
-  const { height } = useVideoConfig();
-  const size = Math.round(height * 0.4);
-  const bleed = -Math.round(size * 0.22);
-  const side = corner === "top-left" ? { left: bleed } : { right: bleed };
+// Fix round 5: the board's top row is its busiest, most readable part, and a top-corner prop (the
+// first placement) sat right on top of it — the zombie hand over springs 11/12, the ghost over
+// spring 1 and the battery. Bottom-anchored instead: most of the image sits below the frame, only
+// a sliver rises up into it, "the way the deck's zombie hand rises out of the ground" — deliberate,
+// not a sticker that landed badly. That sliver is capped under 22% of frame height, and the box
+// itself (anchored flush to a bottom corner, no horizontal bleed) is sized to stay inside the outer
+// quarter of the frame width — comfortably clear of the caption, which docks bottom-CENTER and, in
+// practice, never reaches within 25% of either edge.
+const CornerProp: React.FC<{ src: string; corner: "bottom-left" | "bottom-right"; theme: OhmsvilleTheme }> = ({ src, corner, theme }) => {
+  const { width, height } = useVideoConfig();
+  const size = Math.min(Math.round(height * 0.35), Math.round(width * 0.22)); // square box, clear of the outer-quarter width cap either way
+  // < 22% of frame height (the lead's cap) — sized well under it, not up to it: the board's own
+  // last row of parts (springs 56-59-ish, the tail of most Spooky Shack wirings) sits only about
+  // 12-13% of frame height up from the bottom on several of these recipes, verified by frame
+  // (ghost/s5 covered 1N4001 outright at 20%; mummy/s3 covered a spring at 20%; both still within
+  // single-digit pixels of it at 10%). 8% clears every beat checked with real margin, not a graze.
+  const visible = Math.round(height * 0.08);
+  const hidden = size - visible; // pushed below the frame, so only `visible` rises into it
+  const side = corner === "bottom-left" ? { left: 0 } : { right: 0 };
   return (
     <Img
       src={resolveAsset(src)}
       style={{
         position: "absolute",
-        top: bleed,
+        bottom: -hidden,
         ...side,
         width: size,
         height: size,
@@ -182,7 +196,7 @@ const VideoCut: React.FC<{ cut: OhmsvilleCut; theme: OhmsvilleTheme }> = ({ cut,
         muted
         style={{ width: "100%", height: "100%", objectFit: "cover", opacity }}
       />
-      {cut.prop && <CornerProp src={cut.prop} corner={cut.propCorner || "top-right"} theme={theme} />}
+      {cut.prop && <CornerProp src={cut.prop} corner={cut.propCorner || "bottom-right"} theme={theme} />}
       {cut.label && <LowerThird label={cut.label} theme={theme} />}
     </AbsoluteFill>
   );

@@ -76,13 +76,15 @@ SPOOKY_THEME = {
 # the reference folder at render time") — permanent, like SPOOKY_SHACK_MUSIC above.
 PROPS_DIR = PROJECT / "assets" / "props"
 # One corner prop per board beat (lead's suggested pairing) — never on s6 (the mission shot is a
-# document page, not "the boards"). Alternated corners purely for visual variety across four
-# consecutive beats; CornerProp itself guarantees whichever corner never reaches the caption.
+# document page, not "the boards"). Bottom-anchored (fix round 5: a top-corner prop sat on the
+# board's busiest, most readable row — the zombie hand over springs 11/12, the ghost over the
+# battery), alternated left/right purely for visual variety across four consecutive beats;
+# CornerProp itself keeps whichever corner clear of both the top row and the caption.
 PROP_FOR = {
-    "s2": ("jack-o-lantern.png", "top-right"),
-    "s3": ("mummy.png", "top-left"),
-    "s4": ("zombie-hand.png", "top-right"),
-    "s5": ("ghost.png", "top-left"),
+    "s2": ("jack-o-lantern.png", "bottom-right"),
+    "s3": ("mummy.png", "bottom-left"),
+    "s4": ("zombie-hand.png", "bottom-right"),
+    "s5": ("ghost.png", "bottom-left"),
 }
 # The trailer's own title card (fix round 4), carved out of s1's front: the same witch-hat.png the
 # lead's original prop pairing named for "the title", now as the card's own art rather than a
