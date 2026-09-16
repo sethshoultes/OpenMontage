@@ -77,17 +77,33 @@ SPOOKY_THEME = {
 # (fix round 4: "copy the files into the OpenMontage project's assets rather than reading them from
 # the reference folder at render time") — permanent, like SPOOKY_SHACK_MUSIC above.
 #
-# Fix round 7: props were tried on the four board beats too (rounds 4-6), first as a small corner
-# accent, then bottom-anchored, then — to give one a real margin to live in without ever touching
-# the board — with the board cut itself scaled down to leave a plum band. That last version
-# measured out clean (each prop's own visible area 3-9% of frame, provably clear of the board and
-# the caption), but it made the circuit, the actual subject of the film, a small rectangle in the
-# middle of the frame with a zombie hand the biggest thing on screen. The lead's ruling: don't try
-# to have both in the same frame. Board beats are full-bleed again (VideoCut, unchanged from before
-# any of this) and carry no prop at all — PROP_FOR, the per-prop box-height tuning table, and
-# measure_props.py (which verified it) are gone with them, not left behind to mislead the next
-# person about a requirement that no longer exists.
+# Rounds 4-7's props-on-board-beats history: a top corner sat on the busiest row (4); a fixed-small
+# bottom-anchored box dodged that only by shrinking near to invisibility (5); scaling the board down
+# to leave a guaranteed-empty margin fixed sizing but made the circuit a small rectangle with a
+# zombie hand the biggest thing on screen (6); round 7 removed the props from the board beats
+# entirely. Seth's correction, round 8: he asked for them to be MOVED, not removed — put them back,
+# board full-bleed (round 7's real fix, kept), one prop per board beat living in that beat's own
+# genuinely empty dark corner. PROP_FOR's `corner` and `height_frac` are chosen per beat by looking
+# at that beat's actual recorded frame (see the fix round 8 report for what was checked), not a
+# formula, and not a measuring script — Seth was explicit that scaffolding for a numeric floor/
+# ceiling misses the point when "clearly visible, not over a part" is a visual judgement.
+#
+# Mid-round-8 correction, direct from Seth: the first pass (14-18% visible, must clear every part)
+# undershot — he wants the prop clearly present, not hiding in a gap. Revised brief: whole prop
+# in frame (not cropped to a sliver), ~20-28% of frame height, overlapping the board/wires/parts is
+# fine. The only things a prop must still clear are the caption text and whichever single part the
+# narration is naming in that beat's sentence. s3's mummy was first placed bottom-left, which put it
+# right on top of the SECOND "LED red" (springs 56/57) — exactly the part s3's own line names
+# ("blinking the opposite way round"). Moved to bottom-right, which is clear board there.
 PROPS_DIR = PROJECT / "assets" / "props"
+# height_frac 0.24 -> CornerProp renders at exactly 24% of frame height (CSS height is fixed, not
+# derived from the source art), comfortably inside Seth's 20-28% band for all four props.
+PROP_FOR = {
+    "s2": ("jack-o-lantern.png", "bottom-right", 0.24, 0.3),
+    "s3": ("mummy.png", "bottom-right", 0.24, 0.3),
+    "s4": ("zombie-hand.png", "bottom-right", 0.24, 0.3),
+    "s5": ("ghost.png", "bottom-left", 0.24, 0.3),
+}
 # The trailer's own title card (fix round 4), carved out of s1's front: the same witch-hat.png the
 # lead's original prop pairing named for "the title", now as the card's own art rather than a
 # corner accent over the real footage — real /halloween footage (the hero art fix, round 2) still
@@ -162,9 +178,12 @@ def main(trailer_id: str) -> None:
             time.sleep(5)
     out = stage(trailer_id)
 
-    # Stage the title card's prop, the board badge (both permanent assets), and the end card's art
-    # (fresh from the live site each render — see END_CARD_ART's own comment).
+    # Stage the title card's prop, the four board-beat props, the board badge (all permanent
+    # assets), and the end card's art (fresh from the live site each render — see END_CARD_ART's
+    # own comment).
     shutil.copy(PROPS_DIR / "witch-hat.png", out / "props" / "witch-hat.png")
+    for filename, _corner, _height_frac, _opacity in PROP_FOR.values():
+        shutil.copy(PROPS_DIR / filename, out / "props" / filename)
     shutil.copy(LOGO_DIR / BOARD_BADGE, out / "logo" / BOARD_BADGE)
     card_jpg = OHMSVILLE / "client" / "public" / "halloween" / "card.jpg"
     if not card_jpg.is_file():
@@ -206,12 +225,17 @@ def main(trailer_id: str) -> None:
                 })
                 video_start = start + TITLE_CARD_SECONDS
                 source_start += TITLE_CARD_SECONDS
+            prop, prop_corner, prop_height_frac, prop_opacity = PROP_FOR.get(s["id"], (None, None, None, None))
             cuts.append({
                 "id": s["id"], "type": "video", "layer": 0,
                 "src": f"ohmsville-trailers/{trailer_id}/shots/{s['shot']['file']}",
                 "in_seconds": round(video_start, 2), "out_seconds": round(end, 2),
                 "sourceStartSeconds": source_start,
                 "label": None,  # no lower-third: a trailer names nothing the narration hasn't already said
+                **({
+                    "prop": f"ohmsville-trailers/{trailer_id}/props/{prop}",
+                    "propCorner": prop_corner, "propHeightFrac": prop_height_frac, "propOpacity": prop_opacity,
+                } if prop else {}),
             })
         elif s["card"]["kind"] == "end" and cuts:
             # The trailer's closing section (kind: end, shot: none) has no footage of its own —

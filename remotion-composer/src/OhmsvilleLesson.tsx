@@ -69,6 +69,16 @@ export interface OhmsvilleCut {
   art?: string;
   /** Title/end card only: a small uppercase line above the headline. */
   kicker?: string;
+  /** Video cut only (fix round 8): a corner prop image, over the board's own empty dark corners —
+   *  never a manufactured margin. See CornerProp. */
+  prop?: string;
+  propCorner?: "bottom-left" | "bottom-right";
+  /** Target visible height, as a fraction of frame height — chosen per beat by looking at its own
+   *  frame (build_trailer.py's PROP_FOR), not a shared default. */
+  propHeightFrac?: number;
+  /** Opacity, 0-1 — defaults to 0.3; raised per beat where that reads as mush rather than
+   *  atmosphere at 20-28% of frame height (Seth: "use your eye"). */
+  propOpacity?: number;
 }
 
 export interface OhmsvilleLessonProps {
@@ -140,13 +150,52 @@ const CardArt: React.FC<{ art?: string; theme: OhmsvilleTheme }> = ({ art, theme
     </AbsoluteFill>
   ) : null;
 
-// Board cuts tried carrying a corner prop for three rounds (issue #72, fix rounds 4-6): a top
-// corner sat on the board's busiest row, bottom-anchored either shrank to invisibility dodging live
-// parts or (once the board itself was scaled down to leave a margin for one) made the circuit — the
-// subject of the film — a small rectangle in the middle of the frame with a zombie hand the
-// biggest thing on screen. The lead's fix round 7 ruling: don't try to have both in the same frame.
-// A board cut is full-bleed again, exactly as before any of that — no margin, no prop, nothing
-// between the footage and the frame edge.
+// Board cuts carry a corner prop (issue #72, fix rounds 4-8): a top corner sat on the board's
+// busiest row (round 4); bottom-anchored fixed that but shrank to invisibility dodging live parts
+// at a fixed small size (round 5); scaling the board down to leave a guaranteed-empty margin fixed
+// THAT but made the circuit — the subject of the film — a small rectangle with a zombie hand the
+// biggest thing on screen (round 6); round 7 removed the props from board beats entirely rather
+// than resolve the actual tension. Round 8 (Seth, via the lead: "he never asked for the props to be
+// removed; he asked for them to be moved... put them back") is the real fix: the board stays
+// full-bleed (round 7's fix, kept). First pass kept the prop clear of every part, in the board's
+// own empty dark corners (14-18% of frame height) — Seth's own follow-up dropped that constraint
+// entirely: "the props can cover or overlap a little of the board. they should be mostly visible...
+// a foreground element, not a watermark hiding in a gap." The WHOLE image now sits in frame (no
+// off-frame bleed or crop, natural aspect), 20-28% of frame height, and IS allowed over wires, empty
+// board, even a part's edge. What still can't happen: sitting on the caption, or on whichever part
+// the narration is naming at that exact moment (build_trailer.py's PROP_FOR, chosen per beat by
+// looking at its own frame — see the fix round 8 report).
+const CornerProp: React.FC<{ src: string; corner: "bottom-left" | "bottom-right"; heightFrac: number; opacity: number }> = ({
+  src, corner, heightFrac, opacity,
+}) => {
+  const { height } = useVideoConfig();
+  // Seth, directly, after round 8's first pass: "the props can cover or overlap a little of the
+  // board. they should be mostly visible" — not a watermark hiding in a gap, a foreground element.
+  // The WHOLE image sits in frame now (no off-frame bleed, no crop), natural aspect via `width:
+  // "auto"`, anchored to the bottom corner. Overlapping wires/empty board/a part's edge is fine —
+  // what build_trailer.py's PROP_FOR still keeps clear, per beat, is the caption and whichever part
+  // the narration is naming at that moment.
+  const boxHeight = Math.round(height * heightFrac);
+  const side = corner === "bottom-left" ? { left: 20 } : { right: 20 };
+  return (
+    <Img
+      src={resolveAsset(src)}
+      style={{
+        position: "absolute",
+        bottom: 20,
+        ...side,
+        height: boxHeight,
+        width: "auto",
+        objectFit: "contain",
+        opacity,
+        // Darkened toward the board, not just faded — reads as atmosphere sitting in the dark
+        // rather than a sticker laid on top of it.
+        filter: "brightness(0.5) saturate(0.65)",
+        pointerEvents: "none",
+      }}
+    />
+  );
+};
 
 /** A quiet brand mark on a board cut only (fix round 7) — small, roughly 4% of frame height, at a
  *  fixed low opacity so it reads without competing with the board. Never on the title/end cards
@@ -181,6 +230,14 @@ const VideoCut: React.FC<{ cut: OhmsvilleCut; theme: OhmsvilleTheme }> = ({ cut,
       />
       {theme.boardBadge && (
         <BoardBadge src={theme.boardBadge} position={theme.boardBadgePosition ?? "top-left"} height={Math.round(frameHeight * 0.04)} />
+      )}
+      {cut.prop && (
+        <CornerProp
+          src={cut.prop}
+          corner={cut.propCorner || "bottom-right"}
+          heightFrac={cut.propHeightFrac ?? 0.24}
+          opacity={cut.propOpacity ?? 0.3}
+        />
       )}
       {cut.label && <LowerThird label={cut.label} theme={theme} />}
     </AbsoluteFill>
