@@ -79,6 +79,14 @@ export interface OhmsvilleCut {
   /** Opacity, 0-1 — defaults to 0.3; raised per beat where that reads as mush rather than
    *  atmosphere at 20-28% of frame height (Seth: "use your eye"). */
   propOpacity?: number;
+  /** CornerProp's darkening filter, 0-1 each — default 0.5/0.65 (see CornerProp). Pale, low-density
+   *  art (the ghost: white body, thin dark outline, no saturated fill to hold onto) washes out to
+   *  near-nothing against the near-black board at the shared default and needs its own, lighter
+   *  treatment; the mummy/pumpkin/zombie-hand art is dense/saturated enough that the shared default
+   *  already reads. Per-prop, not a global change — "props should be mostly visible, legible beats
+   *  subtle" (video-guidelines.md). */
+  propBrightness?: number;
+  propSaturate?: number;
 }
 
 export interface OhmsvilleLessonProps {
@@ -165,9 +173,14 @@ const CardArt: React.FC<{ art?: string; theme: OhmsvilleTheme }> = ({ art, theme
 // board, even a part's edge. What still can't happen: sitting on the caption, or on whichever part
 // the narration is naming at that exact moment (build_trailer.py's PROP_FOR, chosen per beat by
 // looking at its own frame — see the fix round 8 report).
-const CornerProp: React.FC<{ src: string; corner: "bottom-left" | "bottom-right"; heightFrac: number; opacity: number }> = ({
-  src, corner, heightFrac, opacity,
-}) => {
+const CornerProp: React.FC<{
+  src: string;
+  corner: "bottom-left" | "bottom-right";
+  heightFrac: number;
+  opacity: number;
+  brightness: number;
+  saturate: number;
+}> = ({ src, corner, heightFrac, opacity, brightness, saturate }) => {
   const { height } = useVideoConfig();
   // Seth, directly, after round 8's first pass: "the props can cover or overlap a little of the
   // board. they should be mostly visible" — not a watermark hiding in a gap, a foreground element.
@@ -189,8 +202,9 @@ const CornerProp: React.FC<{ src: string; corner: "bottom-left" | "bottom-right"
         objectFit: "contain",
         opacity,
         // Darkened toward the board, not just faded — reads as atmosphere sitting in the dark
-        // rather than a sticker laid on top of it.
-        filter: "brightness(0.5) saturate(0.65)",
+        // rather than a sticker laid on top of it. Per-prop (build_trailer.py's PROP_FOR): the
+        // shared 0.5/0.65 default mushes out pale, low-saturation art like the ghost.
+        filter: `brightness(${brightness}) saturate(${saturate})`,
         pointerEvents: "none",
       }}
     />
@@ -237,6 +251,8 @@ const VideoCut: React.FC<{ cut: OhmsvilleCut; theme: OhmsvilleTheme }> = ({ cut,
           corner={cut.propCorner || "bottom-right"}
           heightFrac={cut.propHeightFrac ?? 0.24}
           opacity={cut.propOpacity ?? 0.3}
+          brightness={cut.propBrightness ?? 0.5}
+          saturate={cut.propSaturate ?? 0.65}
         />
       )}
       {cut.label && <LowerThird label={cut.label} theme={theme} />}

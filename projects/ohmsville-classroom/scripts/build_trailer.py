@@ -98,11 +98,22 @@ SPOOKY_THEME = {
 PROPS_DIR = PROJECT / "assets" / "props"
 # height_frac 0.24 -> CornerProp renders at exactly 24% of frame height (CSS height is fixed, not
 # derived from the source art), comfortably inside Seth's 20-28% band for all four props.
+#
+# opacity/brightness/saturate is per-prop, not a shared constant: the mummy, jack-o-lantern and
+# zombie-hand are dense, saturated art that still reads as atmosphere at the original 0.3/0.5/0.65
+# darkening. The ghost is pale, low-saturation art (a white body, thin dark outline, no solid fill
+# to hold onto — see assets/props/ghost.png) that the same treatment washes out to almost nothing
+# against the near-black board (checked against a real extracted frame — it read as a dark smudge,
+# not a ghost). Raised for that one prop only, checked the same way (a CSS-filter simulation
+# composited over the board's own near-black, then confirmed on a real rendered frame): 0.85/0.85
+# brightness/saturate and 0.45 opacity reads clearly as a ghost at a glance, at roughly the mummy's
+# own visibility, still dimmer than full brightness — "mostly visible, legible beats subtle"
+# (video-guidelines.md), not a return to full opacity.
 PROP_FOR = {
-    "s2": ("jack-o-lantern.png", "bottom-right", 0.24, 0.3),
-    "s3": ("mummy.png", "bottom-right", 0.24, 0.3),
-    "s4": ("zombie-hand.png", "bottom-right", 0.24, 0.3),
-    "s5": ("ghost.png", "bottom-left", 0.24, 0.3),
+    "s2": ("jack-o-lantern.png", "bottom-right", 0.24, 0.3, 0.5, 0.65),
+    "s3": ("mummy.png", "bottom-right", 0.24, 0.3, 0.5, 0.65),
+    "s4": ("zombie-hand.png", "bottom-right", 0.24, 0.3, 0.5, 0.65),
+    "s5": ("ghost.png", "bottom-left", 0.24, 0.45, 0.85, 0.85),
 }
 # The trailer's own title card (fix round 4), carved out of s1's front: the same witch-hat.png the
 # lead's original prop pairing named for "the title", now as the card's own art rather than a
@@ -182,7 +193,7 @@ def main(trailer_id: str) -> None:
     # assets), and the end card's art (fresh from the live site each render — see END_CARD_ART's
     # own comment).
     shutil.copy(PROPS_DIR / "witch-hat.png", out / "props" / "witch-hat.png")
-    for filename, _corner, _height_frac, _opacity in PROP_FOR.values():
+    for filename, _corner, _height_frac, _opacity, _brightness, _saturate in PROP_FOR.values():
         shutil.copy(PROPS_DIR / filename, out / "props" / filename)
     shutil.copy(LOGO_DIR / BOARD_BADGE, out / "logo" / BOARD_BADGE)
     card_jpg = OHMSVILLE / "client" / "public" / "halloween" / "card.jpg"
@@ -225,7 +236,9 @@ def main(trailer_id: str) -> None:
                 })
                 video_start = start + TITLE_CARD_SECONDS
                 source_start += TITLE_CARD_SECONDS
-            prop, prop_corner, prop_height_frac, prop_opacity = PROP_FOR.get(s["id"], (None, None, None, None))
+            prop, prop_corner, prop_height_frac, prop_opacity, prop_brightness, prop_saturate = PROP_FOR.get(
+                s["id"], (None, None, None, None, None, None)
+            )
             cuts.append({
                 "id": s["id"], "type": "video", "layer": 0,
                 "src": f"ohmsville-trailers/{trailer_id}/shots/{s['shot']['file']}",
@@ -235,6 +248,7 @@ def main(trailer_id: str) -> None:
                 **({
                     "prop": f"ohmsville-trailers/{trailer_id}/props/{prop}",
                     "propCorner": prop_corner, "propHeightFrac": prop_height_frac, "propOpacity": prop_opacity,
+                    "propBrightness": prop_brightness, "propSaturate": prop_saturate,
                 } if prop else {}),
             })
         elif s["card"]["kind"] == "end" and cuts:
@@ -250,6 +264,20 @@ def main(trailer_id: str) -> None:
             cuts.append({"id": s["id"], "type": s["card"]["kind"], "layer": 0,
                          "in_seconds": round(start, 2), "out_seconds": round(end, 2),
                          "title": shotlist["title"], "label": None})
+
+    # Bridge the SECTION_GAP_SECONDS breath between one beat's narration and the next: `t` above
+    # advances by that gap after every section, but nothing filled the picture for it, so every
+    # ordinary cut-to-cut boundary left a real hole between one cut's out_seconds and the next
+    # cut's in_seconds — no Sequence active, the plain theme background showing through with
+    # whatever caption text hadn't yet been replaced (looks exactly like a dropped shot). Caught by
+    # sampling real frames across the whole film: all five beat boundaries did it, not just s3's.
+    # The fix already used for the end card (holding cuts[-1] through its own trailing narration,
+    # above) generalizes here: every cut holds its last frame until the next cut actually begins.
+    # This only pulls existing gaps closed — it never extends past the final cut, so total runtime
+    # (and everything build_lesson.py's shared helpers compute from it) is unchanged.
+    for i in range(len(cuts) - 1):
+        if cuts[i]["out_seconds"] < cuts[i + 1]["in_seconds"]:
+            cuts[i]["out_seconds"] = cuts[i + 1]["in_seconds"]
 
     # One narration bed, built the same decode-and-re-encode way as build_lesson.py (never the
     # concat demuxer's -c copy, which reintroduces per-splice drift — see that script's comment).
