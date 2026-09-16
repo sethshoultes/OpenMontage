@@ -69,44 +69,25 @@ SPOOKY_THEME = {
     "captionHighlightColor": "#ffb347", "captionBackgroundColor": "rgba(20,12,28,0.9)",
     "scrimColor": "20,12,28",
     "captionFont": "Georgia, 'Times New Roman', serif",
-    # Fix round 6: the lead asked for "about 88 percent". The geometry doesn't support that figure
-    # at the same time as the hard, measured requirement (a corner prop's own visible area 3-9% of
-    # the FRAME, fully inside the margin, never touching the board) — at 0.88 the side margin is
-    # only 6% of frame width (~115px at 1920), and even a bare, undistorted square prop filling it
-    # edge to edge tops out under 0.6% of frame area, an order of magnitude short of the 3% floor.
-    # 0.65 (336px margin) cleared the floor for three of the four props but still couldn't, even at
-    # the side margin's full available height, get jack-o-lantern.png (the darkest — see PROP_FOR's
-    # own comment) above ~2.8%. 0.55 (432px margin, PROP_FOR's box-width ceiling) is the smallest
-    # scale that clears the floor for every prop, measured — see measure_props.py's report.
-    "videoScale": 0.55,
+    # Set below, per trailer_id, once the staged asset path is known (LOGO_DIR/BOARD_BADGE) — see
+    # main()'s SPOOKY_THEME.update() call.
 }
 
 # Six transparent PNGs cut from Seth's Canva deck, copied once into this project's own assets
 # (fix round 4: "copy the files into the OpenMontage project's assets rather than reading them from
 # the reference folder at render time") — permanent, like SPOOKY_SHACK_MUSIC above.
-PROPS_DIR = PROJECT / "assets" / "props"
-# One corner prop per board beat (lead's suggested pairing) — never on s6 (the mission shot is a
-# document page, not "the boards"). Bottom-anchored (fix round 5: a top-corner prop sat on the
-# board's busiest, most readable row — the zombie hand over springs 11/12, the ghost over the
-# battery), alternated left/right purely for visual variety across four consecutive beats;
-# CornerProp itself keeps whichever corner clear of both the top row and the caption.
 #
-# Fix round 6: box height is tuned per prop, not shared. Measured against the source PNGs at a
-# common box width (measure_props.py, before this tuning pass), how much of each box actually reads
-# as "ink" (color meaningfully different from plum) varies enormously — jack-o-lantern.png's dark
-# carved body barely lifts off a dark-plum ground at all (~18% of its own box measured as ink),
-# zombie-hand.png (~34%) and ghost.png (~67%) sit in between, mummy.png's pale wrap reads almost
-# immediately (~76%). One box size clears the 3% floor for the palest prop only by blowing the 9%
-# ceiling on the others, or clears the darkest only by going taller than any one size the others
-# could share — so each prop's height is its own, aimed at the middle of [3,9]% given its own
-# measured density, width always at the same margin-capped maximum (extra board margin costs
-# nothing; only height was ever the scarce dimension).
-PROP_FOR = {
-    "s2": ("jack-o-lantern.png", "bottom-right", 1040),
-    "s3": ("mummy.png", "bottom-left", 330),
-    "s4": ("zombie-hand.png", "bottom-right", 750),
-    "s5": ("ghost.png", "bottom-left", 380),
-}
+# Fix round 7: props were tried on the four board beats too (rounds 4-6), first as a small corner
+# accent, then bottom-anchored, then — to give one a real margin to live in without ever touching
+# the board — with the board cut itself scaled down to leave a plum band. That last version
+# measured out clean (each prop's own visible area 3-9% of frame, provably clear of the board and
+# the caption), but it made the circuit, the actual subject of the film, a small rectangle in the
+# middle of the frame with a zombie hand the biggest thing on screen. The lead's ruling: don't try
+# to have both in the same frame. Board beats are full-bleed again (VideoCut, unchanged from before
+# any of this) and carry no prop at all — PROP_FOR, the per-prop box-height tuning table, and
+# measure_props.py (which verified it) are gone with them, not left behind to mislead the next
+# person about a requirement that no longer exists.
+PROPS_DIR = PROJECT / "assets" / "props"
 # The trailer's own title card (fix round 4), carved out of s1's front: the same witch-hat.png the
 # lead's original prop pairing named for "the title", now as the card's own art rather than a
 # corner accent over the real footage — real /halloween footage (the hero art fix, round 2) still
@@ -120,6 +101,21 @@ TITLE_CARD_TITLE = "Spooky Shack"
 # — it's the live site's asset, not a one-off from the reference folder.
 END_CARD_ART = "card.jpg"
 
+# The brand mark on the board beats (fix round 7, Seth: this is footage headed to YouTube and other
+# feeds — a broadcaster's bug). client/public/logo/mono.svg is the site's own single-colour
+# wordmark, but it bakes its ink as literal fill/stroke attributes rather than `currentColor`, so a
+# plain <img> can't be retinted by CSS — recolored once to the paper cream the lead named and saved
+# here permanently, same convention as PROPS_DIR/SPOOKY_SHACK_MUSIC. The site's own
+# horizontal-paper.svg/horizontal-red.svg were ruled out explicitly: their baked background
+# rectangle would show. See the asset file's own header comment for exactly what changed.
+LOGO_DIR = PROJECT / "assets" / "logo"
+BOARD_BADGE = "ohmsville-mono-cream.svg"
+# Checked against real recorded frames (all four board beats open on the standard board, so one
+# choice covers every recipe): the top row's springs and labels run edge to edge with no gap large
+# enough for a top-left or top-center mark to clear — see the fix round 7 report for the frames
+# looked at. Bottom-left, the lead's own named fallback.
+BOARD_BADGE_POSITION = "bottom-left"
+
 
 def stage(trailer_id: str) -> Path:
     out = PUBLIC / trailer_id
@@ -128,6 +124,7 @@ def stage(trailer_id: str) -> Path:
     (out / "narration").mkdir(parents=True)
     (out / "shots").mkdir()
     (out / "props").mkdir()
+    (out / "logo").mkdir()
     return out
 
 
@@ -165,11 +162,10 @@ def main(trailer_id: str) -> None:
             time.sleep(5)
     out = stage(trailer_id)
 
-    # Stage the corner props (permanent asset) and the end card's art (fresh from the live site
-    # each render — see END_CARD_ART's own comment).
-    for filename, _corner, _height in PROP_FOR.values():
-        shutil.copy(PROPS_DIR / filename, out / "props" / filename)
+    # Stage the title card's prop, the board badge (both permanent assets), and the end card's art
+    # (fresh from the live site each render — see END_CARD_ART's own comment).
     shutil.copy(PROPS_DIR / "witch-hat.png", out / "props" / "witch-hat.png")
+    shutil.copy(LOGO_DIR / BOARD_BADGE, out / "logo" / BOARD_BADGE)
     card_jpg = OHMSVILLE / "client" / "public" / "halloween" / "card.jpg"
     if not card_jpg.is_file():
         raise RuntimeError(f"end card art missing at {card_jpg}")
@@ -210,17 +206,12 @@ def main(trailer_id: str) -> None:
                 })
                 video_start = start + TITLE_CARD_SECONDS
                 source_start += TITLE_CARD_SECONDS
-            prop, prop_corner, prop_height = PROP_FOR.get(s["id"], (None, None, None))
             cuts.append({
                 "id": s["id"], "type": "video", "layer": 0,
                 "src": f"ohmsville-trailers/{trailer_id}/shots/{s['shot']['file']}",
                 "in_seconds": round(video_start, 2), "out_seconds": round(end, 2),
                 "sourceStartSeconds": source_start,
                 "label": None,  # no lower-third: a trailer names nothing the narration hasn't already said
-                **({
-                    "prop": f"ohmsville-trailers/{trailer_id}/props/{prop}",
-                    "propCorner": prop_corner, "propHeight": prop_height,
-                } if prop else {}),
             })
         elif s["card"]["kind"] == "end" and cuts:
             # The trailer's closing section (kind: end, shot: none) has no footage of its own —
@@ -282,9 +273,15 @@ def main(trailer_id: str) -> None:
         str(out / "music.mp3"),
     ])
 
+    # The board badge's position is a per-recipe judgement call (where the top row actually has
+    # room), made by looking at real recorded frames, not guessed from CSS — see BOARD_BADGE_POSITION's
+    # own comment for what was checked and why.
+    theme = {**SPOOKY_THEME, "boardBadge": f"ohmsville-trailers/{trailer_id}/logo/{BOARD_BADGE}",
+             "boardBadgePosition": BOARD_BADGE_POSITION}
+
     props = {
         "fps": 30, "width": 1920, "height": 1080,
-        "themeConfig": SPOOKY_THEME,
+        "themeConfig": theme,
         "cuts": cuts,
         "captions": words,
         "audio": {
