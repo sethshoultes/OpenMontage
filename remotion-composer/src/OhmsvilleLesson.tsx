@@ -12,6 +12,7 @@ import {
   useVideoConfig,
 } from "remotion";
 import { loadFont } from "@remotion/google-fonts/Oswald";
+import { loadFont as loadDisplayFont } from "@remotion/google-fonts/AlfaSlabOne";
 import { CaptionOverlay, WordCaption } from "./components/CaptionOverlay";
 
 // Ohmsville's "Science Fair '78" identity: deep brown-black ground, warm gold
@@ -21,6 +22,11 @@ const { fontFamily: HEADING_FONT } = loadFont("normal", {
   subsets: ["latin"],
 });
 const BODY_FONT = "Georgia, 'Times New Roman', serif";
+// The Spooky Shack trailer's own identity (client/src/home/Home.svelte's `.spookycard`, matched
+// verbatim — see build_trailer.py's SPOOKY_THEME): a chunky serif headline distinct from every
+// other Ohmsville video's Oswald titles. Loaded unconditionally like HEADING_FONT/BODY_FONT — cheap
+// even when a theme never sets `displayFont` and so never uses it.
+const { fontFamily: DISPLAY_FONT } = loadDisplayFont("normal", { weights: ["400"], subsets: ["latin"] });
 
 export interface OhmsvilleTheme {
   primaryColor: string;
@@ -33,6 +39,11 @@ export interface OhmsvilleTheme {
   bodyFont: string;
   captionHighlightColor: string;
   captionBackgroundColor: string;
+  /** "r,g,b" for a title/end card's art scrim (see `cut.art`); defaults to the card's own
+   *  backgroundColor, converted from hex. */
+  scrimColor?: string;
+  /** Caption font; falls back to HEADING_FONT when unset, matching every existing lesson. */
+  captionFont?: string;
 }
 
 export interface OhmsvilleCut {
@@ -47,6 +58,16 @@ export interface OhmsvilleCut {
   title?: string;
   subtitle?: string;
   url?: string;
+  /** Title/end card only: a background image pushed behind a dark scrim gradient (Home.svelte's
+   *  `.spookycard` treatment) — the art recedes, the words sit on the quiet (opaque) side. */
+  art?: string;
+  /** Title/end card only: a small uppercase line above the headline. */
+  kicker?: string;
+  /** Video cut only: a corner prop image, large-but-cropped at a frame edge, dimmed toward the
+   *  theme's ground — never over a live part or the caption (see CornerProp). */
+  prop?: string;
+  /** Which top corner `prop` bleeds off of; defaults to "top-right". */
+  propCorner?: "top-left" | "top-right";
 }
 
 export interface OhmsvilleLessonProps {
@@ -65,7 +86,7 @@ export interface OhmsvilleLessonProps {
       fade_out_seconds?: number;
     };
   };
-  endCard: { url: string; seconds: number };
+  endCard: { url: string; seconds: number; title?: string; kicker?: string; art?: string };
 }
 
 // Same asset-resolution contract as Explainer.tsx / TitledVideo.tsx: URLs and
@@ -96,6 +117,60 @@ function useFade(durationInFrames: number) {
   return fadeIn * fadeOut;
 }
 
+/** "#140c1c" -> "20,12,28", for building an rgba() scrim from a theme's own hex color. */
+function hexToRgb(hex: string): string {
+  const m = /^#?([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i.exec(hex);
+  if (!m) return "0,0,0";
+  return [1, 2, 3].map((i) => parseInt(m[i], 16)).join(",");
+}
+
+/** Home.svelte's `.spookycard` gradient, verbatim: opaque (quiet, for the words) on the left,
+ *  fading toward the art on the right. */
+const scrimGradient = (rgb: string) =>
+  `linear-gradient(to right, rgba(${rgb},0.94) 38%, rgba(${rgb},0.55) 62%, rgba(${rgb},0.2))`;
+
+/** A title/end card's background art, pushed behind the scrim — absent when `art` is unset, so
+ *  every existing lesson card (which never sets it) is unaffected. */
+const CardArt: React.FC<{ art?: string; theme: OhmsvilleTheme }> = ({ art, theme }) =>
+  art ? (
+    <AbsoluteFill>
+      <Img src={resolveAsset(art)} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+      <AbsoluteFill style={{ backgroundImage: scrimGradient(theme.scrimColor || hexToRgb(theme.backgroundColor)) }} />
+    </AbsoluteFill>
+  ) : null;
+
+/** Corner prop over a board shot (issue #72 fix round 4): large-but-cropped at a frame edge — a
+ *  fixed fraction of it hangs off, "a pumpkin half out of frame" rather than a floating sticker —
+ *  dimmed and darkened toward the theme's ground rather than sitting bright on top of the live
+ *  board. Top corners only: captions dock bottom-center (CaptionOverlay's own paddingBottom), so a
+ *  top corner can never cover one, and it stays clear of the board's dense lower rows where the
+ *  parts a shot actually cares about tend to sit once focus mode's crop kicks in. */
+const CornerProp: React.FC<{ src: string; corner: "top-left" | "top-right"; theme: OhmsvilleTheme }> = ({ src, corner, theme }) => {
+  const { height } = useVideoConfig();
+  const size = Math.round(height * 0.4);
+  const bleed = -Math.round(size * 0.22);
+  const side = corner === "top-left" ? { left: bleed } : { right: bleed };
+  return (
+    <Img
+      src={resolveAsset(src)}
+      style={{
+        position: "absolute",
+        top: bleed,
+        ...side,
+        width: size,
+        height: size,
+        objectFit: "contain",
+        opacity: 0.38,
+        // Toward the plum ground, not just faded: darkened and slightly desaturated so it reads as
+        // set back rather than a bright sticker laid on top — a plain lower opacity alone still
+        // looks bright against Night Shift's own near-black board.
+        filter: "brightness(0.55) saturate(0.7)",
+        pointerEvents: "none",
+      }}
+    />
+  );
+};
+
 const VideoCut: React.FC<{ cut: OhmsvilleCut; theme: OhmsvilleTheme }> = ({ cut, theme }) => {
   const { fps, durationInFrames } = useVideoConfig();
   const opacity = useFade(durationInFrames);
@@ -107,6 +182,7 @@ const VideoCut: React.FC<{ cut: OhmsvilleCut; theme: OhmsvilleTheme }> = ({ cut,
         muted
         style={{ width: "100%", height: "100%", objectFit: "cover", opacity }}
       />
+      {cut.prop && <CornerProp src={cut.prop} corner={cut.propCorner || "top-right"} theme={theme} />}
       {cut.label && <LowerThird label={cut.label} theme={theme} />}
     </AbsoluteFill>
   );
@@ -171,75 +247,87 @@ const LowerThird: React.FC<{ label: string; theme: OhmsvilleTheme }> = ({ label,
   </div>
 );
 
-const TitlePlate: React.FC<{ cut: OhmsvilleCut; theme: OhmsvilleTheme }> = ({ cut, theme }) => {
+// Shared by TitlePlate/EndPlate: a plain centered plate (every existing lesson card — no `art`) vs.
+// Home.svelte's `.spookycard` treatment (`art` set: image behind a scrim, text left-aligned on the
+// scrim's opaque/"quiet" side, a kicker line, a border, the headline in DISPLAY_FONT not
+// HEADING_FONT). One component, so a lesson's plain card and a trailer's dressed one can never
+// silently drift apart into two maintained copies.
+const CardPlate: React.FC<{
+  cut: OhmsvilleCut;
+  theme: OhmsvilleTheme;
+  headline: string;
+  headlineSize: number;
+  body?: string;
+}> = ({ cut, theme, headline, headlineSize, body }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const enter = spring({ frame, fps, config: { damping: 16, stiffness: 90 } });
+  const dressed = !!cut.art;
   return (
     <AbsoluteFill
       style={{
         background: theme.backgroundColor,
-        justifyContent: "center",
-        alignItems: "center",
-        flexDirection: "column",
+        border: dressed ? `3px solid ${theme.primaryColor}` : undefined,
+        boxSizing: "border-box",
+        overflow: "hidden",
       }}
     >
-      <div style={{ width: 220, height: 6, background: theme.accentColor, marginBottom: 32, transform: `scaleX(${enter})` }} />
-      <div
+      <CardArt art={cut.art} theme={theme} />
+      <AbsoluteFill
         style={{
-          opacity: enter,
-          fontFamily: HEADING_FONT,
-          fontWeight: 700,
-          fontSize: 84,
-          color: theme.textColor,
-          textAlign: "center",
-          maxWidth: "80%",
+          justifyContent: "center",
+          alignItems: dressed ? "flex-start" : "center",
+          flexDirection: "column",
+          padding: dressed ? "0 9%" : 0,
         }}
       >
-        {cut.title}
-      </div>
-      {cut.subtitle && (
-        <div style={{ opacity: enter, fontFamily: BODY_FONT, fontSize: 36, color: theme.mutedTextColor, marginTop: 20 }}>
-          {cut.subtitle}
+        {!dressed && <div style={{ width: 220, height: 6, background: theme.accentColor, marginBottom: 32, transform: `scaleX(${enter})` }} />}
+        {cut.kicker && (
+          <div
+            style={{
+              opacity: enter,
+              fontFamily: HEADING_FONT,
+              fontWeight: 600,
+              fontSize: 24,
+              letterSpacing: 3,
+              textTransform: "uppercase",
+              color: theme.accentColor,
+              marginBottom: 14,
+            }}
+          >
+            {cut.kicker}
+          </div>
+        )}
+        <div
+          style={{
+            opacity: enter,
+            fontFamily: dressed ? DISPLAY_FONT : HEADING_FONT,
+            fontWeight: dressed ? 400 : 700,
+            fontSize: headlineSize,
+            color: theme.accentColor,
+            textAlign: dressed ? "left" : "center",
+            maxWidth: dressed ? "70%" : "80%",
+          }}
+        >
+          {headline}
         </div>
-      )}
+        {body && (
+          <div style={{ opacity: enter, fontFamily: BODY_FONT, fontSize: dressed ? 30 : 36, color: theme.textColor, marginTop: 20, maxWidth: dressed ? "60%" : undefined }}>
+            {body}
+          </div>
+        )}
+      </AbsoluteFill>
     </AbsoluteFill>
   );
 };
 
-const EndPlate: React.FC<{ cut: OhmsvilleCut; theme: OhmsvilleTheme; url: string }> = ({ cut, theme, url }) => {
-  const frame = useCurrentFrame();
-  const { fps } = useVideoConfig();
-  const enter = spring({ frame, fps, config: { damping: 16, stiffness: 90 } });
-  return (
-    <AbsoluteFill
-      style={{
-        background: theme.backgroundColor,
-        justifyContent: "center",
-        alignItems: "center",
-        flexDirection: "column",
-      }}
-    >
-      <div
-        style={{
-          opacity: enter,
-          fontFamily: HEADING_FONT,
-          fontWeight: 700,
-          fontSize: 64,
-          color: theme.accentColor,
-          textAlign: "center",
-          maxWidth: "80%",
-        }}
-      >
-        {cut.title || "Keep building at"}
-      </div>
-      <div style={{ opacity: enter, fontFamily: BODY_FONT, fontSize: 40, color: theme.textColor, marginTop: 24 }}>
-        {url}
-      </div>
-      <div style={{ width: 160, height: 4, background: theme.primaryColor, marginTop: 32, transform: `scaleX(${enter})` }} />
-    </AbsoluteFill>
-  );
-};
+const TitlePlate: React.FC<{ cut: OhmsvilleCut; theme: OhmsvilleTheme }> = ({ cut, theme }) => (
+  <CardPlate cut={cut} theme={theme} headline={cut.title || ""} headlineSize={cut.art ? 64 : 84} body={cut.subtitle} />
+);
+
+const EndPlate: React.FC<{ cut: OhmsvilleCut; theme: OhmsvilleTheme; url: string }> = ({ cut, theme, url }) => (
+  <CardPlate cut={cut} theme={theme} headline={cut.title || "Keep building at"} headlineSize={cut.art ? 56 : 64} body={url} />
+);
 
 // Explicit dispatch — anything not in the four known cut types renders only
 // the ground color rather than silently falling through to the end card.
@@ -275,6 +363,9 @@ export const OhmsvilleLesson: React.FC<OhmsvilleLessonProps> = (props) => {
           in_seconds: lastCutEnd,
           out_seconds: lastCutEnd + (endCard.seconds ?? 0),
           url: endCard.url,
+          title: endCard.title,
+          kicker: endCard.kicker,
+          art: endCard.art,
         }
       : null;
 
@@ -304,9 +395,12 @@ export const OhmsvilleLesson: React.FC<OhmsvilleLessonProps> = (props) => {
           words={captions}
           wordsPerPage={5}
           fontSize={44}
+          // color is left at CaptionOverlay's own default (near-white) unless a theme sets
+          // captionFont — every existing lesson theme doesn't, so its captions are unaffected.
+          color={theme.captionFont ? theme.textColor : undefined}
           highlightColor={theme.captionHighlightColor}
           backgroundColor={theme.captionBackgroundColor}
-          fontFamily={HEADING_FONT}
+          fontFamily={theme.captionFont || HEADING_FONT}
         />
       )}
 

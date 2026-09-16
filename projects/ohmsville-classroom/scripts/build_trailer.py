@@ -46,7 +46,6 @@ registry.discover()
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import build_lesson as lesson  # noqa: E402
 
-THEME = lesson.THEME
 ART_DIRECTION = lesson.ART_DIRECTION
 SECTION_GAP_SECONDS = lesson.SECTION_GAP_SECONDS
 run_ffmpeg = lesson.run_ffmpeg
@@ -59,6 +58,45 @@ captions_for = lesson.captions
 # than a per-render generation.
 SPOOKY_SHACK_MUSIC = PROJECT / "assets" / "music" / "spooky_shack_bed.mp3"
 
+# The Spooky Shack's own identity (fix round 4), not build_lesson.py's Science Fair '78 THEME —
+# matched verbatim to client/src/home/Home.svelte's `.spookycard` (Seth: "that card turned out
+# really, really good... match it rather than inventing a treatment"). surfaceColor is unused by
+# anything this trailer renders (no schematic cards) but the interface requires a value.
+SPOOKY_THEME = {
+    "primaryColor": "#5a3a6a", "accentColor": "#ffb347", "backgroundColor": "#140c1c",
+    "surfaceColor": "#140c1c", "textColor": "#f6efdc", "mutedTextColor": "#c9b8a0",
+    "headingFont": "Oswald", "bodyFont": "Georgia, 'Times New Roman', serif",
+    "captionHighlightColor": "#ffb347", "captionBackgroundColor": "rgba(20,12,28,0.9)",
+    "scrimColor": "20,12,28",
+    "captionFont": "Georgia, 'Times New Roman', serif",
+}
+
+# Six transparent PNGs cut from Seth's Canva deck, copied once into this project's own assets
+# (fix round 4: "copy the files into the OpenMontage project's assets rather than reading them from
+# the reference folder at render time") — permanent, like SPOOKY_SHACK_MUSIC above.
+PROPS_DIR = PROJECT / "assets" / "props"
+# One corner prop per board beat (lead's suggested pairing) — never on s6 (the mission shot is a
+# document page, not "the boards"). Alternated corners purely for visual variety across four
+# consecutive beats; CornerProp itself guarantees whichever corner never reaches the caption.
+PROP_FOR = {
+    "s2": ("jack-o-lantern.png", "top-right"),
+    "s3": ("mummy.png", "top-left"),
+    "s4": ("zombie-hand.png", "top-right"),
+    "s5": ("ghost.png", "top-left"),
+}
+# The trailer's own title card (fix round 4), carved out of s1's front: the same witch-hat.png the
+# lead's original prop pairing named for "the title", now as the card's own art rather than a
+# corner accent over the real footage — real /halloween footage (the hero art fix, round 2) still
+# follows immediately after, unchanged.
+TITLE_CARD_SECONDS = 2.5
+TITLE_CARD_ART = "props/witch-hat.png"
+TITLE_CARD_KICKER = "SEVEN HALLOWEEN CIRCUITS · THE OCTOBER MISSION"
+TITLE_CARD_TITLE = "Spooky Shack"
+# The end card's own art: the site's real halloween/card.jpg (Home.svelte's own spookycard image),
+# staged fresh from the Ohmsville repo each render rather than duplicated as a permanent asset here
+# — it's the live site's asset, not a one-off from the reference folder.
+END_CARD_ART = "card.jpg"
+
 
 def stage(trailer_id: str) -> Path:
     out = PUBLIC / trailer_id
@@ -66,6 +104,7 @@ def stage(trailer_id: str) -> Path:
         shutil.rmtree(out)
     (out / "narration").mkdir(parents=True)
     (out / "shots").mkdir()
+    (out / "props").mkdir()
     return out
 
 
@@ -103,10 +142,20 @@ def main(trailer_id: str) -> None:
             time.sleep(5)
     out = stage(trailer_id)
 
+    # Stage the corner props (permanent asset) and the end card's art (fresh from the live site
+    # each render — see END_CARD_ART's own comment).
+    for filename, _corner in PROP_FOR.values():
+        shutil.copy(PROPS_DIR / filename, out / "props" / filename)
+    shutil.copy(PROPS_DIR / "witch-hat.png", out / "props" / "witch-hat.png")
+    card_jpg = OHMSVILLE / "client" / "public" / "halloween" / "card.jpg"
+    if not card_jpg.is_file():
+        raise RuntimeError(f"end card art missing at {card_jpg}")
+    shutil.copy(card_jpg, out / END_CARD_ART)
+
     cuts, words = [], []
     sections = shotlist["sections"]
     t = 0.0
-    for s in sections:
+    for i, s in enumerate(sections):
         audio = out / "narration" / f"{s['id']}.mp3"
         shutil.copy(s["audio"], audio)
 
@@ -122,12 +171,30 @@ def main(trailer_id: str) -> None:
 
         if s["shot"]:
             shutil.copy(shots / s["shot"]["file"], out / "shots" / s["shot"]["file"])
+            source_start = s["shot"]["trimStartSeconds"]
+            video_start = start
+            # The trailer's title card (fix round 4): the first TITLE_CARD_SECONDS of s1's own
+            # beat is a graphic card instead of the real /halloween footage, which then plays for
+            # the remainder of s1's narration exactly as before (round 2's hero-art fix untouched)
+            # — advance the video's own source start by the same amount so it doesn't freeze-frame
+            # repeating the instant the card hands off.
+            if i == 0 and end - start > TITLE_CARD_SECONDS:
+                cuts.append({
+                    "id": f"{s['id']}-title", "type": "title", "layer": 0,
+                    "in_seconds": round(start, 2), "out_seconds": round(start + TITLE_CARD_SECONDS, 2),
+                    "title": TITLE_CARD_TITLE, "kicker": TITLE_CARD_KICKER,
+                    "art": f"ohmsville-trailers/{trailer_id}/{TITLE_CARD_ART}",
+                })
+                video_start = start + TITLE_CARD_SECONDS
+                source_start += TITLE_CARD_SECONDS
+            prop, prop_corner = PROP_FOR.get(s["id"], (None, None))
             cuts.append({
                 "id": s["id"], "type": "video", "layer": 0,
                 "src": f"ohmsville-trailers/{trailer_id}/shots/{s['shot']['file']}",
-                "in_seconds": round(start, 2), "out_seconds": round(end, 2),
-                "sourceStartSeconds": s["shot"]["trimStartSeconds"],
+                "in_seconds": round(video_start, 2), "out_seconds": round(end, 2),
+                "sourceStartSeconds": source_start,
                 "label": None,  # no lower-third: a trailer names nothing the narration hasn't already said
+                **({"prop": f"ohmsville-trailers/{trailer_id}/props/{prop}", "propCorner": prop_corner} if prop else {}),
             })
         elif s["card"]["kind"] == "end" and cuts:
             # The trailer's closing section (kind: end, shot: none) has no footage of its own —
@@ -191,7 +258,7 @@ def main(trailer_id: str) -> None:
 
     props = {
         "fps": 30, "width": 1920, "height": 1080,
-        "themeConfig": THEME,
+        "themeConfig": SPOOKY_THEME,
         "cuts": cuts,
         "captions": words,
         "audio": {
@@ -199,8 +266,13 @@ def main(trailer_id: str) -> None:
             "music": {"src": f"ohmsville-trailers/{trailer_id}/music.mp3", "volume": 0.1,
                       "fade_in_seconds": 1.5, "fade_out_seconds": 3.0},
         },
-        # "no lesson end-card" (issue #72): ohmsville.com, not a classroom anchor.
-        "endCard": {"url": SITE, "seconds": end_card_seconds},
+        # "no lesson end-card" (issue #72): ohmsville.com, not a classroom anchor. Dressed the same
+        # way the title card is (fix round 4): the site's own card.jpg behind the scrim.
+        "endCard": {
+            "url": SITE, "seconds": end_card_seconds,
+            "title": "Spooky Shack", "kicker": "THE OCTOBER MISSION",
+            "art": f"ohmsville-trailers/{trailer_id}/{END_CARD_ART}",
+        },
     }
     (art / "composition.json").write_text(json.dumps(props, indent=2))
     (art / "captions.json").write_text(json.dumps(words, indent=2))
