@@ -143,6 +143,57 @@ BOARD_BADGE = "ohmsville-mono-cream.svg"
 # looked at. Bottom-left, the lead's own named fallback.
 BOARD_BADGE_POSITION = "bottom-left"
 
+# Percepto (content/trailers/percepto.md) is the Spooky Shack's shape exactly — real /halloween
+# footage with a title card carved out of its front, board beats, the campaign page, then a closing
+# `kind: end` section that the last shot holds through. Same pack, same skin, same theme, and
+# `music: spooky` in its own frontmatter, which is the same bed: video-guidelines.md's "one bed per
+# family, reused" and this is that family. So it is a second row in this script rather than a third
+# sibling script — build_box_film.py exists because The Box is a genuinely different shape (no
+# props, two beats with no footage, a real end cut), which is not true here.
+#
+# Props (the four proven ones; see PROP_FOR's history above for why each carries its own opacity):
+# one per board beat, in that beat's own empty corner, clear of the single part its sentence names.
+# s3 deliberately carries none — see the "s3" note in PERCEPTO_PROPS below.
+PERCEPTO_PROPS = {
+    "s2": ("jack-o-lantern.png", "bottom-right", 0.24, 0.3, 0.5, 0.65),
+    # "s3": nothing, on purpose. s2 and s3 open the SAME recipe on the SAME board (alarm-button)
+    # and both end holding the pushbutton, so the two beats are within a wire of being the same
+    # picture twice. What separates them is the voice: s2 is [theatrical, relishing it] and s3 is
+    # [plain and matter-of-fact] — the beat where the showman drops the act and admits the bench
+    # has a buzzer where Castle had a motor. A Halloween cut-out sitting in the corner through the
+    # honest beat is the costume the line just took off, and leaving it out gives the audience a
+    # visual cue for the gear change that the wiring alone cannot. This is a taste call, not a
+    # constraint: one line here puts a prop back if Seth wants the rule kept literally.
+    "s4": ("zombie-hand.png", "bottom-right", 0.24, 0.3, 0.5, 0.65),
+    "s5": ("ghost.png", "bottom-left", 0.24, 0.45, 0.85, 0.85),
+    "s6": ("mummy.png", "bottom-right", 0.24, 0.3, 0.5, 0.65),
+}
+
+# Per-trailer configuration for everything above that is not shared. Everything NOT in here — the
+# theme, the board badge and its position, the prop treatment, the title-card duration, the end
+# card's art — is the family's, and is deliberately not made configurable: two films in one pack
+# that disagree about their own palette is a bug, not a feature.
+TRAILERS = {
+    "spooky-shack": {
+        "music": SPOOKY_SHACK_MUSIC,
+        "props": PROP_FOR,
+        "title_card": {"title": TITLE_CARD_TITLE, "kicker": TITLE_CARD_KICKER},
+        "end_card": {"title": "Spooky Shack", "kicker": "THE OCTOBER MISSION"},
+    },
+    "percepto": {
+        "music": SPOOKY_SHACK_MUSIC,
+        "props": PERCEPTO_PROPS,
+        # The title is the script's own `title:` frontmatter; the kicker stays at the house name
+        # rather than describing the pack, because "Percepto" is a reveal this film spends its
+        # second beat earning and the end card is where the offer belongs.
+        "title_card": {"title": "Back When the Scares Were Wired", "kicker": "OHMSVILLE"},
+        # Matched to the closing narration word for word ("The Spooky Science Lab, opening the
+        # first of October") — show it while he says it. "Spooky Science Lab" is the campaign's
+        # own `title` in client/src/kit/campaigns.ts, not a name invented for the card.
+        "end_card": {"title": "Spooky Science Lab", "kicker": "OPENING THE FIRST OF OCTOBER"},
+    },
+}
+
 
 def snapshot(trailer_id: str, dest: Path) -> dict:
     """Copy the recorder's output for `trailer_id` to `dest` and return its shotlist.
@@ -189,6 +240,13 @@ def stage(trailer_id: str) -> Path:
 
 
 def main(trailer_id: str) -> None:
+    if trailer_id not in TRAILERS:
+        raise SystemExit(f"no configuration for trailer {trailer_id!r} — add a row to TRAILERS "
+                         f"(known: {', '.join(sorted(TRAILERS))})")
+    cfg = TRAILERS[trailer_id]
+    props_for = cfg["props"]
+    music = cfg["music"]
+
     art = PROJECT / "artifacts" / f"trailer-{trailer_id}"
     transcript_dir = art / "transcripts"
     art.mkdir(parents=True, exist_ok=True)
@@ -197,11 +255,11 @@ def main(trailer_id: str) -> None:
     shotlist = snapshot(trailer_id, shots)
     out = stage(trailer_id)
 
-    # Stage the title card's prop, the four board-beat props, the board badge (all permanent
+    # Stage the title card's prop, this trailer's board-beat props, the board badge (all permanent
     # assets), and the end card's art (fresh from the live site each render — see END_CARD_ART's
     # own comment).
     shutil.copy(PROPS_DIR / "witch-hat.png", out / "props" / "witch-hat.png")
-    for filename, _corner, _height_frac, _opacity, _brightness, _saturate in PROP_FOR.values():
+    for filename, _corner, _height_frac, _opacity, _brightness, _saturate in props_for.values():
         shutil.copy(PROPS_DIR / filename, out / "props" / filename)
     shutil.copy(LOGO_DIR / BOARD_BADGE, out / "logo" / BOARD_BADGE)
     card_jpg = OHMSVILLE / "client" / "public" / "halloween" / "card.jpg"
@@ -239,12 +297,12 @@ def main(trailer_id: str) -> None:
                 cuts.append({
                     "id": f"{s['id']}-title", "type": "title", "layer": 0,
                     "in_seconds": round(start, 2), "out_seconds": round(start + TITLE_CARD_SECONDS, 2),
-                    "title": TITLE_CARD_TITLE, "kicker": TITLE_CARD_KICKER,
+                    "title": cfg["title_card"]["title"], "kicker": cfg["title_card"]["kicker"],
                     "art": f"ohmsville-trailers/{trailer_id}/{TITLE_CARD_ART}",
                 })
                 video_start = start + TITLE_CARD_SECONDS
                 source_start += TITLE_CARD_SECONDS
-            prop, prop_corner, prop_height_frac, prop_opacity, prop_brightness, prop_saturate = PROP_FOR.get(
+            prop, prop_corner, prop_height_frac, prop_opacity, prop_brightness, prop_saturate = props_for.get(
                 s["id"], (None, None, None, None, None, None)
             )
             cuts.append({
@@ -321,14 +379,14 @@ def main(trailer_id: str) -> None:
     # explicit that a trailer wants "something slow and minor", not the workshop's own identity
     # track. Generated once (ElevenLabs music_gen, ~45s, $0.075) and looped/trimmed to the
     # trailer's real runtime, same technique as build_lesson.py's SERIES_MUSIC handling.
-    if not SPOOKY_SHACK_MUSIC.exists():
+    if not music.exists():
         raise RuntimeError(
-            f"trailer music bed missing at {SPOOKY_SHACK_MUSIC} — generate it once with "
+            f"trailer music bed missing at {music} — generate it once with "
             f"music_gen (see the fix report for the prompt) and save it there before rendering"
         )
     render_seconds = total_seconds + end_card_seconds
     run_ffmpeg([
-        "ffmpeg", "-y", "-stream_loop", "-1", "-i", str(SPOOKY_SHACK_MUSIC),
+        "ffmpeg", "-y", "-stream_loop", "-1", "-i", str(music),
         "-t", f"{render_seconds:.3f}", "-c:a", "libmp3lame", "-q:a", "4",
         str(out / "music.mp3"),
     ])
@@ -353,7 +411,7 @@ def main(trailer_id: str) -> None:
         # way the title card is (fix round 4): the site's own card.jpg behind the scrim.
         "endCard": {
             "url": SITE, "seconds": end_card_seconds,
-            "title": "Spooky Shack", "kicker": "THE OCTOBER MISSION",
+            "title": cfg["end_card"]["title"], "kicker": cfg["end_card"]["kicker"],
             "art": f"ohmsville-trailers/{trailer_id}/{END_CARD_ART}",
         },
     }
