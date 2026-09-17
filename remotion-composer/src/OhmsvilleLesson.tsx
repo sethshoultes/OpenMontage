@@ -505,8 +505,23 @@ export const OhmsvilleLesson: React.FC<OhmsvilleLessonProps> = (props) => {
   return (
     <AbsoluteFill style={{ background: theme.backgroundColor, fontFamily: theme.bodyFont || BODY_FONT }}>
       {cuts.map((cut) => {
+        // Both ends are rounded to frames FIRST, and the duration is their difference — never
+        // `round((out - in) * fps)`, which is a different number. The compositors hand this
+        // component a cut table that is contiguous in seconds (every `out_seconds` is exactly the
+        // next `in_seconds`, asserted by build_trailer.py and build_box_film.py), and the identity
+        // `round(in·fps) + round((out−in)·fps) === round(out·fps)` does NOT hold in general: it
+        // fails whenever the two endpoints round in opposite directions. Measured across all three
+        // trailers' shipped cut tables it held at 21 of 23 seams and broke at two — the Spooky
+        // Shack's s5→s6 covered one frame twice (harmless, the next Sequence paints over it) and
+        // Percepto's s6→s7 left one frame covered by NOTHING, so the theme ground showed through
+        // for a frame at 121.73s. That is the same class of bug as the gap this file's siblings
+        // bridge in seconds, one order of magnitude down, and it is only visible by scanning
+        // frames — the cut table itself is contiguous.
+        //
+        // Rounding both ends makes each Sequence end exactly where the next begins by
+        // construction, at frame granularity. The 21 seams that were already exact are unchanged.
         const from = Math.round(cut.in_seconds * fps);
-        const duration = Math.max(1, Math.round((cut.out_seconds - cut.in_seconds) * fps));
+        const duration = Math.max(1, Math.round(cut.out_seconds * fps) - from);
         return (
           <Sequence key={cut.id} from={from} durationInFrames={duration}>
             <CutRenderer cut={cut} theme={theme} endUrl={endCard?.url || ""} />
@@ -517,7 +532,10 @@ export const OhmsvilleLesson: React.FC<OhmsvilleLessonProps> = (props) => {
       {endCut && endCut.out_seconds > endCut.in_seconds && (
         <Sequence
           from={Math.round(endCut.in_seconds * fps)}
-          durationInFrames={Math.max(1, Math.round((endCut.out_seconds - endCut.in_seconds) * fps))}
+          durationInFrames={Math.max(
+            1,
+            Math.round(endCut.out_seconds * fps) - Math.round(endCut.in_seconds * fps),
+          )}
         >
           <CutRenderer cut={endCut} theme={theme} endUrl={endCard?.url || ""} />
         </Sequence>

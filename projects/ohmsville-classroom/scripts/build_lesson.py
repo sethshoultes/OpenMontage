@@ -153,6 +153,18 @@ def captions(section, audio_path, transcript_dir):
     output_dir is pointed at artifacts/, not the Remotion public dir — otherwise
     the transcriber's own `<id>_transcript.json` writes ship into the composer's
     public/ tree alongside the real staged assets.
+
+    The reference is the SPOKEN words, so a line's leading delivery tag comes off first. A trailer
+    line may open with its own `[...]` — `[plain and matter-of-fact] A motor, a switch, ...` — which
+    client/src/classroom/narrationHash.ts's `spoken()` strips before synthesis, so it is an
+    instruction to ElevenLabs and is never in the audio. Left in the reference, the aligner has
+    nowhere to put those words but on screen, and Percepto's first render burned "[theatrical,",
+    "it]", "[plain", "matter-of-fact]" and the rest into the captions of all four of its tagged
+    beats. No earlier film could hit this: the lesson persona carries no tag at all (a stripped
+    prefix would shift every per-character cue index) and the two shipped trailers took the
+    persona's default rather than writing their own, so this is the first script whose lines carry
+    tags. Same regex as `spoken()`: leading tag only, because a bracket mid-line is the script's
+    own punctuation and belongs on screen.
     """
     result = registry.get("transcriber").execute({
         "input_path": str(audio_path),
@@ -161,7 +173,7 @@ def captions(section, audio_path, transcript_dir):
     if not result.success:
         raise RuntimeError(f"transcriber failed for {audio_path}: {result.error}")
     whisper_words = [(w["word"], w["start"], w["end"]) for w in result.data["word_timestamps"]]
-    reference_words = section["narration"].split()
+    reference_words = re.sub(r"^\s*\[[^\]]*\]\s*", "", section["narration"]).split()
     aligned = align_words_to_reference(whisper_words, reference_words)
     return [{"word": word, "startMs": int(start * 1000), "endMs": int(end * 1000)}
             for word, start, end in aligned]
