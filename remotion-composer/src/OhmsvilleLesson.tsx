@@ -14,6 +14,7 @@ import {
 import { loadFont } from "@remotion/google-fonts/Oswald";
 import { loadFont as loadDisplayFont } from "@remotion/google-fonts/AlfaSlabOne";
 import { CaptionOverlay, WordCaption } from "./components/CaptionOverlay";
+import { KitBox } from "./components/KitBox";
 
 // Ohmsville's "Science Fair '78" identity: deep brown-black ground, warm gold
 // rule/accent, oxide-red accent, parchment surface for schematic cards.
@@ -69,6 +70,19 @@ export interface OhmsvilleCut {
   art?: string;
   /** Title/end card only: a small uppercase line above the headline. */
   kicker?: string;
+  /** Title/end card only, and mutually exclusive with `art`: the kit box itself as the card's
+   *  background, live rather than a still. `open: "animate"` hinges the lid back during the cut
+   *  (the Box film's first beat); `open: "open"` holds it open (its last). Everything else on the
+   *  card — the scrim, the kicker, the headline — is unchanged, so this is one more kind of art,
+   *  not a new kind of card. */
+  box?: {
+    open: "animate" | "open";
+    /** seconds into the cut before the lid starts moving; ignored when `open: "open"` */
+    openStartSeconds?: number;
+    widthFrac?: number;
+    centerXFrac?: number;
+    centerYFrac?: number;
+  };
   /** Video cut only (fix round 8): a corner prop image, over the board's own empty dark corners —
    *  never a manufactured margin. See CornerProp. */
   prop?: string;
@@ -105,7 +119,7 @@ export interface OhmsvilleLessonProps {
       fade_out_seconds?: number;
     };
   };
-  endCard: { url: string; seconds: number; title?: string; kicker?: string; art?: string };
+  endCard: { url: string; seconds: number; title?: string; kicker?: string; art?: string; box?: OhmsvilleCut["box"] };
 }
 
 // Same asset-resolution contract as Explainer.tsx / TitledVideo.tsx: URLs and
@@ -148,13 +162,59 @@ function hexToRgb(hex: string): string {
 const scrimGradient = (rgb: string) =>
   `linear-gradient(to right, rgba(${rgb},0.94) 38%, rgba(${rgb},0.55) 62%, rgba(${rgb},0.2))`;
 
-/** A title/end card's background art, pushed behind the scrim — absent when `art` is unset, so
- *  every existing lesson card (which never sets it) is unaffected. */
-const CardArt: React.FC<{ art?: string; theme: OhmsvilleTheme }> = ({ art, theme }) =>
-  art ? (
+/** The same idea over a `box` card, but clear of the box itself. The gradient above never fully
+ *  reaches zero, so it lays roughly a third of a stop over everything to its right — fine for a
+ *  photograph that is meant to recede, wrong for the kit box, whose red lid and yellow type are
+ *  the one image the film is about. Checked on a real rendered frame: at 0.94/0.55/0.2 the closed
+ *  lid came out muddy brown-red with olive lettering. The box's own left edge sits at 45% of frame
+ *  width (build_box_film.py's centerXFrac minus half its widthFrac), so this reaches zero there
+ *  and the words still sit on solid ground. */
+const boxScrimGradient = (rgb: string) =>
+  `linear-gradient(to right, rgba(${rgb},0.94) 26%, rgba(${rgb},0.45) 38%, rgba(${rgb},0) 45%)`;
+
+/** The kit box as a card's art (see OhmsvilleCut.box): the lid either hinges back during the cut
+ *  or is already lying open. The spring is what a hand does to a cardboard lid — quick, then it
+ *  settles — rather than a linear sweep. */
+const BoxArt: React.FC<{ box: NonNullable<OhmsvilleCut["box"]>; theme: OhmsvilleTheme }> = ({ box, theme }) => {
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  const open =
+    box.open === "open"
+      ? 1
+      : spring({
+          frame: frame - Math.round((box.openStartSeconds ?? 0) * fps),
+          fps,
+          config: { damping: 18, stiffness: 70, mass: 1.2 },
+        });
+  return (
+    <AbsoluteFill style={{ background: theme.backgroundColor }}>
+      <KitBox
+        open={open}
+        widthFrac={box.widthFrac ?? 0.46}
+        centerXFrac={box.centerXFrac ?? 0.68}
+        centerYFrac={box.centerYFrac ?? 0.54}
+        displayFont={DISPLAY_FONT}
+        headingFont={HEADING_FONT}
+      />
+    </AbsoluteFill>
+  );
+};
+
+/** A title/end card's background art, pushed behind the scrim — absent when neither `art` nor
+ *  `box` is set, so every existing lesson card (which sets neither) is unaffected. */
+const CardArt: React.FC<{ art?: string; box?: OhmsvilleCut["box"]; theme: OhmsvilleTheme }> = ({ art, box, theme }) =>
+  art || box ? (
     <AbsoluteFill>
-      <Img src={resolveAsset(art)} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-      <AbsoluteFill style={{ backgroundImage: scrimGradient(theme.scrimColor || hexToRgb(theme.backgroundColor)) }} />
+      {box ? (
+        <BoxArt box={box} theme={theme} />
+      ) : (
+        <Img src={resolveAsset(art!)} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+      )}
+      <AbsoluteFill
+        style={{
+          backgroundImage: (box ? boxScrimGradient : scrimGradient)(theme.scrimColor || hexToRgb(theme.backgroundColor)),
+        }}
+      />
     </AbsoluteFill>
   ) : null;
 
@@ -334,7 +394,7 @@ const CardPlate: React.FC<{
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const enter = spring({ frame, fps, config: { damping: 16, stiffness: 90 } });
-  const dressed = !!cut.art;
+  const dressed = !!cut.art || !!cut.box;
   return (
     <AbsoluteFill
       style={{
@@ -344,7 +404,7 @@ const CardPlate: React.FC<{
         overflow: "hidden",
       }}
     >
-      <CardArt art={cut.art} theme={theme} />
+      <CardArt art={cut.art} box={cut.box} theme={theme} />
       <AbsoluteFill
         style={{
           justifyContent: "center",
@@ -394,11 +454,11 @@ const CardPlate: React.FC<{
 };
 
 const TitlePlate: React.FC<{ cut: OhmsvilleCut; theme: OhmsvilleTheme }> = ({ cut, theme }) => (
-  <CardPlate cut={cut} theme={theme} headline={cut.title || ""} headlineSize={cut.art ? 64 : 84} body={cut.subtitle} />
+  <CardPlate cut={cut} theme={theme} headline={cut.title || ""} headlineSize={cut.art || cut.box ? 64 : 84} body={cut.subtitle} />
 );
 
 const EndPlate: React.FC<{ cut: OhmsvilleCut; theme: OhmsvilleTheme; url: string }> = ({ cut, theme, url }) => (
-  <CardPlate cut={cut} theme={theme} headline={cut.title || "Keep building at"} headlineSize={cut.art ? 56 : 64} body={url} />
+  <CardPlate cut={cut} theme={theme} headline={cut.title || "Keep building at"} headlineSize={cut.art || cut.box ? 56 : 64} body={url} />
 );
 
 // Explicit dispatch — anything not in the four known cut types renders only
@@ -438,6 +498,7 @@ export const OhmsvilleLesson: React.FC<OhmsvilleLessonProps> = (props) => {
           title: endCard.title,
           kicker: endCard.kicker,
           art: endCard.art,
+          box: endCard.box,
         }
       : null;
 

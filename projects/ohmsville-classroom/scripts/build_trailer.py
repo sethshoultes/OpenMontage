@@ -144,6 +144,39 @@ BOARD_BADGE = "ohmsville-mono-cream.svg"
 BOARD_BADGE_POSITION = "bottom-left"
 
 
+def snapshot(trailer_id: str, dest: Path) -> dict:
+    """Copy the recorder's output for `trailer_id` to `dest` and return its shotlist.
+
+    Same snapshot-then-validate dance as build_lesson.py's main(), for the same reason: the
+    recorder writes shotlist.json last, so a naive copytree can silently miss it mid-write.
+    Extracted from main() unchanged so build_box_film.py reads the recorder the same way rather
+    than keeping a second copy of the retry loop.
+    """
+    live_shots = OHMSVILLE / "client" / ".shots" / "trailers" / trailer_id
+    for attempt in range(5):
+        try:
+            if dest.exists():
+                shutil.rmtree(dest)
+            shutil.copytree(live_shots, dest)
+            shotlist = json.loads((dest / "shotlist.json").read_text())
+            missing = [
+                s["shot"]["file"] for s in shotlist["sections"]
+                if s.get("shot") and not (dest / s["shot"]["file"]).is_file()
+            ]
+            if missing:
+                raise FileNotFoundError(f"snapshot missing shot file(s): {missing}")
+            return shotlist
+        except (FileNotFoundError, json.JSONDecodeError, shutil.Error, KeyError) as e:
+            if attempt == 4:
+                raise RuntimeError(
+                    f"could not get a complete, stable snapshot of {live_shots} after "
+                    f"5 tries — the shot recorder is still actively rewriting it: {e}"
+                ) from e
+            print(f"snapshot attempt {attempt + 1} caught the recorder mid-write ({e}); retrying in 5s", file=sys.stderr)
+            time.sleep(5)
+    raise AssertionError("unreachable: the loop above either returns or raises")
+
+
 def stage(trailer_id: str) -> Path:
     out = PUBLIC / trailer_id
     if out.exists():
@@ -160,33 +193,8 @@ def main(trailer_id: str) -> None:
     transcript_dir = art / "transcripts"
     art.mkdir(parents=True, exist_ok=True)
 
-    # Same snapshot-then-validate dance as build_lesson.py's main(), for the same reason: the
-    # recorder writes shotlist.json last, so a naive copytree can silently miss it mid-write.
-    live_shots = OHMSVILLE / "client" / ".shots" / "trailers" / trailer_id
     shots = art / "_source_snapshot"
-    shotlist = None
-    for attempt in range(5):
-        try:
-            if shots.exists():
-                shutil.rmtree(shots)
-            shutil.copytree(live_shots, shots)
-            shotlist = json.loads((shots / "shotlist.json").read_text())
-            missing = [
-                s["shot"]["file"] for s in shotlist["sections"]
-                if s.get("shot") and not (shots / s["shot"]["file"]).is_file()
-            ]
-            if missing:
-                raise FileNotFoundError(f"snapshot missing shot file(s): {missing}")
-            break
-        except (FileNotFoundError, json.JSONDecodeError, shutil.Error, KeyError) as e:
-            shotlist = None
-            if attempt == 4:
-                raise RuntimeError(
-                    f"could not get a complete, stable snapshot of {live_shots} after "
-                    f"5 tries — the shot recorder is still actively rewriting it: {e}"
-                ) from e
-            print(f"snapshot attempt {attempt + 1} caught the recorder mid-write ({e}); retrying in 5s", file=sys.stderr)
-            time.sleep(5)
+    shotlist = snapshot(trailer_id, shots)
     out = stage(trailer_id)
 
     # Stage the title card's prop, the four board-beat props, the board badge (all permanent
