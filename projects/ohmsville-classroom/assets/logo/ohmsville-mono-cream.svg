@@ -1,0 +1,21 @@
+<!--
+  Recolored from the Ohmsville site's own client/public/logo/mono.svg (issue #72 fix round 7,
+  "the top of the frame is free" — a broadcaster's bug on the trailer's board beats). mono.svg
+  bakes its ink as literal `fill="#241c10"` / `stroke="#241c10"` attributes rather than
+  `currentColor`, so a plain <img> can't be retinted by CSS alone — this is that same artwork
+  with every stroke/fill changed to the paper cream (#f6eed8) the lead asked for, so it reads on
+  Night Shift's dark board. The "ELECTRONIC PROJECT KIT" tagline bar is dropped: at ~4% of frame
+  height (the lead's own size) its text renders a few pixels tall, illegible either way, and its
+  original white-on-#241c10 contrast has no equivalent once everything is one cream tone. What's
+  left is the plug-icon "O" + circuit doodle + "HMSVILLE" wordmark, exactly the site's own glyphs,
+  just recolored and its viewBox tightened to drop the now-empty tagline space beneath them.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 92" width="340" height="92">
+  <path d="M 30 38 h 40 v -16 h 34 v 16 h 28 v -24 h 36 v 24 h 30 v -12 h 34 v 12 h 42" stroke="#f6eed8" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <circle cx="30" cy="38" r="5" fill="#f6eed8"/>
+  <circle cx="122" cy="14" r="5" fill="#f6eed8"/>
+  <circle cx="274" cy="38" r="5" fill="none" stroke="#f6eed8" stroke-width="3"/>
+  <circle cx="199" cy="8" r="7" fill="none" stroke="#f6eed8" stroke-width="2.5"/>
+  <path d="M 20.48 86 V 79 H 25.98 A 16 16 0 1 1 50.98 79 H 56.48 V 86 H 41.98 V 75 A 7 7 0 1 0 34.98 75 V 86 Z" fill="#f6eed8"/>
+  <text x="64.48" y="86" font-family="'Alfa Slab One', serif" font-size="42" letter-spacing="1" fill="#f6eed8">HMSVILLE</text>
+</svg>
