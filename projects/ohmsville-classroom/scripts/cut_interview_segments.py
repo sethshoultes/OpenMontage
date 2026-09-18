@@ -168,14 +168,19 @@ def main(film: str) -> None:
     dest_dir = PROJECT / "assets" / "art" / film
     dest_dir.mkdir(parents=True, exist_ok=True)
     record = dest_dir / "segments.json"
-    prior = {s["id"]: s for s in json.loads(record.read_text())["segments"]} if record.is_file() else {}
+    # Keyed by film and section, never by beat id. A beat id is a position in one draft of one
+    # script: draft 2 of this film inserted five beats of scene-setting at the front and every id
+    # after them moved, which silently orphaned all seven segments and failed the render. What a
+    # segment IS, on the other hand, never changes — it is a section of somebody's profile film.
+    prior = ({f'{x["profile"]} {x["section"]}': x for x in json.loads(record.read_text())["segments"]}
+             if record.is_file() else {})
 
     segments = []
     for row in edl_rows(film):
         source = MEDIA / "people" / row["slug"] / "heygen-raw.mp4"
         if not source.is_file():
             raise RuntimeError(f"{row['id']}: no interview film at {source}")
-        was = prior.get(row["id"])
+        was = prior.get(f'{row["profile"]} {row["section"]}')
         fresh = bool(was and was["in"] == row["in"] and was["out"] == row["out"]
                      and was.get("source_mtime") == source.stat().st_mtime
                      and (dest_dir / was["file"]).is_file() and (dest_dir / was["audio"]).is_file())

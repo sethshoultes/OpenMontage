@@ -501,7 +501,11 @@ def interview_segments(trailer_id: str) -> dict:
     record = PROJECT / "assets" / "art" / trailer_id / "segments.json"
     if not record.is_file():
         return {}
-    return {s["id"]: s for s in json.loads(record.read_text())["segments"]}
+    # Keyed by "<film> <section>" — what the script's own `interview:` line says — and never by the
+    # beat id. Beat ids renumber every time a draft inserts a beat, and a lookup on them turns a
+    # rewrite into seven orphaned segments and a failed render, which is exactly how draft 2 of
+    # this film first broke.
+    return {f'{x["profile"]} {x["section"]}': x for x in json.loads(record.read_text())["segments"]}
 
 
 def motion_amount(seconds: float) -> float:
@@ -673,7 +677,8 @@ def main(trailer_id: str) -> None:
         # track, cut out of that persona's profile film by cut_interview_segments.py. Laid into the
         # bed here under the same name every other beat's narration uses, so the concat, the
         # caption pass and the timeline arithmetic below are the identical code path.
-        seg = segments.get(s["id"])
+        iv = s.get("interview")
+        seg = segments.get(f'{iv["film"]} {iv["section"]}') if iv else None
         if seg:
             shutil.copy(PROJECT / "assets" / "art" / trailer_id / seg["audio"], audio)
         elif s.get("audio"):
@@ -771,7 +776,12 @@ def main(trailer_id: str) -> None:
             #
             # cut_interview_segments.py already normalised the picture to 1920x1080 at 30fps, so
             # staging is a copy and the existing "video" cut type renders it unchanged.
-            seg = segments[s["id"]]
+            iv = s["interview"]
+            key = f'{iv["film"]} {iv["section"]}'
+            if key not in segments:
+                raise RuntimeError(f"{s['id']}: the script asks for {key}, which cut_interview_"
+                                   f"segments.py has not cut — re-run it for this film")
+            seg = segments[key]
             shutil.copy(PROJECT / "assets" / "art" / trailer_id / seg["file"], out / "art" / seg["file"])
             who = labels.get(seg["slug"])
             if not who:
