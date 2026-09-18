@@ -55,7 +55,7 @@ export interface OhmsvilleTheme {
 
 export interface OhmsvilleCut {
   id: string;
-  type: "video" | "card" | "title" | "end" | "image";
+  type: "video" | "card" | "title" | "end" | "image" | "parallax";
   layer?: number;
   src?: string;
   in_seconds: number;
@@ -67,6 +67,11 @@ export interface OhmsvilleCut {
    *  show (Volta's kitchen, the argument, the pile, the shock). One of the five words
    *  videoScript.ts's `art:` line accepts — see imageTransform below for what each one does. */
   motion?: "hold" | "push-in" | "drift-left" | "drift-right" | "pull-out";
+  /** "parallax" cut only (#92 draft 4): the beat's planes, BACK TO FRONT. The first is
+   *  opaque and the rest carry alpha. See ParallaxCut for what each plane does. */
+  layers?: string[];
+  /** "parallax" cut only: which way the near planes travel. Defaults to pan-right. */
+  parallaxDirection?: "pan-left" | "pan-right";
   title?: string;
   subtitle?: string;
   url?: string;
@@ -675,7 +680,16 @@ const VideoCut: React.FC<{ cut: OhmsvilleCut; theme: OhmsvilleTheme }> = ({ cut,
 const ImageCut: React.FC<{ cut: OhmsvilleCut; theme: OhmsvilleTheme }> = ({ cut, theme }) => {
   const frame = useCurrentFrame();
   const { durationInFrames } = useVideoConfig();
-  const opacity = useFade(durationInFrames);
+  // useFade's spring starts at literal 0 on this cut's first frame. Everywhere else that's an
+  // invisible fade nobody notices, but here the AbsoluteFill it fades in over is filled with
+  // theme.backgroundColor — the inventor films' own theme ground, deliberately, so captions and
+  // this cut share one color (see INVENTORS_THEME's comment in build_trailer.py: "backgroundColor
+  // must not move"). At opacity 0 that reveals a near-solid ground-colored frame at the cut
+  // boundary — check_render.py's bare-background scan caught exactly this on real film footage
+  // (2 frames, one per image cut, both ~1 RGB unit from ground). A real image's colors sit
+  // ~150 units from ground (build_trailer.py's own comment), so a small floor is enough to pull
+  // every pixel outside the scan's +/-6 tolerance without the fade reading as a jump cut.
+  const opacity = Math.max(useFade(durationInFrames), 0.08);
   const progress = durationInFrames > 1 ? frame / (durationInFrames - 1) : 0;
   return (
     <AbsoluteFill style={{ background: theme.backgroundColor, overflow: "hidden" }}>
@@ -836,6 +850,84 @@ const EndPlate: React.FC<{ cut: OhmsvilleCut; theme: OhmsvilleTheme; url: string
   <CardPlate cut={cut} theme={theme} headline={cut.title || "Keep building at"} headlineSize={cut.art || cut.box ? 56 : 64} body={url} />
 );
 
+
+// The parallax model's beat (#92 draft 4). Seth, on draft 3: "shows the same two screens basically
+// the whole time, the city that doesn't move." A street built out of separately generated planes —
+// sky behind, the shopfront row in the middle, the near kerb in front — each sliding at its own
+// rate, which is the one thing a single flat picture of a street cannot do at any Ken-Burns speed.
+//
+// Everything is driven off useCurrentFrame() rather than a CSS @keyframes animation, for the
+// reason docs/film-pipeline.md already records: a keyframe animation has no defined value at an
+// arbitrarily rendered frame, so it comes out frozen or wrong in a render that looks right in a
+// browser.
+//
+// `layers` runs BACK TO FRONT. The back plane is opaque and the rest carry alpha, so each one is
+// simply painted over the last. Three numbers per plane, all derived from its depth rather than
+// authored per beat:
+//   rate   how much of the pan it crosses — the back plane barely moves, the front plane crosses
+//          all of PARALLAX_PAN_PERCENT. This difference IS the parallax.
+//   scale  nearer planes are drawn larger, which is also what keeps a panning plane from ever
+//          showing its own edge.
+//   drop   nearer planes sit lower in frame, because the camera is standing on the street rather
+//          than floating above it. Chosen by compositing the real generated planes and looking at
+//          the frame (see the draft-4 notes), not by formula.
+const PARALLAX_PAN_PERCENT = 9;
+const PARALLAX_PLANES: { scale: number; drop: number; rate: number }[] = [
+  { scale: 1.06, drop: 0.0, rate: 0.2 },
+  { scale: 1.34, drop: 0.09, rate: 0.6 },
+  { scale: 1.45, drop: 0.26, rate: 1.0 },
+];
+/** A plane's depth numbers. With the usual three layers this is PARALLAX_PLANES as written; with
+ *  two or four it spreads them over the same near/far range so a beat is never left with two
+ *  planes moving at the same rate, which would read as one picture cut in half. */
+function parallaxPlane(index: number, count: number) {
+  if (count === PARALLAX_PLANES.length) return PARALLAX_PLANES[index];
+  const t = count > 1 ? index / (count - 1) : 0;
+  const first = PARALLAX_PLANES[0];
+  const last = PARALLAX_PLANES[PARALLAX_PLANES.length - 1];
+  return {
+    scale: first.scale + (last.scale - first.scale) * t,
+    drop: first.drop + (last.drop - first.drop) * t,
+    rate: first.rate + (last.rate - first.rate) * t,
+  };
+}
+
+const ParallaxCut: React.FC<{ cut: OhmsvilleCut; theme: OhmsvilleTheme }> = ({ cut, theme }) => {
+  const frame = useCurrentFrame();
+  const { durationInFrames } = useVideoConfig();
+  const opacity = useFade(durationInFrames);
+  const progress = durationInFrames > 1 ? frame / (durationInFrames - 1) : 0;
+  const layers = cut.layers ?? [];
+  const sign = cut.parallaxDirection === "pan-left" ? -1 : 1;
+  return (
+    <AbsoluteFill style={{ background: theme.backgroundColor, overflow: "hidden" }}>
+      {layers.map((src, i) => {
+        const { scale, drop, rate } = parallaxPlane(i, layers.length);
+        // centred on the pan, so the beat opens and closes the same distance either side of the
+        // composed frame instead of starting at one edge and crawling off the other
+        const x = sign * rate * PARALLAX_PAN_PERCENT * (progress - 0.5);
+        return (
+          <Img
+            key={`${cut.id}-${i}`}
+            src={resolveAsset(src)}
+            style={{
+              position: "absolute",
+              inset: 0,
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+              opacity,
+              transform: `translateY(${drop * 100}%) scale(${scale}) translateX(${x}%)`,
+              transformOrigin: "center center",
+            }}
+          />
+        );
+      })}
+      {cut.label && <LowerThird label={cut.label} theme={theme} />}
+    </AbsoluteFill>
+  );
+};
+
 // Explicit dispatch — anything not in the four known cut types renders only
 // the ground color rather than silently falling through to the end card.
 // CardKind on the Ohmsville side includes 'none', so a no-shot/no-card
@@ -843,6 +935,7 @@ const EndPlate: React.FC<{ cut: OhmsvilleCut; theme: OhmsvilleTheme; url: string
 const CutRenderer: React.FC<{ cut: OhmsvilleCut; theme: OhmsvilleTheme; endUrl: string }> = ({ cut, theme, endUrl }) => {
   if (cut.type === "video") return <VideoCut cut={cut} theme={theme} />;
   if (cut.type === "image") return <ImageCut cut={cut} theme={theme} />;
+  if (cut.type === "parallax") return <ParallaxCut cut={cut} theme={theme} />;
   if (cut.type === "card") return <CardCut cut={cut} theme={theme} />;
   if (cut.type === "title") return <TitlePlate cut={cut} theme={theme} />;
   if (cut.type === "end") return <EndPlate cut={cut} theme={theme} url={cut.url || endUrl} />;
