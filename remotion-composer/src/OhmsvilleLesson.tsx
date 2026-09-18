@@ -108,12 +108,34 @@ export interface OhmsvilleCut {
   propSaturate?: number;
 }
 
+/** Seth's second, superseding ruling on the inventor films (docs/video-guidelines.md, quoted in
+ *  full there): a beat's board or illustration stays on screen, darkened under a scrim, while one
+ *  of a FIXED library of animations plays over it — "the electrical current, the resistance, show
+ *  the symbols... I want to see examples, not scene after scene of the same board." Kept as a
+ *  SEPARATE top-level list, matched 1:1 to build_trailer.py's `overlays` (never folded into
+ *  `cuts`), because check_render.py's check_contiguity() requires every cut's `out_seconds` to
+ *  equal the next cut's `in_seconds` — an overlay is meant to overlap its own beat's base cut in
+ *  time, not sit next to it. `kind` is one of videoScript.ts's six AnimKind values; this file does
+ *  not re-validate that (parseAnim already refused anything else before this ever reached a
+ *  shotlist), so a new kind needs a matching case in the AnimOverlay dispatch below or it silently
+ *  renders nothing. */
+export interface OhmsvilleOverlay {
+  id: string;
+  kind: "current-flow" | "resistance" | "voltage-push" | "symbol-reveal" | "pile-stack" | "lamp-glow";
+  in_seconds: number;
+  out_seconds: number;
+  props?: Record<string, string>;
+}
+
 export interface OhmsvilleLessonProps {
   fps?: number;
   width?: number;
   height?: number;
   themeConfig: OhmsvilleTheme;
   cuts: OhmsvilleCut[];
+  /** See OhmsvilleOverlay. Optional and defaults to none — every existing lesson (no `anim:` beats)
+   *  passes no `overlays` at all, so this is additive with zero effect elsewhere. */
+  overlays?: OhmsvilleOverlay[];
   captions: WordCaption[];
   audio: {
     narration?: { src: string; volume?: number };
@@ -201,6 +223,301 @@ const scrimGradient = (rgb: string) =>
  *  and the words still sit on solid ground. */
 const boxScrimGradient = (rgb: string) =>
   `linear-gradient(to right, rgba(${rgb},0.94) 26%, rgba(${rgb},0.45) 38%, rgba(${rgb},0) 45%)`;
+
+/** The anim overlay's own scrim (see OhmsvilleOverlay/AnimOverlay below) — Seth's own words:
+ *  "you can have the table or the board in the background, dark, a dark overlay, and run the
+ *  animation." Deliberately FLAT and FULL-FRAME, unlike scrimGradient/boxScrimGradient above:
+ *  those are directional and partial because they sit over a title/end card's art, receding on one
+ *  side so words have quiet ground on the other. An anim overlay sits over a mid-lesson VIDEO or
+ *  IMAGE cut, and Seth's instruction was to dim the *whole* thing evenly, not fade one edge. 65%
+ *  is the middle of his "60-70%" range. */
+const ANIM_SCRIM = "rgba(0,0,0,0.65)";
+
+/** A `props` value like "9V" or "3" parsed to a plain number, defaulting when absent or
+ *  unparseable. Lets one anim kind (current-flow) read a beat-specific number — e.g. Ohm's law
+ *  beat plays two current-flow overlays back to back at two different voltages — without adding a
+ *  separate mechanism per numeric prop; the label is still shown verbatim so "9V" reads as text
+ *  even though only its leading number drives the animation. */
+function parseNumericProp(value: string | undefined, fallback: number): number {
+  if (!value) return fallback;
+  const n = parseFloat(value);
+  return Number.isFinite(n) ? n : fallback;
+}
+
+/** Six fixed animations (videoScript.ts's AnimKind) drawn in the same ink/amber schematic style as
+ *  the rest of Ohmsville's identity: `theme.accentColor` for the "live" element, `theme.mutedTextColor`
+ *  for the inert wire/ground it moves through, `theme.textColor` for the caption line. Each takes
+ *  `progress` 0→1 across its OWN overlay duration (see AnimOverlay) so a beat can set any `dur=`
+ *  and the animation still completes exactly once — same contract as imageTransform's `progress`
+ *  above. None of the six read anything about the base cut underneath; they only know they're
+ *  drawn over ANIM_SCRIM. */
+
+const CurrentFlowAnim: React.FC<{ progress: number; theme: OhmsvilleTheme; overlayProps: Record<string, string> }> = ({
+  progress,
+  theme,
+  overlayProps,
+}) => {
+  // A higher voltage reads as faster-moving charge, not a bigger arrow, so Ohm's "two voltages"
+  // beat can play this same kind twice with only `props.voltage` changed.
+  const voltage = parseNumericProp(overlayProps.voltage, 1);
+  const dashLen = 22;
+  const gap = 18;
+  const cycle = dashLen + gap;
+  const offset = -((progress * cycle * 14 * voltage) % cycle);
+  const label = overlayProps.label || (overlayProps.voltage ? `${overlayProps.voltage} · current flow` : "current flow");
+  return (
+    <svg viewBox="0 0 1000 300" width="62%" style={{ overflow: "visible" }}>
+      <line x1="40" y1="150" x2="960" y2="150" stroke={theme.mutedTextColor} strokeWidth={4} opacity={0.35} />
+      <line
+        x1="40"
+        y1="150"
+        x2="960"
+        y2="150"
+        stroke={theme.accentColor}
+        strokeWidth={10}
+        strokeLinecap="round"
+        strokeDasharray={`${dashLen} ${gap}`}
+        strokeDashoffset={offset}
+      />
+      {[0, 1, 2].map((i) => {
+        const x = 200 + i * 300;
+        return <polygon key={i} points={`${x},118 ${x + 42},150 ${x},182`} fill={theme.accentColor} opacity={0.9} />;
+      })}
+      <text x="500" y="255" fill={theme.textColor} fontSize={36} fontFamily={theme.headingFont || HEADING_FONT} textAnchor="middle">
+        {label}
+      </text>
+    </svg>
+  );
+};
+
+const ResistanceAnim: React.FC<{ progress: number; theme: OhmsvilleTheme; overlayProps: Record<string, string> }> = ({
+  progress,
+  theme,
+  overlayProps,
+}) => {
+  const label = overlayProps.label || "resistance";
+  // A breathing glow through the zigzag plus a couple of drifting heat-shimmer strokes above it —
+  // "narrower path, current has to work" read as friction/heat rather than a formula on screen.
+  const pulse = 0.55 + 0.45 * Math.abs(Math.sin(progress * Math.PI * 3));
+  const zigzag = "M60,150 L140,150 L170,90 L230,210 L290,90 L350,210 L410,90 L470,150 L940,150";
+  return (
+    <svg viewBox="0 0 1000 300" width="62%" style={{ overflow: "visible" }}>
+      <path d={zigzag} fill="none" stroke={theme.mutedTextColor} strokeWidth={4} opacity={0.3} />
+      <path
+        d={zigzag}
+        fill="none"
+        stroke={theme.accentColor}
+        strokeWidth={8}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        opacity={pulse}
+      />
+      {[0, 1, 2].map((i) => (
+        <path
+          key={i}
+          d={`M${170 + i * 120},${70 - 10 * Math.sin(progress * Math.PI * 2 + i)} q15,-20 30,0`}
+          fill="none"
+          stroke={theme.textColor}
+          strokeWidth={2}
+          opacity={0.5}
+        />
+      ))}
+      <text x="500" y="260" fill={theme.textColor} fontSize={36} fontFamily={theme.headingFont || HEADING_FONT} textAnchor="middle">
+        {label}
+      </text>
+    </svg>
+  );
+};
+
+const VoltagePushAnim: React.FC<{ progress: number; theme: OhmsvilleTheme; overlayProps: Record<string, string> }> = ({
+  progress,
+  theme,
+  overlayProps,
+}) => {
+  const label = overlayProps.label || "voltage — the push";
+  const dotCount = 5;
+  return (
+    <svg viewBox="0 0 1000 300" width="62%" style={{ overflow: "visible" }}>
+      {/* battery symbol: long plate (+) then short plate (−), charges pushed away from it */}
+      <line x1="480" y1="90" x2="480" y2="210" stroke={theme.accentColor} strokeWidth={8} />
+      <line x1="520" y1="120" x2="520" y2="180" stroke={theme.accentColor} strokeWidth={8} />
+      <line x1="40" y1="150" x2="480" y2="150" stroke={theme.mutedTextColor} strokeWidth={4} opacity={0.35} />
+      <line x1="520" y1="150" x2="960" y2="150" stroke={theme.mutedTextColor} strokeWidth={4} opacity={0.35} />
+      {Array.from({ length: dotCount }).map((_, i) => {
+        const t = (progress + i / dotCount) % 1;
+        // Eased "push": slow leaving the terminal, faster further down the wire.
+        const eased = t * t;
+        const x = 520 + eased * 420;
+        return <circle key={i} cx={x} cy={150} r={12} fill={theme.accentColor} />;
+      })}
+      <text x="500" y="260" fill={theme.textColor} fontSize={36} fontFamily={theme.headingFont || HEADING_FONT} textAnchor="middle">
+        {label}
+      </text>
+    </svg>
+  );
+};
+
+/** A small, deliberately non-exhaustive lookup — only the symbols an inventor beat actually names
+ *  (`props.symbol`) need to exist here; an unknown or absent one falls back to the resistor zigzag
+ *  rather than failing, since a missing schematic symbol is a cosmetic gap, not a broken beat. */
+const SYMBOL_PATHS: Record<string, string> = {
+  resistor: "M60,150 L140,150 L170,90 L230,210 L290,90 L350,210 L410,90 L470,150 L940,150",
+  battery: "M60,150 L460,150 M480,90 L480,210 M520,120 L520,180 M540,150 L940,150",
+  led: "M60,150 L440,150 M440,110 L440,190 L520,150 Z M520,110 L520,190 M540,150 L940,150",
+};
+
+const SymbolRevealAnim: React.FC<{ progress: number; theme: OhmsvilleTheme; overlayProps: Record<string, string> }> = ({
+  progress,
+  theme,
+  overlayProps,
+}) => {
+  const symbolKey = (overlayProps.symbol || "resistor").toLowerCase();
+  const d = SYMBOL_PATHS[symbolKey] || SYMBOL_PATHS.resistor;
+  const rawLabel = overlayProps.label || symbolKey;
+  const label = rawLabel.charAt(0).toUpperCase() + rawLabel.slice(1);
+  // One generously long dasharray so every symbol above "reveals" as a single continuous stroke
+  // regardless of its own path length — offset runs from fully hidden to drawn, finishing slightly
+  // before progress=1 so the completed symbol has a beat to sit still before the overlay ends.
+  const TOTAL = 2600;
+  const offset = TOTAL * (1 - Math.min(1, progress * 1.15));
+  return (
+    <svg viewBox="0 0 1000 300" width="62%" style={{ overflow: "visible" }}>
+      <path d={d} fill="none" stroke={theme.mutedTextColor} strokeWidth={3} opacity={0.25} />
+      <path
+        d={d}
+        fill="none"
+        stroke={theme.accentColor}
+        strokeWidth={8}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeDasharray={TOTAL}
+        strokeDashoffset={offset}
+      />
+      <text x="500" y="260" fill={theme.textColor} fontSize={32} fontFamily={theme.headingFont || HEADING_FONT} textAnchor="middle">
+        {label}
+      </text>
+    </svg>
+  );
+};
+
+// Enough discs to read as "a stack built up disc by disc", not a claim about Volta's actual count.
+const PILE_LAYERS = 8;
+
+const PileStackAnim: React.FC<{ progress: number; theme: OhmsvilleTheme; overlayProps: Record<string, string> }> = ({
+  progress,
+  theme,
+  overlayProps,
+}) => {
+  const label = overlayProps.label || "the pile";
+  const shown = Math.min(PILE_LAYERS, Math.floor(progress * (PILE_LAYERS + 1)));
+  const discHeight = 22;
+  const discWidth = 260;
+  const baseY = 250;
+  // zinc / silver / brine-soaked cardboard, repeating — Volta's own recipe, not a made-up palette.
+  const metals = [theme.accentColor, theme.mutedTextColor, "#7a5230"];
+  return (
+    <svg viewBox="0 0 1000 300" width="42%" style={{ overflow: "visible" }}>
+      {Array.from({ length: PILE_LAYERS }).map((_, i) => {
+        const y = baseY - (i + 1) * discHeight;
+        return (
+          <rect
+            key={i}
+            x={500 - discWidth / 2}
+            y={y}
+            width={discWidth}
+            height={discHeight - 3}
+            rx={4}
+            fill={metals[i % metals.length]}
+            opacity={i < shown ? 0.95 : 0}
+          />
+        );
+      })}
+      <text x="500" y="280" fill={theme.textColor} fontSize={32} fontFamily={theme.headingFont || HEADING_FONT} textAnchor="middle">
+        {label}
+      </text>
+    </svg>
+  );
+};
+
+const LampGlowAnim: React.FC<{
+  progress: number;
+  theme: OhmsvilleTheme;
+  overlayProps: Record<string, string>;
+  gradientId: string;
+}> = ({ progress, theme, overlayProps, gradientId }) => {
+  const label = overlayProps.label || "lamp glow";
+  const glow = progress;
+  const haloR = 60 + glow * 140;
+  return (
+    <svg viewBox="0 0 1000 300" width="46%" style={{ overflow: "visible" }}>
+      <defs>
+        <radialGradient id={gradientId} cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stopColor={theme.accentColor} stopOpacity={0.9 * glow} />
+          <stop offset="100%" stopColor={theme.accentColor} stopOpacity={0} />
+        </radialGradient>
+      </defs>
+      <circle cx="500" cy="140" r={haloR} fill={`url(#${gradientId})`} />
+      <circle cx="500" cy="140" r="50" fill="none" stroke={theme.mutedTextColor} strokeWidth={4} opacity={0.5} />
+      <circle cx="500" cy="140" r="50" fill="none" stroke={theme.accentColor} strokeWidth={4} opacity={glow} />
+      <line x1="470" y1="120" x2="530" y2="160" stroke={theme.accentColor} strokeWidth={4} opacity={0.4 + 0.6 * glow} />
+      <line x1="530" y1="120" x2="470" y2="160" stroke={theme.accentColor} strokeWidth={4} opacity={0.4 + 0.6 * glow} />
+      <line x1="500" y1="190" x2="500" y2="230" stroke={theme.mutedTextColor} strokeWidth={6} />
+      <text x="500" y="270" fill={theme.textColor} fontSize={32} fontFamily={theme.headingFont || HEADING_FONT} textAnchor="middle">
+        {label}
+      </text>
+    </svg>
+  );
+};
+
+/** The dispatch videoScript.ts's ANIM_KINDS set exists to keep in sync with: one case per
+ *  AnimKind, each returning one of the six components above. An unrecognized `kind` (which
+ *  shouldn't reach here — parseAnim already validated it before this ever left build_trailer.py)
+ *  falls through to `null`, matching CutRenderer's own unhandled-type behavior rather than
+ *  throwing mid-render. */
+function renderAnimKind(
+  overlay: OhmsvilleOverlay,
+  progress: number,
+  theme: OhmsvilleTheme,
+  overlayProps: Record<string, string>
+) {
+  switch (overlay.kind) {
+    case "current-flow":
+      return <CurrentFlowAnim progress={progress} theme={theme} overlayProps={overlayProps} />;
+    case "resistance":
+      return <ResistanceAnim progress={progress} theme={theme} overlayProps={overlayProps} />;
+    case "voltage-push":
+      return <VoltagePushAnim progress={progress} theme={theme} overlayProps={overlayProps} />;
+    case "symbol-reveal":
+      return <SymbolRevealAnim progress={progress} theme={theme} overlayProps={overlayProps} />;
+    case "pile-stack":
+      return <PileStackAnim progress={progress} theme={theme} overlayProps={overlayProps} />;
+    case "lamp-glow":
+      return (
+        <LampGlowAnim progress={progress} theme={theme} overlayProps={overlayProps} gradientId={`${overlay.id}-halo`} />
+      );
+    default:
+      return null;
+  }
+}
+
+/** One `anim:` beat, rendered as a full-frame dark scrim (ANIM_SCRIM) plus its animated kind on
+ *  top — see OhmsvilleOverlay for why this is a separate Sequence layer from `cuts`, not a field
+ *  on one. `durationInFrames` here is this component's OWN Sequence duration (the overlay's
+ *  `out_seconds - in_seconds`), the same nested-useVideoConfig contract ImageCut's `progress`
+ *  already relies on above — not the composition's total. */
+const AnimOverlay: React.FC<{ overlay: OhmsvilleOverlay; theme: OhmsvilleTheme }> = ({ overlay, theme }) => {
+  const frame = useCurrentFrame();
+  const { durationInFrames } = useVideoConfig();
+  const progress = durationInFrames > 1 ? frame / (durationInFrames - 1) : 0;
+  const overlayProps = overlay.props || {};
+  return (
+    <AbsoluteFill style={{ background: ANIM_SCRIM }}>
+      <AbsoluteFill style={{ alignItems: "center", justifyContent: "center" }}>
+        {renderAnimKind(overlay, progress, theme, overlayProps)}
+      </AbsoluteFill>
+    </AbsoluteFill>
+  );
+};
 
 /** The kit box as a card's art (see OhmsvilleCut.box): the lid either hinges back during the cut
  *  or is already lying open. The spring is what a hand does to a cardboard lid — quick, then it
@@ -584,6 +901,23 @@ export const OhmsvilleLesson: React.FC<OhmsvilleLessonProps> = (props) => {
         return (
           <Sequence key={cut.id} from={from} durationInFrames={duration}>
             <CutRenderer cut={cut} theme={theme} endUrl={endCard?.url || ""} />
+          </Sequence>
+        );
+      })}
+
+      {/* Anim overlays (see OhmsvilleOverlay/AnimOverlay above): a SEPARATE list from `cuts`,
+          rendered as additional Sequences positioned here — after the main cuts loop — so each
+          one paints on top of its own beat's base cut via DOM order, dimming it under ANIM_SCRIM
+          while its animation plays. Each overlay's own `in_seconds`/`out_seconds` are expected to
+          fall INSIDE some cut's span (build_trailer.py only emits an overlay under a beat that has
+          a `shot:` or `art:` to dim), never required to be contiguous with anything the way `cuts`
+          must be for check_render.py's check_contiguity() — that check only ever looks at `cuts`. */}
+      {(props.overlays || []).map((overlay) => {
+        const from = Math.round(overlay.in_seconds * fps);
+        const duration = Math.max(1, Math.round(overlay.out_seconds * fps) - from);
+        return (
+          <Sequence key={overlay.id} from={from} durationInFrames={duration}>
+            <AnimOverlay overlay={overlay} theme={theme} />
           </Sequence>
         );
       })}
