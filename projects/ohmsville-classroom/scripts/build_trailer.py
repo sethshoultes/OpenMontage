@@ -101,11 +101,17 @@ FAMILIES = {
     },
     "inventors": {
         "theme": INVENTORS_THEME,
-        # Dead-code path for both current inventor scripts (s1 is `shot: none`, so the title-card
-        # carve in main() below never runs — see its own comment) — kept for interface parity with
-        # "halloween" and so a future inventor film that *does* open on footage doesn't need this
-        # dict reshaped. nib-pen.png is committed at PROPS_DIR alongside the other four tool props.
-        "title_card_art_file": "nib-pen.png",
+        # This path is genuinely live for both current inventor scripts (s1 is `shot: none`, so
+        # the title carve in main()'s shot-branch never runs, but the elif "title" branch covers
+        # the whole beat with this art instead — see its own comment). It must therefore be a
+        # full-bleed-safe image under object-fit: cover on a 16:9 frame, not a corner-prop shape.
+        # nib-pen.png (committed at PROPS_DIR alongside the other four tool props, used correctly
+        # elsewhere as a narrow CornerProp) is wrong for this role: 221x646, 16%-opaque, cropped to
+        # almost nothing under cover. inventors-card.jpg is a copy of the site's own vintage
+        # kit-box art (client/src/site/seo.ts's SITE + "/gallery/derived/og-card.jpg", the same
+        # file used below as end_card_source) placed in PROPS_DIR — opaque (JPG, no alpha) and
+        # 1200x630 (aspect 1.905), close enough to 16:9 (1.778) that cover barely crops it.
+        "title_card_art_file": "inventors-card.jpg",
         # The site's own vintage kit-box art (client/src/site/seo.ts's SITE + "/gallery/derived/
         # og-card.jpg"), not a per-film asset — matches the "dressed the same way the title card
         # is: the site's own card.jpg behind the scrim" convention with the inventors' own site
@@ -412,10 +418,23 @@ def main(trailer_id: str) -> None:
             # through it (same fix as build_lesson.py's own end-card handling), and
             # OhmsvilleLesson.tsx's endCard synthesis adds the actual plate afterward, silent.
             cuts[-1]["out_seconds"] = round(end, 2)
+        elif s["card"]["kind"] == "title":
+            # No footage recorded for this beat (an inventor film's cold open, e.g. Volta/Ohm's
+            # s1, has no board shot to hold — unlike Spooky Shack/Percepto's s1, which always has
+            # one). Without a video underneath, the title card must cover the WHOLE beat instead
+            # of just its opening TITLE_CARD_SECONDS, using the same art/title/kicker as the
+            # shot-branch's title-carving above. Skipping "art" here is the bug this comment
+            # replaces: OhmsvilleLesson.tsx's TitlePlate renders text over the bare theme
+            # background when "art" is absent, which the bare-background check correctly flags.
+            cuts.append({
+                "id": s["id"], "type": "title", "layer": 0,
+                "in_seconds": round(start, 2), "out_seconds": round(end, 2),
+                "title": cfg["title_card"]["title"], "kicker": cfg["title_card"]["kicker"],
+                "art": f"ohmsville-trailers/{trailer_id}/props/{family['title_card_art_file']}",
+            })
         else:
-            # First-section edge case only (a "kind: end" section with no prior cut to hold on) —
-            # a trailer never authors card: title/schematic/none itself (videoScript.ts derives
-            # card from kind/position), so this path is defensive, not exercised by Spooky Shack.
+            # Still-defensive fallback (a shot-less section that is neither "end" nor "title") —
+            # not currently exercised by any trailer.
             cuts.append({"id": s["id"], "type": s["card"]["kind"], "layer": 0,
                          "in_seconds": round(start, 2), "out_seconds": round(end, 2),
                          "title": shotlist["title"], "label": None})

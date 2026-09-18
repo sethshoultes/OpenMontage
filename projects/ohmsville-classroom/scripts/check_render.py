@@ -96,10 +96,60 @@ def ground_share(frame: np.ndarray, ground: tuple[int, int, int]) -> float:
     return float((d.max(axis=-1) <= GROUND_TOL).mean())
 
 
+_NUMBER_WORDS = {
+    "0": "zero", "1": "one", "2": "two", "3": "three", "4": "four", "5": "five", "6": "six",
+    "7": "seven", "8": "eight", "9": "nine", "10": "ten", "11": "eleven", "12": "twelve",
+    "13": "thirteen", "14": "fourteen", "15": "fifteen", "16": "sixteen", "17": "seventeen",
+    "18": "eighteen", "19": "nineteen", "20": "twenty",
+}
+_TENS_WORDS = {
+    2: "twenty", 3: "thirty", 4: "forty", 5: "fifty", 6: "sixty", 7: "seventy", 8: "eighty",
+    9: "ninety",
+}
+
+
+def _spell_two_digit(n: int) -> str:
+    """0-99 as the words a narrator would say, reusing `_NUMBER_WORDS` for the irregular teens."""
+    if n < 20:
+        return _NUMBER_WORDS[str(n)]
+    tens, ones = divmod(n, 10)
+    return _TENS_WORDS[tens] if ones == 0 else f"{_TENS_WORDS[tens]} {_NUMBER_WORDS[str(ones)]}"
+
+
+def _spell_year(m: re.Match) -> str:
+    """A four-digit year the way it is actually said: two two-digit pairs ("eighteen forty-one"),
+    or "hundred" when the low pair is a bare century ("eighteen hundred")."""
+    hi, lo = int(m.group(0)[:2]), int(m.group(0)[2:])
+    return f"{_spell_two_digit(hi)} hundred" if lo == 0 else f"{_spell_two_digit(hi)} {_spell_two_digit(lo)}"
+
+
 def normalise(text: str) -> list[str]:
     """Spoken words only: the leading delivery `[tag]` is stripped before synthesis, so it is not
-    in the audio and must not be in the reference either."""
+    in the audio and must not be in the reference either.
+
+    Three ASR-driven mismatches recur, none of them a script or audio defect, so they're fixed here
+    rather than by touching Seth-approved narration text:
+
+    - the boilerplate "...at ohmsville dot com" closer, marginal even on precedent films (Spooky
+      Shack s7 scored 0.902, Percepto s8 0.952) and an outright FAIL on the inventor films' much
+      shorter closing line: Whisper transcribes a spoken digit as a numeral ("10" not "ten") and
+      renders spoken "dot com" as the literal punctuation ".com", silently dropping the "dot" token.
+    - inventor-georg-ohm s4: Whisper transcribes a spoken century-style year ("eighteen forty-one")
+      as a bare four-digit numeral ("1841"). inventor-alessandro-volta s3 and Ohm's own s3 say
+      "eighteen twenty-seven" the same way and still passed only because the surrounding sentence is
+      long enough to absorb one mismatched token; Ohm s4's sentence is short enough that the same gap
+      alone dropped it from ~0.97 to 0.893, under the 0.90 threshold. `_spell_year` turns "1841" back
+      into "eighteen forty one" so it lines up with the script the same way the 1-2 digit case does.
+
+    The "ohmsville" vs "omsville" mishearing, and Ohm s4's own "Copley" heard as "Coply" (ASR
+    confidence 0.276 on that one word), are left alone deliberately — hardcoding a specific
+    word-for-word substitution would be overfit and could mask a real defect elsewhere. Ohm s4 scores
+    comfortably clear of 0.90 once the year alone is fixed, so no second fix is needed for it to pass.
+    """
     text = re.sub(r"^\s*\[[^\]]*\]\s*", "", text)
+    text = re.sub(r"\.(com|org|net|io)\b", r" dot \1", text)
+    text = re.sub(r"\b(1[0-9]|20)\d{2}\b", _spell_year, text)
+    text = re.sub(r"\b\d{1,2}\b", lambda m: _NUMBER_WORDS.get(m.group(0), m.group(0)), text)
     return re.sub(r"[^a-z0-9 ]+", " ", text.lower()).split()
 
 

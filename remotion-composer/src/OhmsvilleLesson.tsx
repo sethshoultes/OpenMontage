@@ -532,10 +532,17 @@ export const OhmsvilleLesson: React.FC<OhmsvilleLessonProps> = (props) => {
       {endCut && endCut.out_seconds > endCut.in_seconds && (
         <Sequence
           from={Math.round(endCut.in_seconds * fps)}
-          durationInFrames={Math.max(
-            1,
-            Math.round(endCut.out_seconds * fps) - Math.round(endCut.in_seconds * fps),
-          )}
+          // Extend to the composition's own `durationInFrames`, not to a second independent
+          // round(out_seconds * fps). calculateOhmsvilleLessonMetadata computes the root's total
+          // via Math.ceil((lastCutEnd + endSeconds) * fps); this Sequence used to recompute its own
+          // end via Math.round on the same seconds value. Those two rounding functions agree only
+          // when the fractional frame count is >= 0.5 — inventor-alessandro-volta's tail lands at
+          // 2935.2 frames, where ceil gives 2936 but round gives 2935, leaving the render's actual
+          // last frame (index 2935) covered by no Sequence at all and showing bare theme ground.
+          // Same bug class as the "round both ends" fix above for ordinary cuts (Percepto's
+          // s6→s7), one level up: the fix is the same idea, made exact against the frame count the
+          // composition actually rendered rather than a second, independently-rounded guess at it.
+          durationInFrames={Math.max(1, durationInFrames - Math.round(endCut.in_seconds * fps))}
         >
           <CutRenderer cut={endCut} theme={theme} endUrl={endCard?.url || ""} />
         </Sequence>
