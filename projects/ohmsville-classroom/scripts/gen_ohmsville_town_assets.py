@@ -37,7 +37,12 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[3]
 PROJECT = ROOT / "projects" / "ohmsville-classroom"
-ART = PROJECT / "assets" / "art" / "ohmsville"
+# The film this run is generating for. The town film is the default and the only one this script
+# had until #92's second film needed two stills of its own; `--film people-of-ohmsville` points
+# ART, COSTS and ASSETS at that film's directory and its own short asset table instead. Nothing
+# about a run without the flag changes.
+FILM = "ohmsville"
+ART = PROJECT / "assets" / "art" / FILM
 COSTS = ART / "costs.md"
 
 BUDGET_USD = 30.0
@@ -288,6 +293,51 @@ ASSETS: dict[str, dict] = {
 }
 
 
+# ---------------------------------------------------------------------------------------------
+# The People of Ohmsville (#92, film 2). Nine of its eleven pictures are the town film's, reused
+# from the directory above; these are the two it needs that no film has made. Same STYLE preamble,
+# same gpt-image-2 rails, same costs.md discipline - a separate table only because they belong in
+# a different film's asset directory.
+PEOPLE_ASSETS: dict[str, dict] = {
+    "classroom-desks": {
+        "kind": "still",
+        "beat": "s1",
+        # The teller's own place, and the standard's rule that it is the film's first picture. Also
+        # its last: s19 plays the same still pulling out, which is the film's frame closing.
+        "prompt": (
+            "An empty small-town junior-high science classroom late on an autumn afternoon, seen "
+            "from the doorway: four pupil desks pushed together into one square table at the back "
+            "of the room, and on the middle of it a 1970s hobby-kit box lying open - varnished "
+            "plywood frame, tidy rows of small coiled brass spring terminals, lid standing up. A "
+            "loose stack of ruled paper sheets squared off on the nearest desk corner. Behind the "
+            "table a big slate chalkboard wiped to a grey haze, a wooden teacher's desk to one "
+            "side, a tall window with low sun coming in across the floor. Rows of ordinary desks "
+            "in front, chairs up on two of them. No people in frame, no hands, no writing legible "
+            "anywhere. Warm cream light on the pushed-together table, the rest of the room in "
+            "quiet plywood-tan shadow, with generous empty space above the table."
+        ),
+    },
+    "sign-in-sheets": {
+        "kind": "still",
+        "beat": "s2",
+        # What the listener is holding in the first line. The rule against legible lettering is the
+        # house STYLE's, and it is why the pencil marks read as marks rather than as names.
+        "prompt": (
+            "A close, near-overhead view of a small loose stack of old ruled paper sheets held in "
+            "two hands over a desk, the top sheet tilted to the light: a hand-ruled column down "
+            "the left margin and a column of short pencilled marks running down it, soft and grey "
+            "and worn, the kind of list somebody kept for years. The sheets are foxed at the "
+            "corners, one dog-eared, a rusted paper clip on the stack. A wooden desk edge and a "
+            "stub of pencil below. Absolutely no legible letters, words, numbers or names "
+            "anywhere - the pencil marks are marks, not writing. Warm cream paper against "
+            "plywood-tan desk, one soft pool of afternoon light, deep charcoal shadow at the edges."
+        ),
+    },
+}
+
+FILMS: dict[str, dict[str, dict]] = {"ohmsville": ASSETS, "people-of-ohmsville": PEOPLE_ASSETS}
+
+
 def spend_so_far() -> float:
     """Every dollar this script has already logged, read back off costs.md."""
     if not COSTS.is_file():
@@ -430,12 +480,24 @@ def build(name: str) -> None:
 
 
 def main() -> None:
+    # Declared up here because --film's own default reads FILM below; Python requires the
+    # declaration to precede every use of the name in the function.
+    global FILM, ART, COSTS, ASSETS
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("names", nargs="*", help="asset names to (re)generate")
     ap.add_argument("--all", action="store_true", help="every asset that does not exist yet")
     ap.add_argument("--force", action="store_true", help="with --all, regenerate existing ones too")
     ap.add_argument("--list", action="store_true")
+    ap.add_argument("--film", default=FILM, choices=sorted(FILMS),
+                    help="which film's asset directory and table to work in (default: %(default)s)")
     args = ap.parse_args()
+
+    # Rebound before any of the helpers below run, so ART, COSTS and ASSETS all name the same film
+    # and a budget guard can never be read off one film's ledger while writing into another's.
+    FILM = args.film
+    ART = PROJECT / "assets" / "art" / FILM
+    COSTS = ART / "costs.md"
+    ASSETS = FILMS[FILM]
 
     if args.list:
         for n, s in ASSETS.items():

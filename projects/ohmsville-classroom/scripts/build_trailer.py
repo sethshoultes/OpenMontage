@@ -107,6 +107,21 @@ OHMSVILLE_MUSIC = PROJECT / "assets" / "music" / "ohmsville_bed.mp3"
 OHMSVILLE_THEME = {**lesson.THEME, "primaryColor": "#c0392b", "scrimColor": "36,28,16",
                    "captionFont": lesson.THEME["bodyFont"]}
 
+# The interview family's own bed (#92 film 2). `music: profiles` has been in all seven profile
+# scripts since #89, but those films were composited by scripts/persona-interview-composite.sh,
+# which lays no bed at all, so the name existed and the file never did. Generated once here at the
+# documentary's own length (ElevenLabs music_gen, 265s, $0.4417) and committed at this path, which
+# also makes the seven profile scripts true if any of them is ever rendered through this pipeline.
+# Warmer and quieter than the town bed on purpose: it sits under people talking, not under a
+# narrator over pictures.
+PROFILES_MUSIC = PROJECT / "assets" / "music" / "profiles_bed.mp3"
+
+# The interview family's palette: the site's own brand ground, exactly as the inventors and the
+# town film use it. No campaign skin - the pictures are the town film's own stills and seven
+# talking heads on the site's cream, and a bespoke palette would only make one family's beats a
+# different colour from the other's for no reason a viewer could name.
+PROFILES_THEME = {**lesson.THEME, "scrimColor": "36,28,16", "captionFont": lesson.THEME["bodyFont"]}
+
 # Per-family configuration: everything the boundary comment above PERCEPTO_PROPS calls "the
 # family's" (the theme, the title card's own art, the end card's art) now keyed by family instead
 # of hardcoded, so a second family (inventors) can exist without a second copy of main(). The board
@@ -137,6 +152,18 @@ FAMILIES = {
         # og-card.jpg"), not a per-film asset — matches the "dressed the same way the title card
         # is: the site's own card.jpg behind the scrim" convention with the inventors' own site
         # image standing in for Halloween's card.jpg.
+        "end_card_source": ("gallery", "derived", "og-card.jpg"),
+    },
+    "profiles": {
+        "theme": PROFILES_THEME,
+        # The ART is genuinely unused by the documentary, and named anyway for interface parity:
+        # its s1 is `shot: none` with its own `art:`, so main()'s title branch takes the beat's own
+        # illustration (classroom-desks.png, the teller's room) in place of the family's plate -
+        # the same path Volta and Ohm take. If a second film in this family ever opens without art
+        # of its own, this is what it gets. The title card's TEXT is used either way.
+        "title_card_art_file": "inventors-card.jpg",
+        # The site's own vintage kit-box art, as for the inventors and the town: the closing line
+        # is "These are made-up people in a made-up town. The kit is real," and this is the kit.
         "end_card_source": ("gallery", "derived", "og-card.jpg"),
     },
     "ohmsville": {
@@ -318,6 +345,28 @@ OHMSVILLE_PROPS = {
 }
 
 TRAILERS = {
+    "people-of-ohmsville": {
+        "family": "profiles",
+        "music": PROFILES_MUSIC,
+        # No corner props. Seven of this film's twenty beats are a person's face at the size of the
+        # frame, and the rest are the town film's own illustrations, which "are already the
+        # atmosphere a prop would otherwise add" (the art branch's own note). A tool dimmed into
+        # the corner of somebody's interview is a sticker on a photograph.
+        "props": {},
+        # Nine of the eleven pictures are the town film's, reused rather than regenerated: the two
+        # street parallaxes, its three generated clips and four of its stills. Only
+        # classroom-desks.png and sign-in-sheets.png - the teller's room and what the listener is
+        # holding - are this film's own, and they live in its own directory.
+        "art_from": "ohmsville",
+        # Both of these are on screen at 0:00, checked on a real frame. What s1 does NOT use is the
+        # family's `title_card_art_file`: it carries its own `art:` (the teller's classroom), and
+        # the title branch prefers a beat's own illustration to the family's plate. The text is the
+        # script's own `title:` and the house kicker, like every other row.
+        "title_card": {"title": "The People of Ohmsville", "kicker": "OHMSVILLE"},
+        # Matched to the closing narration word for word ("These are made-up people in a made-up
+        # town. The kit is real.") - show it while she says it.
+        "end_card": {"title": "Made-Up People", "kicker": "A MADE-UP TOWN - THE KIT IS REAL"},
+    },
     "spooky-shack": {
         "family": "halloween",
         "music": SPOOKY_SHACK_MUSIC,
@@ -395,6 +444,64 @@ TRAILERS = {
         "end_card": {"title": "Ohmsville", "kicker": "OHMSVILLE IS A MADE-UP TOWN \u00b7 THE KIT IS REAL"},
     },
 }
+
+
+def art_source(trailer_id: str, name: str) -> Path:
+    """Where a picture named in a script actually lives.
+
+    A film's own asset directory first, then the directory named by its TRAILERS row's `art_from`,
+    if it has one. #92's second film is the reason this exists: nine of its eleven pictures are the
+    town film's own stills, clips and parallax planes, reused as they are. Copying them into a
+    second directory would put the same generated picture on disk twice with nothing keeping the
+    copies in step, and the alternative - regenerating them - would pay twice for the same art.
+    A film with no `art_from` resolves exactly where it always did.
+    """
+    own = PROJECT / "assets" / "art" / trailer_id / name
+    if own.is_file():
+        return own
+    shared = TRAILERS[trailer_id].get("art_from")
+    if shared:
+        borrowed = PROJECT / "assets" / "art" / shared / name
+        if borrowed.is_file():
+            return borrowed
+    raise RuntimeError(f"{trailer_id}: no picture called {name!r} in its own assets"
+                       + (f" or in {shared}'s" if shared else ""))
+
+
+def interview_labels() -> dict:
+    """{slug: (name, trade)}, read off the Ohmsville repo's own client/src/site/people.ts.
+
+    The same table scripts/persona-interview-composite.sh reads for the profile films' own lower
+    thirds, so the name under a face in the documentary and the name under that same face in the
+    person's own film cannot drift apart. Parsed rather than imported for the same reason
+    check_render.py reads the narration manifest as text: it is one small lookup, and this is a
+    Python script on the other side of a repo boundary.
+    """
+    src = (OHMSVILLE / "client" / "src" / "site" / "people.ts").read_text()
+    out = {}
+    for block in src.split("slug: '")[1:]:
+        slug = block.split("'", 1)[0]
+        name = re.search(r"name: '([^']*)'", block)
+        trade = re.search("trade: (?:'([^']*)'|\"([^\"]*)\")", block)
+        if name and trade:
+            out[slug] = (name.group(1), trade.group(1) or trade.group(2))
+    if not out:
+        raise RuntimeError("no people found in client/src/site/people.ts - its shape must have "
+                           "changed; this function reads it, it does not guess")
+    return out
+
+
+def interview_segments(trailer_id: str) -> dict:
+    """What cut_interview_segments.py cut for this film, keyed by beat id.
+
+    Empty for every film that has no interview beats, which is every film but one. The record is
+    the authority on how long each of those beats runs: the seconds are ffprobe's, measured off the
+    segment that was actually written, never the EDL's planned window.
+    """
+    record = PROJECT / "assets" / "art" / trailer_id / "segments.json"
+    if not record.is_file():
+        return {}
+    return {s["id"]: s for s in json.loads(record.read_text())["segments"]}
 
 
 def motion_amount(seconds: float) -> float:
@@ -532,6 +639,9 @@ def main(trailer_id: str) -> None:
     shots = art / "_source_snapshot"
     shotlist = snapshot(trailer_id, shots)
     out = stage(trailer_id)
+    # Empty for every film without interview beats, which is every film but the documentary.
+    segments = interview_segments(trailer_id)
+    labels = interview_labels() if segments else {}
 
     # Stage the title card's prop, this trailer's board-beat props, the board badge (all permanent
     # assets), and the end card's art (fresh from the live site each render — see END_CARD_ART's
@@ -559,7 +669,17 @@ def main(trailer_id: str) -> None:
     t = 0.0
     for i, s in enumerate(sections):
         audio = out / "narration" / f"{s['id']}.mp3"
-        shutil.copy(s["audio"], audio)
+        # An interview beat's audio is not narration and was never bought: it is the segment's own
+        # track, cut out of that persona's profile film by cut_interview_segments.py. Laid into the
+        # bed here under the same name every other beat's narration uses, so the concat, the
+        # caption pass and the timeline arithmetic below are the identical code path.
+        seg = segments.get(s["id"])
+        if seg:
+            shutil.copy(PROJECT / "assets" / "art" / trailer_id / seg["audio"], audio)
+        elif s.get("audio"):
+            shutil.copy(s["audio"], audio)
+        else:
+            raise RuntimeError(f"{s['id']}: no narration and no interview segment — nothing to play")
 
         # Same timeline-from-measured-audio fix as build_lesson.py: derive start/end from THIS
         # clip's own ffprobe duration, never shotlist.json's upstream-computed seconds.
@@ -576,15 +696,14 @@ def main(trailer_id: str) -> None:
         # has nothing to show. Staged once here so both the title branch (s1, kind "title") and the
         # new image branch (s2-s4, kind "none") below can reference the file without re-copying it.
         if s.get("art"):
-            shutil.copy(PROJECT / "assets" / "art" / trailer_id / s["art"]["file"],
-                        out / "art" / s["art"]["file"])
+            shutil.copy(art_source(trailer_id, s["art"]["file"]), out / "art" / s["art"]["file"])
 
         # The parallax model (#92 draft 4): a beat's planes, staged the same way a single `art:`
         # still is and out of the same directory, because they are the same kind of asset — a
         # generated picture with no recording behind it. The compositor's ParallaxCut slides them
         # at different rates; this script only has to put them where it can find them.
         for layer in (s.get("parallax") or {}).get("layers", []):
-            shutil.copy(PROJECT / "assets" / "art" / trailer_id / layer, out / "art" / layer)
+            shutil.copy(art_source(trailer_id, layer), out / "art" / layer)
 
         # videoScript.ts's parseAnim already refuses an `anim:` with no `shot:`/`art:` to dim under
         # (fail(file, where, 'anim needs a "shot:" or "art:" to dim under it')), so by the time an
@@ -635,6 +754,36 @@ def main(trailer_id: str) -> None:
                     "propBrightness": prop_brightness, "propSaturate": prop_saturate,
                 } if prop else {}),
             })
+        elif s.get("interview"):
+            # The interview model (#92 film 2): a beat that is a section of somebody's own profile
+            # film, playing with that film's own audio. Three things separate it from every clip
+            # branch above, and all three are already handled by the time the cut is written:
+            #
+            #   - its audio is the segment's, laid into the narration bed at the top of this loop,
+            #     so `start`/`end` here are derived from the segment's real ffprobe duration
+            #     exactly as every other beat's are derived from its narration's;
+            #   - it is NOT looped. loop_clip exists because a generated clip is five seconds and a
+            #     beat is not; a segment is precisely as long as its own beat, because the beat was
+            #     built from it. Bouncing a talking head would run somebody's sentence backwards.
+            #   - it carries a lower third, which no other trailer cut does ("a trailer names
+            #     nothing the narration hasn't already said" — but here the narration is somebody
+            #     else's voice arriving with no introduction, so the name IS the introduction).
+            #
+            # cut_interview_segments.py already normalised the picture to 1920x1080 at 30fps, so
+            # staging is a copy and the existing "video" cut type renders it unchanged.
+            seg = segments[s["id"]]
+            shutil.copy(PROJECT / "assets" / "art" / trailer_id / seg["file"], out / "art" / seg["file"])
+            who = labels.get(seg["slug"])
+            if not who:
+                raise RuntimeError(f"{s['id']}: nobody with slug {seg['slug']!r} in people.ts, so "
+                                   f"this face would go on screen unnamed")
+            cuts.append({
+                "id": s["id"], "type": "video", "layer": 0,
+                "src": f"ohmsville-trailers/{trailer_id}/art/{seg['file']}",
+                "in_seconds": round(start, 2), "out_seconds": round(end, 2),
+                "sourceStartSeconds": 0.0,
+                "label": f"{who[0]} · {who[1]}",
+            })
         elif s.get("clip"):
             # The clip model (#92 draft 4): a generated five-second video in place of a recorded
             # shot, for the beats Seth named as the film's hero moments (the kid at the counter,
@@ -643,7 +792,7 @@ def main(trailer_id: str) -> None:
             # composition: the staged mp4 is already exactly as long as the beat, which means the
             # existing "video" cut type renders it with no change to OhmsvilleLesson.tsx at all.
             staged = out / "art" / s["clip"]
-            loop_clip(PROJECT / "assets" / "art" / trailer_id / s["clip"], staged, end - start)
+            loop_clip(art_source(trailer_id, s["clip"]), staged, end - start)
             video_start = start
             source_start = 0.0
             # Same title carve as the shot branch above, for the same reason: s1's first
