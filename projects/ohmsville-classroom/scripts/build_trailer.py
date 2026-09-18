@@ -86,6 +86,24 @@ INVENTORS_MUSIC = PROJECT / "assets" / "music" / "inventors_bed.mp3"
 # SPOOKY_THEME's convention of matching bodyFont.
 INVENTORS_THEME = {**lesson.THEME, "scrimColor": "36,28,16", "captionFont": lesson.THEME["bodyFont"]}
 
+# The town film's own bed (#92). A third family: a film about the place, not about a person and not
+# about the bench, so none of the three existing beds fits — the inventors' sits under a biography,
+# the box film's under a box, the Spooky Shack's is slow and minor. One bed per family, reused
+# (docs/film-pipeline.md's Music section). ElevenLabs music_gen, 240s, $0.40, committed at this path.
+OHMSVILLE_MUSIC = PROJECT / "assets" / "music" / "ohmsville_bed.mp3"
+
+# The town family's palette. Same base as INVENTORS_THEME — the site's real Science Fair '78 brand
+# ground, whose gold the town page's own kid skin already shares (client/src/kids/kids.css's
+# --kid-yellow is #ffd21f, the fill of the active era tab in every street beat) — with primaryColor
+# moved to the town's own accent red (--kid-accent, #c0392b: the ring around the selected building
+# and around that era tab). That is the era palette without touching backgroundColor, and
+# backgroundColor must not move. check_render.py scores each frame's share of pixels within
+# GROUND_TOL (6) of the theme ground, and six of this film's ten beats are a full-frame #4ec3e8
+# halftone sky: a ground anywhere near that blue would score every street beat as a bare frame and
+# fail a correct film. #241c10 sits ~150 RGB units away on every channel, so the check keeps working.
+OHMSVILLE_THEME = {**lesson.THEME, "primaryColor": "#c0392b", "scrimColor": "36,28,16",
+                   "captionFont": lesson.THEME["bodyFont"]}
+
 # Per-family configuration: everything the boundary comment above PERCEPTO_PROPS calls "the
 # family's" (the theme, the title card's own art, the end card's art) now keyed by family instead
 # of hardcoded, so a second family (inventors) can exist without a second copy of main(). The board
@@ -116,6 +134,19 @@ FAMILIES = {
         # og-card.jpg"), not a per-film asset — matches the "dressed the same way the title card
         # is: the site's own card.jpg behind the scrim" convention with the inventors' own site
         # image standing in for Halloween's card.jpg.
+        "end_card_source": ("gallery", "derived", "og-card.jpg"),
+    },
+    "ohmsville": {
+        "theme": OHMSVILLE_THEME,
+        # Its own title-card art, per the inventors' fix 2 ("if you add an eleventh family, give it
+        # its own title-card art file rather than reusing a prop's"). This one is a real frame of
+        # the 1978 street, pulled from s1's own recording: the town film's title card is the town.
+        # Opaque JPG at the delivered 1920x1080, so `cover` neither crops nor letterboxes it.
+        # s1 has a shot, so this art is used for the carved TITLE_CARD_SECONDS at the film's front
+        # (the Percepto path), not for a whole shot-less beat (the Volta/Ohm path).
+        "title_card_art_file": "ohmsville-card.jpg",
+        # The site's own vintage kit-box art, same as the inventors family: the closing line is
+        # "Ohmsville is a made-up town. The kit is real," and this is the kit.
         "end_card_source": ("gallery", "derived", "og-card.jpg"),
     },
 }
@@ -226,10 +257,10 @@ PERCEPTO_PROPS = {
 # exception) — per PROPS_DIR's own comment ("chosen per beat by looking at that beat's actual
 # recorded frame ... not a formula"), these are checked against real rendered frames and adjusted
 # in the same pass that watches the frames per docs/film-pipeline.md's "open the frames" check.
+# s2-s4 are history beats now told with art (see the art-model comments below) rather than a
+# recorded shot, so they carry no corner prop — an illustration doesn't need one. Only s5 (the
+# wired build) still records footage and keeps its prop.
 VOLTA_PROPS = {
-    "s2": ("voltage-tester.png", "bottom-right", 0.24, 0.3, 0.5, 0.65),
-    "s3": ("multimeter.png", "bottom-right", 0.24, 0.3, 0.5, 0.65),
-    "s4": ("test-leads.png", "bottom-left", 0.24, 0.3, 0.5, 0.65),
     "s5": ("nib-pen.png", "bottom-left", 0.24, 0.3, 0.5, 0.65),
 }
 OHM_PROPS = {
@@ -237,6 +268,46 @@ OHM_PROPS = {
     "s3": ("test-leads.png", "bottom-right", 0.24, 0.3, 0.5, 0.65),
     "s4": ("nib-pen.png", "bottom-left", 0.24, 0.3, 0.5, 0.65),
     "s5": ("screwdriver.png", "bottom-left", 0.24, 0.3, 0.5, 0.65),
+}
+# exp-16 (Faraday's relay board): s2-s4 are the same unwired parts drawer (no `wire-it` in those
+# shot chains — see content/trailers/inventor-michael-faraday.md), so any corner is free of the
+# beat's own named part there. s5 is wired and running (a lit green LED plus a "Relay 9V" module
+# occupy the grid's right-hand columns), so its props sit bottom-left, clear of both.
+FARADAY_PROPS = {
+    "s2": ("nib-pen.png", "bottom-right", 0.24, 0.3, 0.5, 0.65),
+    "s3": ("voltage-tester.png", "bottom-right", 0.24, 0.3, 0.5, 0.65),
+    "s4": ("test-leads.png", "bottom-left", 0.24, 0.3, 0.5, 0.65),
+    "s5": ("screwdriver.png", "bottom-left", 0.24, 0.3, 0.5, 0.65),
+}
+
+
+# The town film's props (#92), deliberately thin. video-guidelines.md wants props in view, but the
+# brief for this film is "the street is the picture": six of its ten beats are the town page, which
+# is already a drawn scene with six shopfronts in it, and a floating tool in the corner of a street
+# would read as a sticker on a painting rather than as set dressing. So the street beats carry
+# none, and only the four bench beats do — one period-plausible tool each, in that beat's own empty
+# corner, at 24% of frame height — see the treatment note below for the opacity numbers.
+#
+# Which tool, per beat, follows the line rather than a rotation: s3 is the boy asking what the
+# parts are, so a voltage tester (the thing you would be handed to find out); s5 is the manual open
+# to experiment one on the garage bench, so the nib pen that marks up a manual — Ray's own pencil
+# on project forty-one is s9's line, and this plants it; s9 is the loop closing, so test leads; s10
+# is the one number the film has been walking toward (560 mA cold, 63 mA settled), so the
+# multimeter. s3/s5 open the unwired exp-1 board and s9/s10 the lamp recipe; bottom-right is clear
+# board in the first pair and bottom-left in the second, where the lit lamp and its wiring sit
+# right of centre. Checked against the real recorded frames, not assumed.
+# Treatment: the ghost's numbers (0.45 opacity, 0.85 brightness, 0.85 saturate), not the
+# jack-o-lantern's (0.3/0.5/0.65). Same reason PROP_FOR raises the ghost alone: these five tool
+# PNGs are pale, low-saturation ink line art with no solid fill, and the darker profile washes them
+# out to almost nothing against the near-black board. Checked on a real rendered frame of this
+# film's s3 at 0.3/0.5/0.65 — the voltage tester was whole and in frame and effectively invisible,
+# a few faint lines you only find if you know where to look, which is not set dressing. Seth's
+# mid-round-8 correction on PROP_FOR is the standing ruling: "clearly present, not hiding in a gap."
+OHMSVILLE_PROPS = {
+    "s3": ("voltage-tester.png", "bottom-right", 0.24, 0.45, 0.85, 0.85),
+    "s5": ("nib-pen.png", "bottom-right", 0.24, 0.45, 0.85, 0.85),
+    "s9": ("test-leads.png", "bottom-left", 0.24, 0.45, 0.85, 0.85),
+    "s10": ("multimeter.png", "bottom-left", 0.24, 0.45, 0.85, 0.85),
 }
 
 TRAILERS = {
@@ -286,6 +357,29 @@ TRAILERS = {
         "title_card": {"title": "Does a Wire Have a Mind of Its Own", "kicker": "OHMSVILLE"},
         "end_card": {"title": "Ten Inventors", "kicker": "OHMSVILLE.COM"},
     },
+    "inventor-michael-faraday": {
+        "family": "inventors",
+        "music": INVENTORS_MUSIC,
+        "props": FARADAY_PROPS,
+        # See inventor-alessandro-volta's own comment: unused for the same reason (s1 is
+        # `shot: none` in content/trailers/inventor-michael-faraday.md too).
+        "title_card": {"title": "The Coil That Only Wakes Up Once", "kicker": "OHMSVILLE"},
+        "end_card": {"title": "Ten Inventors", "kicker": "OHMSVILLE.COM"},
+    },
+    "ohmsville": {
+        "family": "ohmsville",
+        "music": OHMSVILLE_MUSIC,
+        "props": OHMSVILLE_PROPS,
+        # The title is the script's own `title:` frontmatter and the kicker its own `kicker:` key
+        # ("MAIN STREET - ONE STREET, FOUR DECADES"), which is what the card is a picture of. No
+        # reveal is being withheld the way Percepto withholds its campaign name: this film says
+        # what it is in its first line.
+        "title_card": {"title": "Ohmsville", "kicker": "MAIN STREET \u00b7 ONE STREET, FOUR DECADES"},
+        # Word for word the script's own `endcard:`/`endkicker:` frontmatter, which is itself word
+        # for word the closing narration ("Ohmsville is a made-up town. The kit is real.") — show it
+        # while he says it, the same rule Percepto's end card follows.
+        "end_card": {"title": "Ohmsville", "kicker": "OHMSVILLE IS A MADE-UP TOWN \u00b7 THE KIT IS REAL"},
+    },
 }
 
 
@@ -330,6 +424,7 @@ def stage(trailer_id: str) -> Path:
     (out / "shots").mkdir()
     (out / "props").mkdir()
     (out / "logo").mkdir()
+    (out / "art").mkdir()
     return out
 
 
@@ -379,6 +474,14 @@ def main(trailer_id: str) -> None:
             words.append({"word": w["word"], "startMs": int(start * 1000) + w["startMs"],
                           "endMs": int(start * 1000) + w["endMs"], "liftPx": 0})
 
+        # The art model (docs/film-pipeline.md's "Inventor films" section): a beat may carry its
+        # own illustration instead of a recorded shot — Volta/Ohm's history beats, where the board
+        # has nothing to show. Staged once here so both the title branch (s1, kind "title") and the
+        # new image branch (s2-s4, kind "none") below can reference the file without re-copying it.
+        if s.get("art"):
+            shutil.copy(PROJECT / "assets" / "art" / trailer_id / s["art"]["file"],
+                        out / "art" / s["art"]["file"])
+
         if s["shot"]:
             shutil.copy(shots / s["shot"]["file"], out / "shots" / s["shot"]["file"])
             source_start = s["shot"]["trimStartSeconds"]
@@ -426,11 +529,29 @@ def main(trailer_id: str) -> None:
             # shot-branch's title-carving above. Skipping "art" here is the bug this comment
             # replaces: OhmsvilleLesson.tsx's TitlePlate renders text over the bare theme
             # background when "art" is absent, which the bare-background check correctly flags.
+            # A beat with its own per-beat illustration (s.get("art")) uses that in place of the
+            # family's generic title_card_art_file — Volta's s1 is "the hook", not a portrait of
+            # the family's whole card, so the frog's-leg scene belongs here instead.
+            title_art = (f"ohmsville-trailers/{trailer_id}/art/{s['art']['file']}" if s.get("art")
+                        else f"ohmsville-trailers/{trailer_id}/props/{family['title_card_art_file']}")
             cuts.append({
                 "id": s["id"], "type": "title", "layer": 0,
                 "in_seconds": round(start, 2), "out_seconds": round(end, 2),
                 "title": cfg["title_card"]["title"], "kicker": cfg["title_card"]["kicker"],
-                "art": f"ohmsville-trailers/{trailer_id}/props/{family['title_card_art_file']}",
+                "art": title_art,
+            })
+        elif s.get("art"):
+            # The art model's plain case: a beat with an illustration and no card kind (Volta/Ohm's
+            # s2-s4 — the people, the argument, what it cost). The compositor renders the image
+            # full-bleed with its own named camera motion (hold/push-in/drift-left/drift-right/
+            # pull-out) under the beat's captions, in place of a recorded shot. No prop overlay:
+            # the illustration is already the atmosphere a prop would otherwise add.
+            cuts.append({
+                "id": s["id"], "type": "image", "layer": 0,
+                "src": f"ohmsville-trailers/{trailer_id}/art/{s['art']['file']}",
+                "motion": s["art"]["motion"],
+                "in_seconds": round(start, 2), "out_seconds": round(end, 2),
+                "label": None,
             })
         else:
             # Still-defensive fallback (a shot-less section that is neither "end" nor "title") —

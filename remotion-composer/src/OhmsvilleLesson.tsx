@@ -55,13 +55,18 @@ export interface OhmsvilleTheme {
 
 export interface OhmsvilleCut {
   id: string;
-  type: "video" | "card" | "title" | "end";
+  type: "video" | "card" | "title" | "end" | "image";
   layer?: number;
   src?: string;
   in_seconds: number;
   out_seconds: number;
   sourceStartSeconds?: number;
   label?: string;
+  /** "image" cut only (the art model, docs/film-pipeline.md's "Inventor films"): a still
+   *  illustration in place of a recorded shot, for a history beat with nothing on the board to
+   *  show (Volta's kitchen, the argument, the pile, the shock). One of the five words
+   *  videoScript.ts's `art:` line accepts — see imageTransform below for what each one does. */
+  motion?: "hold" | "push-in" | "drift-left" | "drift-right" | "pull-out";
   title?: string;
   subtitle?: string;
   url?: string;
@@ -148,6 +153,31 @@ function useFade(durationInFrames: number) {
     extrapolateRight: "clamp",
   });
   return fadeIn * fadeOut;
+}
+
+/** The art model's Ken-Burns motion (see OhmsvilleCut.motion): a still illustration is never
+ *  static on screen for a full beat, but the motion is a plain word chosen per beat by what the
+ *  picture needs the eye to do, not a formula. `progress` runs 0→1 across the cut's own duration,
+ *  so a four-second beat and a seven-second beat both complete exactly one pass of the named
+ *  move — never a fixed pixels/frame rate that finishes early or is still crawling at the cut.
+ *  Every case scales up beyond 100% first so a pan never reveals the image's own edge. */
+function imageTransform(motion: OhmsvilleCut["motion"], progress: number): string {
+  const p = Math.max(0, Math.min(1, progress));
+  switch (motion) {
+    case "push-in":
+      return `scale(${1 + 0.12 * p})`;
+    case "pull-out":
+      return `scale(${1.12 - 0.12 * p})`;
+    case "drift-left":
+      return `scale(1.14) translateX(${6 - 12 * p}%)`;
+    case "drift-right":
+      return `scale(1.14) translateX(${-6 + 12 * p}%)`;
+    case "hold":
+    default:
+      // Not literally motionless — a picture held dead still against a moving caption line reads
+      // as a slide, not a shot. A slow, barely-there push keeps it feeling like a camera.
+      return `scale(${1 + 0.04 * p})`;
+  }
 }
 
 /** "#140c1c" -> "20,12,28", for building an rgba() scrim from a theme's own hex color. */
@@ -320,6 +350,34 @@ const VideoCut: React.FC<{ cut: OhmsvilleCut; theme: OhmsvilleTheme }> = ({ cut,
   );
 };
 
+// The art model's beat: a full-bleed illustration under the captions, in place of a recorded
+// shot (build_trailer.py's `elif s.get("art")` branch — a history beat with nothing on the board
+// to show). Same full-bleed/no-chrome rule as VideoCut (docs/video-guidelines.md's "the board is
+// the subject" — the picture IS the subject here), same fade, same optional label; no corner prop
+// (an illustration already carries its own atmosphere) and no board badge (this isn't the board).
+const ImageCut: React.FC<{ cut: OhmsvilleCut; theme: OhmsvilleTheme }> = ({ cut, theme }) => {
+  const frame = useCurrentFrame();
+  const { durationInFrames } = useVideoConfig();
+  const opacity = useFade(durationInFrames);
+  const progress = durationInFrames > 1 ? frame / (durationInFrames - 1) : 0;
+  return (
+    <AbsoluteFill style={{ background: theme.backgroundColor, overflow: "hidden" }}>
+      <Img
+        src={resolveAsset(cut.src || "")}
+        style={{
+          width: "100%",
+          height: "100%",
+          objectFit: "cover",
+          opacity,
+          transform: imageTransform(cut.motion, progress),
+          transformOrigin: "center center",
+        }}
+      />
+      {cut.label && <LowerThird label={cut.label} theme={theme} />}
+    </AbsoluteFill>
+  );
+};
+
 const CardCut: React.FC<{ cut: OhmsvilleCut; theme: OhmsvilleTheme }> = ({ cut, theme }) => {
   const { durationInFrames } = useVideoConfig();
   const opacity = useFade(durationInFrames);
@@ -467,6 +525,7 @@ const EndPlate: React.FC<{ cut: OhmsvilleCut; theme: OhmsvilleTheme; url: string
 // section must NOT be mistaken for the lesson's actual end plate.
 const CutRenderer: React.FC<{ cut: OhmsvilleCut; theme: OhmsvilleTheme; endUrl: string }> = ({ cut, theme, endUrl }) => {
   if (cut.type === "video") return <VideoCut cut={cut} theme={theme} />;
+  if (cut.type === "image") return <ImageCut cut={cut} theme={theme} />;
   if (cut.type === "card") return <CardCut cut={cut} theme={theme} />;
   if (cut.type === "title") return <TitlePlate cut={cut} theme={theme} />;
   if (cut.type === "end") return <EndPlate cut={cut} theme={theme} url={cut.url || endUrl} />;
