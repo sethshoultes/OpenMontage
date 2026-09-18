@@ -25,9 +25,12 @@ type it's handed.
 """
 import json
 import os
+import re
 import shutil
+import subprocess
 import sys
 import time
+from collections import Counter
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -144,7 +147,7 @@ FAMILIES = {
         # Opaque JPG at the delivered 1920x1080, so `cover` neither crops nor letterboxes it.
         # s1 has a shot, so this art is used for the carved TITLE_CARD_SECONDS at the film's front
         # (the Percepto path), not for a whole shot-less beat (the Volta/Ohm path).
-        "title_card_art_file": "ohmsville-card.jpg",
+        "title_card_art_file": "ohmsville-card-counter.jpg",
         # The site's own vintage kit-box art, same as the inventors family: the closing line is
         # "Ohmsville is a made-up town. The kit is real," and this is the kit.
         "end_card_source": ("gallery", "derived", "og-card.jpg"),
@@ -383,6 +386,80 @@ TRAILERS = {
 }
 
 
+def motion_amount(seconds: float) -> float:
+    """How far a still's camera move travels over a beat of this length.
+
+    imageTransform completes exactly one pass of its named move across the cut, so with a fixed
+    amplitude the longer the beat the slower the camera — backwards, and measurable: on the first
+    draft-4 render s3 (11.1s, push-in) had a longest static run of 0.10s and s7 (18.4s, pull-out)
+    had 17.20s, same code and same 12%, because s7's night street has far less contrast for a
+    sub-pixel zoom to move than s3's board does.
+
+    0.02 per second, clamped. The floor is the old fixed 0.12, which this reproduces exactly at
+    six seconds, so no existing beat gets a smaller move than it had. The ceiling is 0.34, past
+    which a push-in is cropping away a third of the picture to get its motion.
+    """
+    return round(min(0.34, max(0.12, 0.02 * seconds)), 3)
+
+
+def detect_letterbox(src: Path) -> str:
+    """The `crop=` filter that removes a generated clip's own black padding, measured not assumed.
+
+    Veo returns a 1920x1080 file whose picture is 1620x1080 centred — it preserves the 1.5:1 aspect
+    of the start frame rather than filling 16:9 — so three of this film's eight beats would
+    otherwise carry 150px of bare black either side, which is both ugly and the exact thing
+    check_render.py's bare-background check exists to catch. cropdetect over two seconds in the
+    middle of the clip, most frequent answer wins; a clip that really is full-frame yields
+    `crop=<its own size>:0:0` and nothing is lost.
+    """
+    proc = subprocess.run(
+        ["ffmpeg", "-hide_banner", "-ss", "2", "-t", "2", "-i", str(src),
+         "-vf", "cropdetect=24:2:0", "-f", "null", "-"],
+        capture_output=True, text=True, check=False,
+    )
+    found = re.findall(r"crop=(\d+:\d+:\d+:\d+)", proc.stderr)
+    if not found:
+        raise RuntimeError(f"cropdetect said nothing about {src.name} — cannot tell picture from padding")
+    return "crop=" + Counter(found).most_common(1)[0][0]
+
+
+def loop_clip(src: Path, dest: Path, seconds: float) -> None:
+    """Make a five-second generated clip last a beat, without ever freezing on a frame.
+
+    Not `-stream_loop` on the clip itself: that hard-cuts back to frame 0 every five seconds, which
+    reads as a dropped shot. Forward-then-reversed does not — the motion simply runs back the way
+    it came — and because the bounce ends on the frame it started on, looping THAT is seamless. The
+    duplicated frame at the turn (forward's last is reverse's first) is trimmed, or the pivot
+    stutters for a frame.
+
+    Also where the clip is normalised to the delivered frame: generated video arrives at 720p and
+    at whatever frame rate the model chose, and every other cut in this film is 1920x1080 at 30.
+    """
+    crop = detect_letterbox(src)
+    bounce = dest.with_name(dest.stem + "-bounce.mp4")
+    run_ffmpeg([
+        "ffmpeg", "-y", "-i", str(src), "-filter_complex",
+        f"[0:v]{crop},split[a][b];[b]reverse,trim=start_frame=1,setpts=PTS-STARTPTS[r];[a][r]concat=n=2:v=1:a=0[v]",
+        "-map", "[v]", "-an", "-c:v", "libx264", "-crf", "16", "-preset", "medium",
+        "-pix_fmt", "yuv420p", str(bounce),
+    ])
+    run_ffmpeg([
+        "ffmpeg", "-y", "-stream_loop", "-1", "-i", str(bounce), "-t", f"{seconds:.3f}",
+        # cover, not stretch: the picture inside a generated clip keeps the 1.5:1 aspect of the
+        # still it grew out of, and every `art:` still in this film is fitted the same way
+        # (object-fit: cover in ImageCut). Filling by distortion would make one beat's people a
+        # different shape from the next beat's.
+        "-vf", "scale=1920:1080:force_original_aspect_ratio=increase:flags=lanczos,"
+               "crop=1920:1080,fps=30",
+        "-an",
+        "-c:v", "libx264", "-crf", "18", "-preset", "medium", "-pix_fmt", "yuv420p",
+        "-movflags", "faststart", str(dest),
+    ])
+    bounce.unlink()
+    if not dest.is_file() or dest.stat().st_size < 50_000:
+        raise RuntimeError(f"looping {src.name} to {seconds:.1f}s produced nothing usable")
+
+
 def snapshot(trailer_id: str, dest: Path) -> dict:
     """Copy the recorder's output for `trailer_id` to `dest` and return its shotlist.
 
@@ -491,6 +568,13 @@ def main(trailer_id: str) -> None:
             shutil.copy(PROJECT / "assets" / "art" / trailer_id / s["art"]["file"],
                         out / "art" / s["art"]["file"])
 
+        # The parallax model (#92 draft 4): a beat's planes, staged the same way a single `art:`
+        # still is and out of the same directory, because they are the same kind of asset — a
+        # generated picture with no recording behind it. The compositor's ParallaxCut slides them
+        # at different rates; this script only has to put them where it can find them.
+        for layer in (s.get("parallax") or {}).get("layers", []):
+            shutil.copy(PROJECT / "assets" / "art" / trailer_id / layer, out / "art" / layer)
+
         # videoScript.ts's parseAnim already refuses an `anim:` with no `shot:`/`art:` to dim under
         # (fail(file, where, 'anim needs a "shot:" or "art:" to dim under it')), so by the time an
         # anim reaches this script its beat is guaranteed to have a base cut. Multiple anims on one
@@ -540,6 +624,44 @@ def main(trailer_id: str) -> None:
                     "propBrightness": prop_brightness, "propSaturate": prop_saturate,
                 } if prop else {}),
             })
+        elif s.get("clip"):
+            # The clip model (#92 draft 4): a generated five-second video in place of a recorded
+            # shot, for the beats Seth named as the film's hero moments (the kid at the counter,
+            # the front door on a Saturday, the four shops going dark). The generated file is
+            # never the beat's own length, so it is looped out to it HERE rather than in the
+            # composition: the staged mp4 is already exactly as long as the beat, which means the
+            # existing "video" cut type renders it with no change to OhmsvilleLesson.tsx at all.
+            staged = out / "art" / s["clip"]
+            loop_clip(PROJECT / "assets" / "art" / trailer_id / s["clip"], staged, end - start)
+            video_start = start
+            source_start = 0.0
+            # Same title carve as the shot branch above, for the same reason: s1's first
+            # TITLE_CARD_SECONDS are the card, and the clip picks up from that point in its own
+            # source rather than replaying the seconds the card covered.
+            if i == 0 and end - start > TITLE_CARD_SECONDS:
+                cuts.append({
+                    "id": f"{s['id']}-title", "type": "title", "layer": 0,
+                    "in_seconds": round(start, 2), "out_seconds": round(start + TITLE_CARD_SECONDS, 2),
+                    "title": cfg["title_card"]["title"], "kicker": cfg["title_card"]["kicker"],
+                    "art": f"ohmsville-trailers/{trailer_id}/props/{family['title_card_art_file']}",
+                })
+                video_start = start + TITLE_CARD_SECONDS
+                source_start = TITLE_CARD_SECONDS
+            cuts.append({
+                "id": s["id"], "type": "video", "layer": 0,
+                "src": f"ohmsville-trailers/{trailer_id}/art/{s['clip']}",
+                "in_seconds": round(video_start, 2), "out_seconds": round(end, 2),
+                "sourceStartSeconds": source_start,
+                "label": None,
+            })
+        elif s.get("parallax"):
+            cuts.append({
+                "id": s["id"], "type": "parallax", "layer": 0,
+                "layers": [f"ohmsville-trailers/{trailer_id}/art/{f}" for f in s["parallax"]["layers"]],
+                "parallaxDirection": s["parallax"]["direction"],
+                "in_seconds": round(start, 2), "out_seconds": round(end, 2),
+                "label": None,
+            })
         elif s["card"]["kind"] == "end" and cuts:
             # The trailer's closing section (kind: end, shot: none) has no footage of its own —
             # its narration is the voiceover for the closing card, so the last real shot holds
@@ -575,6 +697,7 @@ def main(trailer_id: str) -> None:
                 "id": s["id"], "type": "image", "layer": 0,
                 "src": f"ohmsville-trailers/{trailer_id}/art/{s['art']['file']}",
                 "motion": s["art"]["motion"],
+                "motionAmount": motion_amount(end - start),
                 "in_seconds": round(start, 2), "out_seconds": round(end, 2),
                 "label": None,
             })

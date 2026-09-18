@@ -67,6 +67,11 @@ export interface OhmsvilleCut {
    *  show (Volta's kitchen, the argument, the pile, the shock). One of the five words
    *  videoScript.ts's `art:` line accepts — see imageTransform below for what each one does. */
   motion?: "hold" | "push-in" | "drift-left" | "drift-right" | "pull-out";
+  /** "image" cut only: how far the named move travels, as a fraction of the frame. Absent
+   *  means the old fixed 0.12 (0.04 for `hold`). build_trailer.py sets it from the beat's
+   *  own duration, because one pass of a fixed-size move across a long beat is a slower
+   *  camera than the same move across a short one - see imageTransform. */
+  motionAmount?: number;
   /** "parallax" cut only (#92 draft 4): the beat's planes, BACK TO FRONT. The first is
    *  opaque and the rest carry alpha. See ParallaxCut for what each plane does. */
   layers?: string[];
@@ -182,28 +187,55 @@ function useFade(durationInFrames: number) {
   return fadeIn * fadeOut;
 }
 
+/** The floor under a full-bleed picture cut's fade-in, shared by ImageCut and ParallaxCut.
+ *
+ *  Why there is a floor at all: useFade's spring starts at literal 0 on a cut's first frame, and
+ *  the AbsoluteFill it fades in over is filled with theme.backgroundColor. At opacity 0 that IS a
+ *  ground-coloured frame at the cut boundary, which check_render.py's bare-background scan flags -
+ *  correctly, because on a hard cut between two beats a flash of bare ground is a real defect and
+ *  not just a measurement artefact.
+ *
+ *  Why 0.30 rather than a smaller number: the floor has to make the FRAME differ from the ground,
+ *  not just the brightest pixel in it. A daylight illustration clears the scan at almost any
+ *  floor; a night scene does not, because most of its pixels are already within a few units of
+ *  #241c10. Measured with check_render.py's own scorer against this film's two stills composited
+ *  over the ground - garage-lamp 0.951 / 0.875 / 0.810 / 0.535 / 0.345 at opacity 0.08 / 0.15 /
+ *  0.20 / 0.25 / 0.30 against a 0.6 limit, bench-first-wire 0.646 at 0.08 - 0.25 clears by 0.065
+ *  and 0.30 clears by 0.255. The spring reaches 1.0 in under a third of a second, so this reads as
+ *  the picture arriving bright rather than as a jump cut. */
+const PICTURE_FADE_FLOOR = 0.3;
+
 /** The art model's Ken-Burns motion (see OhmsvilleCut.motion): a still illustration is never
  *  static on screen for a full beat, but the motion is a plain word chosen per beat by what the
  *  picture needs the eye to do, not a formula. `progress` runs 0→1 across the cut's own duration,
  *  so a four-second beat and a seven-second beat both complete exactly one pass of the named
  *  move — never a fixed pixels/frame rate that finishes early or is still crawling at the cut.
  *  Every case scales up beyond 100% first so a pan never reveals the image's own edge. */
-function imageTransform(motion: OhmsvilleCut["motion"], progress: number): string {
+function imageTransform(
+  motion: OhmsvilleCut["motion"],
+  progress: number,
+  amount?: number,
+): string {
   const p = Math.max(0, Math.min(1, progress));
+  // `amount` is how far the move travels over the whole cut. Absent, it is the fixed 0.12 this
+  // function used to hardcode, so a cut that does not carry one renders exactly as it did before.
+  // A `hold` keeps its own much smaller number: it is meant to be barely there.
+  const a = amount ?? 0.12;
   switch (motion) {
     case "push-in":
-      return `scale(${1 + 0.12 * p})`;
+      return `scale(${1 + a * p})`;
     case "pull-out":
-      return `scale(${1.12 - 0.12 * p})`;
+      return `scale(${1 + a - a * p})`;
     case "drift-left":
-      return `scale(1.14) translateX(${6 - 12 * p}%)`;
+      return `scale(${1 + a * 1.17}) translateX(${(a * 50) - a * 100 * p}%)`;
     case "drift-right":
-      return `scale(1.14) translateX(${-6 + 12 * p}%)`;
+      return `scale(${1 + a * 1.17}) translateX(${-(a * 50) + a * 100 * p}%)`;
     case "hold":
-    default:
       // Not literally motionless — a picture held dead still against a moving caption line reads
       // as a slide, not a shot. A slow, barely-there push keeps it feeling like a camera.
-      return `scale(${1 + 0.04 * p})`;
+      return `scale(${1 + (a / 3) * p})`;
+    default:
+      return `scale(${1 + (a / 3) * p})`;
   }
 }
 
@@ -689,7 +721,7 @@ const ImageCut: React.FC<{ cut: OhmsvilleCut; theme: OhmsvilleTheme }> = ({ cut,
   // (2 frames, one per image cut, both ~1 RGB unit from ground). A real image's colors sit
   // ~150 units from ground (build_trailer.py's own comment), so a small floor is enough to pull
   // every pixel outside the scan's +/-6 tolerance without the fade reading as a jump cut.
-  const opacity = Math.max(useFade(durationInFrames), 0.08);
+  const opacity = Math.max(useFade(durationInFrames), PICTURE_FADE_FLOOR);
   const progress = durationInFrames > 1 ? frame / (durationInFrames - 1) : 0;
   return (
     <AbsoluteFill style={{ background: theme.backgroundColor, overflow: "hidden" }}>
@@ -700,7 +732,7 @@ const ImageCut: React.FC<{ cut: OhmsvilleCut; theme: OhmsvilleTheme }> = ({ cut,
           height: "100%",
           objectFit: "cover",
           opacity,
-          transform: imageTransform(cut.motion, progress),
+          transform: imageTransform(cut.motion, progress, cut.motionAmount),
           transformOrigin: "center center",
         }}
       />
@@ -895,7 +927,9 @@ function parallaxPlane(index: number, count: number) {
 const ParallaxCut: React.FC<{ cut: OhmsvilleCut; theme: OhmsvilleTheme }> = ({ cut, theme }) => {
   const frame = useCurrentFrame();
   const { durationInFrames } = useVideoConfig();
-  const opacity = useFade(durationInFrames);
+  // The same floor as ImageCut's, from the same constant and for the same reason - a parallax
+  // beat is the same shape (planes fading in over a ground-filled AbsoluteFill).
+  const opacity = Math.max(useFade(durationInFrames), PICTURE_FADE_FLOOR);
   const progress = durationInFrames > 1 ? frame / (durationInFrames - 1) : 0;
   const layers = cut.layers ?? [];
   const sign = cut.parallaxDirection === "pan-left" ? -1 : 1;
