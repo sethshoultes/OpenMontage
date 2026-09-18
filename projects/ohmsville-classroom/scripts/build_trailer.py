@@ -457,7 +457,16 @@ def main(trailer_id: str) -> None:
         raise RuntimeError(f"end card art missing at {end_card_source}")
     shutil.copy(end_card_source, out / END_CARD_ART)
 
-    cuts, words = [], []
+    # The anim model (docs/film-pipeline.md's "Inventor films" section, Seth's second ruling):
+    # a beat may also carry one or more `anim:` overlay clips — a fixed-library Remotion animation
+    # (current-flow, resistance, voltage-push, symbol-reveal, pile-stack, lamp-glow) played over a
+    # dimmed version of that beat's own base cut (its `shot:` or `art:`), never alone. Kept in a
+    # SEPARATE top-level list rather than folded into `cuts`, because check_render.py's
+    # check_contiguity() requires strict adjacency between cuts (every out_seconds ==
+    # the next cut's in_seconds) and an overlay is meant to overlap its base cut in time, not sit
+    # next to it. OhmsvilleLesson.tsx renders `overlays` as additional <Sequence>s painted after
+    # the main cuts.map(...) loop, so they draw on top by DOM order alone.
+    cuts, words, overlays = [], [], []
     sections = shotlist["sections"]
     t = 0.0
     for i, s in enumerate(sections):
@@ -481,6 +490,22 @@ def main(trailer_id: str) -> None:
         if s.get("art"):
             shutil.copy(PROJECT / "assets" / "art" / trailer_id / s["art"]["file"],
                         out / "art" / s["art"]["file"])
+
+        # videoScript.ts's parseAnim already refuses an `anim:` with no `shot:`/`art:` to dim under
+        # (fail(file, where, 'anim needs a "shot:" or "art:" to dim under it')), so by the time an
+        # anim reaches this script its beat is guaranteed to have a base cut. Multiple anims on one
+        # beat play in written order over that same base (Volta's s3: pile-stack then
+        # voltage-push), so they're laid back-to-back starting at the beat's own start rather than
+        # each spanning the whole beat.
+        if s.get("anim"):
+            a_t = start
+            for j, a in enumerate(s["anim"]):
+                overlays.append({
+                    "id": f"{s['id']}-anim{j}", "kind": a["kind"],
+                    "in_seconds": round(a_t, 2), "out_seconds": round(a_t + a["dur"], 2),
+                    "props": a.get("props", {}),
+                })
+                a_t += a["dur"]
 
         if s["shot"]:
             shutil.copy(shots / s["shot"]["file"], out / "shots" / s["shot"]["file"])
@@ -630,6 +655,7 @@ def main(trailer_id: str) -> None:
         "fps": 30, "width": 1920, "height": 1080,
         "themeConfig": theme,
         "cuts": cuts,
+        "overlays": overlays,
         "captions": words,
         "audio": {
             "narration": {"src": f"ohmsville-trailers/{trailer_id}/narration/full.mp3"},
