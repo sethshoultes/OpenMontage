@@ -104,6 +104,43 @@ ASSETS: dict[str, dict] = {
             "faces, no room - just the lit corner of the board."
         ),
     },
+    # ---- draft 5: the two pictures the telling needed and draft 4 did not have ----------------
+    # Seth on draft 4: "You need a little bit of background - who's speaking or why they're there."
+    # The film now opens in Ray's own garage with the listener sitting down, so it needs the room he
+    # is standing in (bench-now, which is also the title card's art), and it spends a beat on what
+    # was actually inside the lid, which the wide over-the-shoulder counter clip cannot get close
+    # enough to marvel at (kit-open-counter).
+    "bench-now": {
+        "kind": "still",
+        "beat": "s1",
+        "prompt": (
+            "Inside a small-town garage workshop at night, seen from a low stool across the bench: "
+            "a scarred plywood workbench under one gooseneck lamp, and in the middle of it an open "
+            "1970s hobby-kit box - varnished plywood frame, tidy rows of small coiled brass spring "
+            "terminals, its lid standing up and away from the camera - with a well-thumbed paper "
+            "manual open beside it and a pencil laid across the page. A second wooden stool pulled "
+            "up on the near side, an enamel mug going cold, a soldering iron in its stand, a coffee "
+            "can of resistors. Behind the bench, the pulled-down roll-up door, a pegboard of hand "
+            "tools, and the dark of the rest of the garage. No people in frame, no hands. One warm "
+            "pool of lamplight on the box, everything else deep kraft-brown shadow, with generous "
+            "unlit space above the bench."
+        ),
+    },
+    "kit-open-counter": {
+        "kind": "still",
+        "beat": "s3",
+        "prompt": (
+            "A close, near-overhead view down into a 1970s hobby electronics kit lying open on a "
+            "shop counter, the way a nine-year-old sees it from tiptoe: the varnished plywood frame "
+            "filling most of the frame, and inside it row upon row of small coiled brass spring "
+            "terminals, evenly spaced like seedlings in a garden bed, with a few components set "
+            "among them - a fat capacitor, a coil, a transformer, a round meter face. The lid "
+            "stands open at the top of the frame, and a thick paper manual lies half on the counter "
+            "beside it, open to a page of neat diagrams. Two small hands rest on the counter edge at "
+            "the very bottom of the frame, nothing else of the child visible. Warm tungsten shop "
+            "light, dust in the air, the counter's wood grain, a curl of solder wire."
+        ),
+    },
     # ---- s2: the 1970s Main Street, three parallax planes ------------------------------------
     "1970s-sky": {
         "kind": "layer",

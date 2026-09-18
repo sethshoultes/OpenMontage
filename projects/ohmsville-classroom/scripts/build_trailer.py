@@ -686,6 +686,14 @@ def main(trailer_id: str) -> None:
                 "in_seconds": round(start, 2), "out_seconds": round(end, 2),
                 "title": cfg["title_card"]["title"], "kicker": cfg["title_card"]["kicker"],
                 "art": title_art,
+                # #92 draft 5: a title beat carrying its OWN illustration is a picture beat that
+                # happens to have words over it, so it gets the same Ken Burns the `art:` branch
+                # below gives every other still. Without this the plate is frozen for the whole
+                # beat — measured at 2.73s of held frame on draft 5's first cut, against the 1.0s
+                # limit. The family's generic title_card_art_file keeps no motion: it is a plate,
+                # not a scene, and every inventor film's s1 renders exactly as it did before.
+                **({"motion": s["art"]["motion"], "motionAmount": motion_amount(end - start)}
+                   if s.get("art") else {}),
             })
         elif s.get("art"):
             # The art model's plain case: a beat with an illustration and no card kind (Volta/Ohm's

@@ -586,13 +586,34 @@ const BoxArt: React.FC<{ box: NonNullable<OhmsvilleCut["box"]>; theme: Ohmsville
 
 /** A title/end card's background art, pushed behind the scrim — absent when neither `art` nor
  *  `box` is set, so every existing lesson card (which sets neither) is unaffected. */
-const CardArt: React.FC<{ art?: string; box?: OhmsvilleCut["box"]; theme: OhmsvilleTheme }> = ({ art, box, theme }) =>
-  art || box ? (
+const CardArt: React.FC<{
+  art?: string;
+  box?: OhmsvilleCut["box"];
+  theme: OhmsvilleTheme;
+  motion?: OhmsvilleCut["motion"];
+  motionAmount?: number;
+}> = ({ art, box, theme, motion, motionAmount }) => {
+  // #92 draft 5: a card whose art is the beat's own illustration is a picture beat with words over
+  // it, and a picture beat may not sit still — same imageTransform, same per-cut `motionAmount`,
+  // same nested-useVideoConfig clock as ImageCut. A card with no `motion` (every lesson card, every
+  // end plate, every inventor film's generic title art) renders exactly as it did before.
+  const frame = useCurrentFrame();
+  const { durationInFrames } = useVideoConfig();
+  const progress = durationInFrames > 1 ? frame / (durationInFrames - 1) : 1;
+  return art || box ? (
     <AbsoluteFill>
       {box ? (
         <BoxArt box={box} theme={theme} />
       ) : (
-        <Img src={resolveAsset(art!)} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+        <Img
+          src={resolveAsset(art!)}
+          style={{
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+            ...(motion ? { transform: imageTransform(motion, progress, motionAmount) } : {}),
+          }}
+        />
       )}
       <AbsoluteFill
         style={{
@@ -601,6 +622,7 @@ const CardArt: React.FC<{ art?: string; box?: OhmsvilleCut["box"]; theme: Ohmsvi
       />
     </AbsoluteFill>
   ) : null;
+};
 
 // Board cuts carry a corner prop (issue #72, fix rounds 4-8): a top corner sat on the board's
 // busiest row (round 4); bottom-anchored fixed that but shrank to invisibility dodging live parts
@@ -825,7 +847,7 @@ const CardPlate: React.FC<{
         overflow: "hidden",
       }}
     >
-      <CardArt art={cut.art} box={cut.box} theme={theme} />
+      <CardArt art={cut.art} box={cut.box} theme={theme} motion={cut.motion} motionAmount={cut.motionAmount} />
       <AbsoluteFill
         style={{
           justifyContent: "center",
