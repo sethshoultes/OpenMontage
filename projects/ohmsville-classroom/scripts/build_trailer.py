@@ -283,6 +283,10 @@ FARADAY_PROPS = {
     "s5": ("screwdriver.png", "bottom-left", 0.24, 0.3, 0.5, 0.65),
 }
 
+# Latimer: s1–s4 are art: beats (the illustration is the atmosphere a prop would add); s5, the
+# wired lamp, is a lamp-glow beat where no tool prop fits.
+LATIMER_PROPS = {}
+
 
 # The town film's props (#92), deliberately thin. video-guidelines.md wants props in view, but the
 # brief for this film is "the street is the picture": six of its ten beats are the town page, which
@@ -367,6 +371,13 @@ TRAILERS = {
         # See inventor-alessandro-volta's own comment: unused for the same reason (s1 is
         # `shot: none` in content/trailers/inventor-michael-faraday.md too).
         "title_card": {"title": "The Coil That Only Wakes Up Once", "kicker": "OHMSVILLE"},
+        "end_card": {"title": "Ten Inventors", "kicker": "OHMSVILLE.COM"},
+    },
+    "inventor-lewis-latimer": {
+        "family": "inventors",
+        "music": INVENTORS_MUSIC,
+        "props": LATIMER_PROPS,
+        "title_card": {"title": "The Bulb That Wouldn't Stay Lit", "kicker": "OHMSVILLE"},
         "end_card": {"title": "Ten Inventors", "kicker": "OHMSVILLE.COM"},
     },
     "ohmsville": {
