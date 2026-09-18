@@ -73,6 +73,47 @@ SPOOKY_THEME = {
     # main()'s SPOOKY_THEME.update() call.
 }
 
+# The inventor films' own bed (a new family, not the Halloween one — one bed per family, reused;
+# see docs/film-pipeline.md's Music section). ElevenLabs music_gen, $0.30, committed at this path.
+INVENTORS_MUSIC = PROJECT / "assets" / "music" / "inventors_bed.mp3"
+
+# The inventors family reuses build_lesson.py's own THEME — the site's real brand palette, already
+# shown on every lesson film and matched to client/src/site/Inventors.svelte/InventorPage.svelte —
+# rather than inventing a bespoke campaign skin the way SPOOKY_THEME is bespoke for the Spooky
+# Shack. scrimColor and captionFont are the two fields lesson.THEME doesn't carry (it has no need
+# of them outside a trailer); scrimColor is backgroundColor's own RGB triple (#241c10 → 36,28,16,
+# already implicit in lesson.THEME's own captionBackgroundColor), and captionFont mirrors
+# SPOOKY_THEME's convention of matching bodyFont.
+INVENTORS_THEME = {**lesson.THEME, "scrimColor": "36,28,16", "captionFont": lesson.THEME["bodyFont"]}
+
+# Per-family configuration: everything the boundary comment above PERCEPTO_PROPS calls "the
+# family's" (the theme, the title card's own art, the end card's art) now keyed by family instead
+# of hardcoded, so a second family (inventors) can exist without a second copy of main(). The board
+# badge/position stay OUTSIDE this dict on purpose: they're the site's own brand mark on every
+# trailer regardless of family ("a broadcaster's bug" — see BOARD_BADGE_POSITION's own comment),
+# not a campaign skin element, so both families use the identical LOGO_DIR/BOARD_BADGE/
+# BOARD_BADGE_POSITION constants below unchanged.
+FAMILIES = {
+    "halloween": {
+        "theme": SPOOKY_THEME,
+        "title_card_art_file": "witch-hat.png",
+        "end_card_source": ("halloween", "card.jpg"),
+    },
+    "inventors": {
+        "theme": INVENTORS_THEME,
+        # Dead-code path for both current inventor scripts (s1 is `shot: none`, so the title-card
+        # carve in main() below never runs — see its own comment) — kept for interface parity with
+        # "halloween" and so a future inventor film that *does* open on footage doesn't need this
+        # dict reshaped. nib-pen.png is committed at PROPS_DIR alongside the other four tool props.
+        "title_card_art_file": "nib-pen.png",
+        # The site's own vintage kit-box art (client/src/site/seo.ts's SITE + "/gallery/derived/
+        # og-card.jpg"), not a per-film asset — matches the "dressed the same way the title card
+        # is: the site's own card.jpg behind the scrim" convention with the inventors' own site
+        # image standing in for Halloween's card.jpg.
+        "end_card_source": ("gallery", "derived", "og-card.jpg"),
+    },
+}
+
 # Six transparent PNGs cut from Seth's Canva deck, copied once into this project's own assets
 # (fix round 4: "copy the files into the OpenMontage project's assets rather than reading them from
 # the reference folder at render time") — permanent, like SPOOKY_SHACK_MUSIC above.
@@ -120,7 +161,6 @@ PROP_FOR = {
 # corner accent over the real footage — real /halloween footage (the hero art fix, round 2) still
 # follows immediately after, unchanged.
 TITLE_CARD_SECONDS = 2.5
-TITLE_CARD_ART = "props/witch-hat.png"
 TITLE_CARD_KICKER = "SEVEN HALLOWEEN CIRCUITS · THE OCTOBER MISSION"
 TITLE_CARD_TITLE = "Spooky Shack"
 # The end card's own art: the site's real halloween/card.jpg (Home.svelte's own spookycard image),
@@ -173,14 +213,36 @@ PERCEPTO_PROPS = {
 # theme, the board badge and its position, the prop treatment, the title-card duration, the end
 # card's art — is the family's, and is deliberately not made configurable: two films in one pack
 # that disagree about their own palette is a bug, not a feature.
+# Per-beat prop treatment for the inventor films' four board beats (s2-s5), one tool per beat,
+# using the five hand-drawn tool PNGs committed alongside the Halloween props at PROPS_DIR. The
+# corner/height/opacity/brightness/saturate values are a first pass at the family's established
+# default treatment (matching PROP_FOR's dense/saturated-art profile, not the pale-art "ghost"
+# exception) — per PROPS_DIR's own comment ("chosen per beat by looking at that beat's actual
+# recorded frame ... not a formula"), these are checked against real rendered frames and adjusted
+# in the same pass that watches the frames per docs/film-pipeline.md's "open the frames" check.
+VOLTA_PROPS = {
+    "s2": ("voltage-tester.png", "bottom-right", 0.24, 0.3, 0.5, 0.65),
+    "s3": ("multimeter.png", "bottom-right", 0.24, 0.3, 0.5, 0.65),
+    "s4": ("test-leads.png", "bottom-left", 0.24, 0.3, 0.5, 0.65),
+    "s5": ("nib-pen.png", "bottom-left", 0.24, 0.3, 0.5, 0.65),
+}
+OHM_PROPS = {
+    "s2": ("multimeter.png", "bottom-right", 0.24, 0.3, 0.5, 0.65),
+    "s3": ("test-leads.png", "bottom-right", 0.24, 0.3, 0.5, 0.65),
+    "s4": ("nib-pen.png", "bottom-left", 0.24, 0.3, 0.5, 0.65),
+    "s5": ("screwdriver.png", "bottom-left", 0.24, 0.3, 0.5, 0.65),
+}
+
 TRAILERS = {
     "spooky-shack": {
+        "family": "halloween",
         "music": SPOOKY_SHACK_MUSIC,
         "props": PROP_FOR,
         "title_card": {"title": TITLE_CARD_TITLE, "kicker": TITLE_CARD_KICKER},
         "end_card": {"title": "Spooky Shack", "kicker": "THE OCTOBER MISSION"},
     },
     "percepto": {
+        "family": "halloween",
         "music": SPOOKY_SHACK_MUSIC,
         "props": PERCEPTO_PROPS,
         # The title is the script's own `title:` frontmatter; the kicker stays at the house name
@@ -191,6 +253,32 @@ TRAILERS = {
         # first of October") — show it while he says it. "Spooky Science Lab" is the campaign's
         # own `title` in client/src/kit/campaigns.ts, not a name invented for the card.
         "end_card": {"title": "Spooky Science Lab", "kicker": "OPENING THE FIRST OF OCTOBER"},
+    },
+    "inventor-alessandro-volta": {
+        "family": "inventors",
+        "music": INVENTORS_MUSIC,
+        "props": VOLTA_PROPS,
+        # title_card is unused for this film: s1 is `shot: none` (content/trailers/
+        # inventor-alessandro-volta.md), so main()'s title-card carve — which only fires inside
+        # the `if s["shot"]:` branch — never runs; s1 instead falls through to the card-kind
+        # fallback branch (a path the Halloween trailers never exercise; see its own comment).
+        # Set anyway for interface parity with every other TRAILERS row, using the script's own
+        # `title:` frontmatter and the house kicker (no campaign reveal to withhold, unlike
+        # Percepto).
+        "title_card": {"title": "The Twitch That Wasn't in the Frog", "kicker": "OHMSVILLE"},
+        # Matched word for word to the shared closing narration ("Ten inventors, each with a build
+        # already on the board. Ohmsville dot com.") — both inventor films share this line, so both
+        # end cards share this text; there is no per-film campaign name to reveal here.
+        "end_card": {"title": "Ten Inventors", "kicker": "OHMSVILLE.COM"},
+    },
+    "inventor-georg-ohm": {
+        "family": "inventors",
+        "music": INVENTORS_MUSIC,
+        "props": OHM_PROPS,
+        # See inventor-alessandro-volta's own comment: unused for the same reason (s1 is
+        # `shot: none` in content/trailers/inventor-georg-ohm.md too).
+        "title_card": {"title": "Does a Wire Have a Mind of Its Own", "kicker": "OHMSVILLE"},
+        "end_card": {"title": "Ten Inventors", "kicker": "OHMSVILLE.COM"},
     },
 }
 
@@ -246,6 +334,7 @@ def main(trailer_id: str) -> None:
     cfg = TRAILERS[trailer_id]
     props_for = cfg["props"]
     music = cfg["music"]
+    family = FAMILIES[cfg.get("family", "halloween")]
 
     art = PROJECT / "artifacts" / f"trailer-{trailer_id}"
     transcript_dir = art / "transcripts"
@@ -258,14 +347,14 @@ def main(trailer_id: str) -> None:
     # Stage the title card's prop, this trailer's board-beat props, the board badge (all permanent
     # assets), and the end card's art (fresh from the live site each render — see END_CARD_ART's
     # own comment).
-    shutil.copy(PROPS_DIR / "witch-hat.png", out / "props" / "witch-hat.png")
+    shutil.copy(PROPS_DIR / family["title_card_art_file"], out / "props" / family["title_card_art_file"])
     for filename, _corner, _height_frac, _opacity, _brightness, _saturate in props_for.values():
         shutil.copy(PROPS_DIR / filename, out / "props" / filename)
     shutil.copy(LOGO_DIR / BOARD_BADGE, out / "logo" / BOARD_BADGE)
-    card_jpg = OHMSVILLE / "client" / "public" / "halloween" / "card.jpg"
-    if not card_jpg.is_file():
-        raise RuntimeError(f"end card art missing at {card_jpg}")
-    shutil.copy(card_jpg, out / END_CARD_ART)
+    end_card_source = OHMSVILLE / "client" / "public" / Path(*family["end_card_source"])
+    if not end_card_source.is_file():
+        raise RuntimeError(f"end card art missing at {end_card_source}")
+    shutil.copy(end_card_source, out / END_CARD_ART)
 
     cuts, words = [], []
     sections = shotlist["sections"]
@@ -298,7 +387,7 @@ def main(trailer_id: str) -> None:
                     "id": f"{s['id']}-title", "type": "title", "layer": 0,
                     "in_seconds": round(start, 2), "out_seconds": round(start + TITLE_CARD_SECONDS, 2),
                     "title": cfg["title_card"]["title"], "kicker": cfg["title_card"]["kicker"],
-                    "art": f"ohmsville-trailers/{trailer_id}/{TITLE_CARD_ART}",
+                    "art": f"ohmsville-trailers/{trailer_id}/props/{family['title_card_art_file']}",
                 })
                 video_start = start + TITLE_CARD_SECONDS
                 source_start += TITLE_CARD_SECONDS
@@ -394,7 +483,7 @@ def main(trailer_id: str) -> None:
     # The board badge's position is a per-recipe judgement call (where the top row actually has
     # room), made by looking at real recorded frames, not guessed from CSS — see BOARD_BADGE_POSITION's
     # own comment for what was checked and why.
-    theme = {**SPOOKY_THEME, "boardBadge": f"ohmsville-trailers/{trailer_id}/logo/{BOARD_BADGE}",
+    theme = {**family["theme"], "boardBadge": f"ohmsville-trailers/{trailer_id}/logo/{BOARD_BADGE}",
              "boardBadgePosition": BOARD_BADGE_POSITION}
 
     props = {
