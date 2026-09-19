@@ -335,7 +335,92 @@ PEOPLE_ASSETS: dict[str, dict] = {
     },
 }
 
-FILMS: dict[str, dict[str, dict]] = {"ohmsville": ASSETS, "people-of-ohmsville": PEOPLE_ASSETS}
+# The Founders of Ohmsville (#108). Five of its eleven pictures are the town film's, reached
+# through its TRAILERS row's `art_from: ohmsville`; these are the three it needs that no film has
+# made. Same STYLE preamble and the same gpt-image-2 rails as the two tables above, plus the
+# inventor films' stronger no-lettering clause (NO_LETTERING below): this film's own brief makes
+# "no baked-in text" a named check, and two of the three are pictures of a wall of framed pictures,
+# which is the shape most likely to invent a caption under each frame.
+#
+# The room these three describe is not invented here. It is settled once, in
+# docs/films/ohmsville-series-notes.md's "The room, decided once" - which wall the portraits hang
+# on, two rows of five in the order of their years, Edison's the one oversized frame fourth along
+# the top row, the pegboard by the register, the drawers behind the counter.
+NO_LETTERING = (
+    "No lettering, no signage, no writing anywhere in the image, including on box lids, labels, "
+    "drawer fronts, price tickets, book spines, papers or the mounts under the framed pictures. "
+)
+
+FOUNDERS_ASSETS: dict[str, dict] = {
+    "shop-floor": {
+        "kind": "still",
+        "beat": "s2",
+        # The front room, and the only picture in the film of the room Seth's note is about: the
+        # town film's own shop pictures are all the counter or the door, neither of which shows a
+        # customer what they walked into.
+        "prompt": NO_LETTERING + (
+            "Inside a small-town electrical parts shop, seen from just inside the propped-open "
+            "front door on a bright Saturday morning: a narrow aisle running away from the camera "
+            "between shelves of electrical parts down both walls - coils of hook-up wire, boxed "
+            "components, tubs of switches and lamp holders - with warm strip light glowing under "
+            "each shelf edge. The walls are wood-panelled and gone dark where hands go. On the "
+            "right, a pegboard of hand tools hangs beside a wooden sales counter with an old "
+            "transistor radio on it; behind the counter a floor-to-ceiling wall of small parts "
+            "drawers. On the left, at elbow height, a shelf of flat boxed hobby-electronics kits "
+            "standing on their edges. One customer at the far end of the aisle, seen from behind, "
+            "reaching up to a shelf. Dust in the warm tungsten light, a worn wooden floor. Blank "
+            "boxes, blank drawer fronts, blank labels - nothing written anywhere."
+        ),
+    },
+    "portrait-wall": {
+        "kind": "still",
+        "beat": "s6",
+        # s6 push-in and s20 pull-out - the film opens on this wall and closes the frame on it.
+        # Two rows of five is the decided hanging; the oversized frame fourth along the top row is
+        # Edison's, which is the part of the arrangement the year order does not give for free.
+        "prompt": NO_LETTERING + (
+            "The back room of a small-town electrical parts shop, seen from the doorway behind the "
+            "counter: a long scarred workbench runs left to right along the far wall across the "
+            "frame, with a 1970s hobby-kit box lying open on it - varnished plywood frame, tidy "
+            "rows of small coiled brass spring terminals - and a shaded work lamp on a bracket "
+            "throwing one warm pool of light down onto it. On the wall above the bench hang ten "
+            "small framed pictures in plain black frames and nothing else: FIVE frames in the "
+            "upper row and FIVE frames in the lower row, evenly spaced, ten in total, no eleventh "
+            "frame anywhere on the wall. Each holds a small ink line drawing of a head and "
+            "shoulders in profile on cream paper, in period clothing, too small to read clearly "
+            "from this distance. One frame in the upper row, fourth from the left, is noticeably "
+            "larger than the other nine. Tall stock shelves of boxed parts stand to the right, a "
+            "stool is pushed under the bench, and the rest of the room falls into deep "
+            "kraft-brown shadow. No people in frame, no hands."
+        ),
+    },
+    "portrait-wall-close": {
+        "kind": "still",
+        "beat": "s7",
+        # The frames close enough to see what they are: ink line art on cream, per the portrait
+        # plan's own prompt template (docs/superpowers/plans/2026-09-17-inventor-portraits.md),
+        # never photographs. No real likenesses are asked for - the faces are period figures, and
+        # the narration is what names them.
+        "prompt": NO_LETTERING + (
+            "A close, straight-on view of ten small framed pictures hanging on a wood-panelled "
+            "wall, filling the frame: two even rows of five, plain narrow black frames with dusty "
+            "top edges, hung on cream-painted panelling. Inside each frame is a head-and-shoulders "
+            "ink line drawing on cream paper - black pen cross-hatching, no colour but one small "
+            "spot of warm amber, each figure in three-quarter view in period clothing from a "
+            "different era, collars and coats and whiskers and spectacles varying frame to frame. "
+            "One frame in the top row, fourth from the left, is clearly larger than the other "
+            "nine. A hand comes in from the right edge, levelling the frame it touches. Warm lamp "
+            "light raking across the glass, deep shadow at the corners. Blank mounts, blank walls "
+            "- no plaques, no captions, no writing under any frame."
+        ),
+    },
+}
+
+FILMS: dict[str, dict[str, dict]] = {
+    "ohmsville": ASSETS,
+    "people-of-ohmsville": PEOPLE_ASSETS,
+    "founders-of-ohmsville": FOUNDERS_ASSETS,
+}
 
 
 def spend_so_far() -> float:

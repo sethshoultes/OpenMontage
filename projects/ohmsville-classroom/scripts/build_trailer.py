@@ -333,6 +333,66 @@ HERTZ_PROPS = {
 # prop fits (see LATIMER_PROPS's own comment for the reasoning, which applies unchanged here).
 EDISON_PROPS = {}
 
+# Tesla: no art: beats at all (see the brief's own note — this film, and three of its remaining
+# siblings, are intentional all-live-shot designs). s2-s4 are the SAME recorded macro
+# (`open /bench#a=what-the-propeller-costs`) held across three narrated beats rather than three
+# different board states, so one consistent tool/corner is used across all three rather than
+# Ohm's per-beat rotation; s5 adds &wire=1 and keeps its own tool, matching the wired-build
+# convention from Ohm/Faraday/Hertz. First pass, not yet checked against a real recorded frame —
+# corner and tool to be confirmed once the shot is captured, per PROPS_DIR's own "chosen per beat
+# by looking at that beat's actual recorded frame ... not a formula" rule.
+TESLA_PROPS = {
+    "s2": ("nib-pen.png", "bottom-right", 0.24, 0.3, 0.5, 0.65),
+    "s3": ("nib-pen.png", "bottom-right", 0.24, 0.3, 0.5, 0.65),
+    "s4": ("nib-pen.png", "bottom-right", 0.24, 0.3, 0.5, 0.65),
+    "s5": ("screwdriver.png", "bottom-left", 0.24, 0.3, 0.5, 0.65),
+}
+
+# Lamarr and Antheil: same shape as Tesla — no art: beats at all (see the brief's own note,
+# docs/films/brief-inventor-lamarr-and-antheil.md), s2-s4 the SAME recorded macro
+# (`open /bench#a=exp-10`) held across three narrated beats, s5 adding &wire=1 for the wired
+# siren-knob beat. Same tool/corner convention as Tesla: one consistent tool across the three
+# unwired beats, the wired convention's screwdriver on the last. First pass, not yet checked
+# against a real recorded frame — corner and tool to be confirmed once the shot is captured, per
+# PROPS_DIR's own "chosen per beat by looking at that beat's actual recorded frame ... not a
+# formula" rule.
+LAMARR_PROPS = {
+    "s2": ("nib-pen.png", "bottom-right", 0.24, 0.3, 0.5, 0.65),
+    "s3": ("nib-pen.png", "bottom-right", 0.24, 0.3, 0.5, 0.65),
+    "s4": ("nib-pen.png", "bottom-right", 0.24, 0.3, 0.5, 0.65),
+    "s5": ("screwdriver.png", "bottom-left", 0.24, 0.3, 0.5, 0.65),
+}
+
+# Bardeen, Brattain and Shockley: same shape again — no art: beats at all (see the brief's own
+# note, docs/films/brief-inventor-bardeen-brattain-shockley.md), s2-s4 the SAME recorded macro
+# (`open /bench#a=exp-8`) held across three narrated beats, s5 adding &wire=1 for the wired
+# transistor-knob beat. Same tool/corner convention as Tesla and Lamarr and Antheil: one
+# consistent tool across the three unwired beats, the wired convention's screwdriver on the last.
+# First pass, not yet checked against a real recorded frame — corner and tool to be confirmed once
+# the shot is captured, per PROPS_DIR's own "chosen per beat by looking at that beat's actual
+# recorded frame ... not a formula" rule.
+BARDEEN_BRATTAIN_SHOCKLEY_PROPS = {
+    "s2": ("nib-pen.png", "bottom-right", 0.24, 0.3, 0.5, 0.65),
+    "s3": ("nib-pen.png", "bottom-right", 0.24, 0.3, 0.5, 0.65),
+    "s4": ("nib-pen.png", "bottom-right", 0.24, 0.3, 0.5, 0.65),
+    "s5": ("screwdriver.png", "bottom-left", 0.24, 0.3, 0.5, 0.65),
+}
+
+# Kilby and Noyce: same shape again — no art: beats at all (see the brief's own note,
+# docs/films/brief-inventor-kilby-and-noyce.md), s2-s4 the SAME recorded macro
+# (`open /bench#a=count-by-hand`) held across three narrated beats, s5 adding &wire=1 for the
+# wired counter beat. Same tool/corner convention as Tesla, Lamarr and Antheil, and Bardeen,
+# Brattain and Shockley: one consistent tool across the three unwired beats, the wired
+# convention's screwdriver on the last. First pass, not yet checked against a real recorded
+# frame — corner and tool to be confirmed once the shot is captured, per PROPS_DIR's own "chosen
+# per beat by looking at that beat's actual recorded frame ... not a formula" rule.
+KILBY_AND_NOYCE_PROPS = {
+    "s2": ("nib-pen.png", "bottom-right", 0.24, 0.3, 0.5, 0.65),
+    "s3": ("nib-pen.png", "bottom-right", 0.24, 0.3, 0.5, 0.65),
+    "s4": ("nib-pen.png", "bottom-right", 0.24, 0.3, 0.5, 0.65),
+    "s5": ("screwdriver.png", "bottom-left", 0.24, 0.3, 0.5, 0.65),
+}
+
 
 # The town film's props (#92), deliberately thin. video-guidelines.md wants props in view, but the
 # brief for this film is "the street is the picture": six of its ten beats are the town page, which
@@ -361,6 +421,33 @@ OHMSVILLE_PROPS = {
     "s5": ("nib-pen.png", "bottom-right", 0.24, 0.45, 0.85, 0.85),
     "s9": ("test-leads.png", "bottom-left", 0.24, 0.45, 0.85, 0.85),
     "s10": ("multimeter.png", "bottom-left", 0.24, 0.45, 0.85, 0.85),
+}
+
+# The Founders of Ohmsville (#108). Eleven of its twenty-one beats are the live bench, one after
+# another, so each of the ten inventor beats takes a tool in the corner to keep them from reading
+# as one long bench shot — the same job the film's five `anim:` overlays do for the five beats that
+# have one. Five tools rotating twice, in year order, so no two neighbouring beats wear the same
+# one. s19 is the /inventors page rather than the board and takes none: a tool dimmed into the
+# corner of a cream document page is a sticker on a web page.
+#
+# Corner and treatment are measured, not assumed, per PROPS_DIR's own rule. Bottom-right is empty
+# on every one of the ten: the board's bottom row runs from the left and its right-hand columns are
+# bare, so that corner reads a mean luma of 20-28 of 255 on the real recorded frames against 70 for
+# bottom-left, which is the pushbutton's own tile in every build. The treatment is the town film's
+# (0.45/0.85/0.85), not the inventor films' (0.3/0.5/0.65): OHMSVILLE_PROPS's own comment records
+# that the darker profile washes these pale line-art tools out to almost nothing against a near-
+# black board, checked on a real frame, and this film's board beats are that same near-black board.
+FOUNDERS_PROPS = {
+    "s9": ("voltage-tester.png", "bottom-right", 0.24, 0.45, 0.85, 0.85),
+    "s10": ("multimeter.png", "bottom-right", 0.24, 0.45, 0.85, 0.85),
+    "s11": ("test-leads.png", "bottom-right", 0.24, 0.45, 0.85, 0.85),
+    "s12": ("screwdriver.png", "bottom-right", 0.24, 0.45, 0.85, 0.85),
+    "s13": ("nib-pen.png", "bottom-right", 0.24, 0.45, 0.85, 0.85),
+    "s14": ("voltage-tester.png", "bottom-right", 0.24, 0.45, 0.85, 0.85),
+    "s15": ("multimeter.png", "bottom-right", 0.24, 0.45, 0.85, 0.85),
+    "s16": ("test-leads.png", "bottom-right", 0.24, 0.45, 0.85, 0.85),
+    "s17": ("screwdriver.png", "bottom-right", 0.24, 0.45, 0.85, 0.85),
+    "s18": ("nib-pen.png", "bottom-right", 0.24, 0.45, 0.85, 0.85),
 }
 
 TRAILERS = {
@@ -466,6 +553,64 @@ TRAILERS = {
         "title_card": {"title": "What Took a Lab Full of People a Year", "kicker": "OHMSVILLE"},
         "end_card": {"title": "Ten Inventors", "kicker": "OHMSVILLE.COM"},
     },
+    "inventor-nikola-tesla": {
+        "family": "inventors",
+        "music": INVENTORS_MUSIC,
+        "props": TESLA_PROPS,
+        # Unlike Volta/Ohm/Faraday/Hertz/Edison, this title_card is NOT unused: s1 has
+        # `shot: none` AND no `art:` line (content/trailers/inventor-nikola-tesla.md), so
+        # main()'s title-kind fallback branch renders straight from this title_card and the
+        # family's title_card_art_file plate — there is no per-beat illustration to prefer over
+        # it. s2-s5 are the same live-bench macro recorded once and repeated with a varying
+        # `linger`, per the brief's own note (docs/films/brief-inventor-nikola-tesla.md) that
+        # this film needed no art:/anim: conversion at all.
+        "title_card": {"title": "A Motor That Turns Without a Spark", "kicker": "OHMSVILLE"},
+        "end_card": {"title": "Ten Inventors", "kicker": "OHMSVILLE.COM"},
+    },
+    "inventor-lamarr-and-antheil": {
+        "family": "inventors",
+        "music": INVENTORS_MUSIC,
+        "props": LAMARR_PROPS,
+        # Same shape as inventor-nikola-tesla's own comment above, for the same reason: s1 has
+        # `shot: none` and no `art:` line (content/trailers/inventor-lamarr-and-antheil.md), so
+        # main()'s title-kind fallback branch renders straight from this title_card. s2-s5 are
+        # the same live-bench macro (`open /bench#a=exp-10`) repeated with only settle style,
+        # linger, and `&wire=1` varying — per the brief's own note
+        # (docs/films/brief-inventor-lamarr-and-antheil.md) that this film, like Tesla, needed no
+        # art:/anim: conversion at all.
+        "title_card": {"title": "The Signal the Enemy Couldn't Find", "kicker": "OHMSVILLE"},
+        "end_card": {"title": "Ten Inventors", "kicker": "OHMSVILLE.COM"},
+    },
+    "inventor-bardeen-brattain-shockley": {
+        "family": "inventors",
+        "music": INVENTORS_MUSIC,
+        "props": BARDEEN_BRATTAIN_SHOCKLEY_PROPS,
+        # Same shape as inventor-nikola-tesla's and inventor-lamarr-and-antheil's own comments
+        # above, for the same reason: s1 has `shot: none` and no `art:` line
+        # (content/trailers/inventor-bardeen-brattain-shockley.md), so main()'s title-kind
+        # fallback branch renders straight from this title_card. s2-s5 are the same live-bench
+        # macro (`open /bench#a=exp-8`) repeated with only settle style, linger, and `&wire=1`
+        # varying — per the brief's own note
+        # (docs/films/brief-inventor-bardeen-brattain-shockley.md) that this film, like Tesla and
+        # Lamarr and Antheil, needed no art:/anim: conversion at all.
+        "title_card": {"title": "The Amplifier With No Glass in It", "kicker": "OHMSVILLE"},
+        "end_card": {"title": "Ten Inventors", "kicker": "OHMSVILLE.COM"},
+    },
+    "inventor-kilby-and-noyce": {
+        "family": "inventors",
+        "music": INVENTORS_MUSIC,
+        "props": KILBY_AND_NOYCE_PROPS,
+        # Same shape as inventor-nikola-tesla's, inventor-lamarr-and-antheil's, and
+        # inventor-bardeen-brattain-shockley's own comments above, for the same reason: s1 has
+        # `shot: none` and no `art:` line (content/trailers/inventor-kilby-and-noyce.md), so
+        # main()'s title-kind fallback branch renders straight from this title_card. s2-s5 are
+        # the same live-bench macro (`open /bench#a=count-by-hand`) repeated with only settle
+        # style, linger, and `&wire=1` varying — per the brief's own note
+        # (docs/films/brief-inventor-kilby-and-noyce.md) that this film, like the three before it,
+        # needed no art:/anim: conversion at all.
+        "title_card": {"title": "The Circuit With No Joints to Fail", "kicker": "OHMSVILLE"},
+        "end_card": {"title": "Ten Inventors", "kicker": "OHMSVILLE.COM"},
+    },
     "ohmsville": {
         "family": "ohmsville",
         "music": OHMSVILLE_MUSIC,
@@ -479,6 +624,26 @@ TRAILERS = {
         # for word the closing narration ("Ohmsville is a made-up town. The kit is real.") — show it
         # while he says it, the same rule Percepto's end card follows.
         "end_card": {"title": "Ohmsville", "kicker": "OHMSVILLE IS A MADE-UP TOWN \u00b7 THE KIT IS REAL"},
+    },
+    "founders-of-ohmsville": {
+        "family": "inventors",
+        "music": INVENTORS_MUSIC,
+        "props": FOUNDERS_PROPS,
+        # Five of its eleven pictures are the town film's, reached here rather than regenerated:
+        # saturday-door.mp4 (s1), counter.mp4 (s4), kit-open-counter.png (s3), bench-now.png (s5)
+        # and bench-first-wire.png (s8). Its own three — shop-floor, portrait-wall and
+        # portrait-wall-close — live in its own directory and are found first.
+        "art_from": "ohmsville",
+        # s1 carries a clip and card kind "title", so main()'s CLIP branch does the title carve:
+        # TITLE_CARD_SECONDS of the family's plate, then the shop door propped open on a Saturday
+        # picking up from that point in its own source. No film in this family had put a clip under
+        # a title plate before, which is why s1's frames are the first ones to open after a build.
+        # Title and kicker are the script's own `title:` and `kicker:` frontmatter.
+        "title_card": {"title": "The Founders of Ohmsville", "kicker": "TEN PORTRAITS OVER ONE BENCH \u00b7 1800 TO 1958"},
+        # Word for word the script's own `endcard:`/`endkicker:`, the same rule the town film's row
+        # follows — and the closing narration is the inventor family's shared line, so the plate is
+        # saying what the voice is saying.
+        "end_card": {"title": "Ohmsville", "kicker": "TEN INVENTORS \u00b7 TEN BUILDS ALREADY WIRED"},
     },
 }
 
@@ -897,10 +1062,26 @@ def main(trailer_id: str) -> None:
                 # happens to have words over it, so it gets the same Ken Burns the `art:` branch
                 # below gives every other still. Without this the plate is frozen for the whole
                 # beat — measured at 2.73s of held frame on draft 5's first cut, against the 1.0s
-                # limit. The family's generic title_card_art_file keeps no motion: it is a plate,
-                # not a scene, and every inventor film's s1 renders exactly as it did before.
-                **({"motion": s["art"]["motion"], "motionAmount": motion_amount(end - start)}
-                   if s.get("art") else {}),
+                # limit that was in force at the time.
+                #
+                # #72 Tesla: that comment's "every inventor film's s1 renders exactly as it did
+                # before" was true when written because Volta/Ohm/Faraday/Hertz/Edison all carry
+                # their own s1 art — none of them had ever actually exercised the `else` branch
+                # below (the family's generic title_card_art_file with no motion key at all).
+                # Tesla is the first film with no per-beat art for s1 (the brief's own confirmed,
+                # intentional choice — three more of this agent's remaining films share the exact
+                # shape), so it is the first to hold that bare plate for the WHOLE beat's real
+                # narration length rather than a short TITLE_CARD_SECONDS slice, and the first to
+                # hit check_render.py's zero-tolerance static-run check on it: FAILED at 1.57s on
+                # Tesla's first render ("a picture beat holds still for 1.57s", limit 0.0s). A
+                # plate held that long is exactly the frozen-frame shape this same Ken Burns
+                # treatment already exists to prevent one branch up — so it now applies whichever
+                # art is on screen, not only a beat's own: per-beat art keeps its own named move,
+                # and the fallback plate defaults to push-in, the same verb Edison's own s1
+                # portrait already uses, so "the plate keeps no motion" is no longer a shape this
+                # compositor can produce for a beat long enough to be seen holding still.
+                "motion": s["art"]["motion"] if s.get("art") else "push-in",
+                "motionAmount": motion_amount(end - start),
             })
         elif s.get("art"):
             # The art model's plain case: a beat with an illustration and no card kind (Volta/Ohm's
