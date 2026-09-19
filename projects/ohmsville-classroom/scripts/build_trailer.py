@@ -314,6 +314,21 @@ FARADAY_PROPS = {
 # wired lamp, is a lamp-glow beat where no tool prop fits.
 LATIMER_PROPS = {}
 
+# Hertz: s1-s4 are art: beats like Faraday's (spark-gap theory, the measurement, the "no use at
+# all" reflection), not recorded shots, so they follow Faraday's own precedent of keeping a prop
+# anyway rather than Latimer's fully-bare choice — Latimer went bare because a lamp-glow beat
+# specifically doesn't suit a static line-art tool, not because art beats never take one. s5 (the
+# wired two-transistor flasher, exp-3) is a running board like Faraday's relay, so it keeps a
+# prop too. Same tool-per-beat and corner choices as Faraday's, since the beat shapes match
+# (theory beat, measurement beat, reflection beat, wired build): to be re-checked against a real
+# rendered frame and adjusted if a prop turns out to overlap the board's own components.
+HERTZ_PROPS = {
+    "s2": ("nib-pen.png", "bottom-right", 0.24, 0.3, 0.5, 0.65),
+    "s3": ("voltage-tester.png", "bottom-right", 0.24, 0.3, 0.5, 0.65),
+    "s4": ("test-leads.png", "bottom-left", 0.24, 0.3, 0.5, 0.65),
+    "s5": ("screwdriver.png", "bottom-left", 0.24, 0.3, 0.5, 0.65),
+}
+
 
 # The town film's props (#92), deliberately thin. video-guidelines.md wants props in view, but the
 # brief for this film is "the street is the picture": six of its ten beats are the town page, which
@@ -427,6 +442,15 @@ TRAILERS = {
         "music": INVENTORS_MUSIC,
         "props": LATIMER_PROPS,
         "title_card": {"title": "The Bulb That Wouldn't Stay Lit", "kicker": "OHMSVILLE"},
+        "end_card": {"title": "Ten Inventors", "kicker": "OHMSVILLE.COM"},
+    },
+    "inventor-heinrich-hertz": {
+        "family": "inventors",
+        "music": INVENTORS_MUSIC,
+        "props": HERTZ_PROPS,
+        # See inventor-alessandro-volta's own comment: unused for the same reason (s1 is
+        # `shot: none` in content/trailers/inventor-heinrich-hertz.md too).
+        "title_card": {"title": "The Wave Nobody Had Made on Purpose", "kicker": "OHMSVILLE"},
         "end_card": {"title": "Ten Inventors", "kicker": "OHMSVILLE.COM"},
     },
     "ohmsville": {
