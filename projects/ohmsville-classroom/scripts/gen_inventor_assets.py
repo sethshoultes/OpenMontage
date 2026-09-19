@@ -43,7 +43,9 @@ STYLE = (
     "study: warm candlelight or window light, fine linework, soft painterly shading, period-accurate "
     "clothing, furniture and instruments for the decade shown. "
     "Absolutely no text, no letters, no numbers, no signage lettering, no logos, no brand names, "
-    "no diagrams with labels. No recognizable real person's face rendered as a straight-on portrait: "
+    "no diagrams with labels. No lettering, no signage, no writing anywhere in the image, including "
+    "on book spines, manuscripts, papers, windows or distant buildings. No recognizable real person's "
+    "face rendered as a straight-on portrait: "
     "show the figure from behind, in profile, in silhouette, or with the face turned away or in "
     "shadow. No modern objects, no photographic realism, no 3D render. "
 )
@@ -114,6 +116,48 @@ INVENTORS: dict[str, dict] = {
                 "window behind the desk, a quiet evening street with a few distant lit windows. "
                 "No figure present in the room — an empty chair. Soft, melancholy candlelight, "
                 "the rest of the room in cool shadow."
+            ),
+        },
+    },
+    "thomas-edison": {
+        "assets": {
+            "s1-the-portrait": (
+                "A framed engraved portrait of a 19th-century American inventor hanging on a "
+                "cluttered electronics-shop wall of tools and parts, seen at an angle so the "
+                "frame catches warm lamplight from below — the portrait's own face turned "
+                "three-quarter or in soft shadow rather than looking straight out. Shelves of "
+                "old radio and television chassis around it, a workbench lamp just out of frame "
+                "casting long warm light upward across the wall."
+            ),
+            "s2-the-laboratory": (
+                "A long two-story wooden laboratory building at Menlo Park, New Jersey, 1876, "
+                "interior view: a full workshop floor with a machinist at a lathe, a "
+                "glassblower bent over a torch and blank glass bulbs, and a chemist at a "
+                "shelf of labeled-but-illegible bottles. Bright, even lamplight fills most of "
+                "the frame - several gas lamps burning close together plus broad daylight "
+                "through tall factory windows, so the room reads as brightly and evenly lit "
+                "rather than shadowy, with only small pockets of shade under the benches. "
+                "Workbenches crowded with tools, coils of wire, and hand-blown glass shapes "
+                "catching the light. Every figure seen from behind, in profile, or with face "
+                "turned away. A bright, busy, purposeful room, not a dim one."
+            ),
+            "s3-the-trials": (
+                "A crowded laboratory workbench at night, late 1870s: dozens of small burnt "
+                "and broken filament samples laid out in rows on a wooden tray, tweezers and a "
+                "hand-cranked vacuum pump nearby, and at the center one single glass bulb "
+                "glowing warm and steady with a fine looping thread filament inside. A figure "
+                "leaning close to study the glowing bulb, seen from behind or in profile, "
+                "sleeves rolled up. Dim room, the one lit bulb the brightest thing in the frame."
+            ),
+            "s4-the-result": (
+                "A nearly bare wooden desk at night, one small glass electric light bulb sitting "
+                "upright in a simple round socket base, its thin looping filament glowing warm "
+                "and steady inside the clear glass — an electric incandescent bulb like the one "
+                "on the trial bench, definitely not an oil lamp or candle: no flame, no glass "
+                "chimney, no wick. It is the only object on the desk besides a closed notebook "
+                "and a pair of pliers set aside. The rest of the room in soft cool shadow, a tall "
+                "window behind showing a dark quiet street. No figure present — an empty stool "
+                "pushed back, as if the work here is finished and handed on."
             ),
         },
     },

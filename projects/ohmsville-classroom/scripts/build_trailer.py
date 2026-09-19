@@ -329,6 +329,10 @@ HERTZ_PROPS = {
     "s5": ("screwdriver.png", "bottom-left", 0.24, 0.3, 0.5, 0.65),
 }
 
+# Edison: same shape as Latimer — s1-s4 are art: beats, s5 is a lamp-glow beat where no tool
+# prop fits (see LATIMER_PROPS's own comment for the reasoning, which applies unchanged here).
+EDISON_PROPS = {}
+
 
 # The town film's props (#92), deliberately thin. video-guidelines.md wants props in view, but the
 # brief for this film is "the street is the picture": six of its ten beats are the town page, which
@@ -451,6 +455,15 @@ TRAILERS = {
         # See inventor-alessandro-volta's own comment: unused for the same reason (s1 is
         # `shot: none` in content/trailers/inventor-heinrich-hertz.md too).
         "title_card": {"title": "The Wave Nobody Had Made on Purpose", "kicker": "OHMSVILLE"},
+        "end_card": {"title": "Ten Inventors", "kicker": "OHMSVILLE.COM"},
+    },
+    "inventor-thomas-edison": {
+        "family": "inventors",
+        "music": INVENTORS_MUSIC,
+        "props": EDISON_PROPS,
+        # See inventor-alessandro-volta's own comment: unused for the same reason (s1 is
+        # `shot: none` in content/trailers/inventor-thomas-edison.md too).
+        "title_card": {"title": "What Took a Lab Full of People a Year", "kicker": "OHMSVILLE"},
         "end_card": {"title": "Ten Inventors", "kicker": "OHMSVILLE.COM"},
     },
     "ohmsville": {
