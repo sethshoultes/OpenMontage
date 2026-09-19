@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""The three render checks from the Ohmsville repo's docs/film-pipeline.md, each with its control.
+"""The render checks from the Ohmsville repo's docs/brand/FILMMAKING.md, each with its control.
 
     .venv/bin/python projects/ohmsville-classroom/scripts/check_render.py percepto
 
@@ -14,6 +14,16 @@ rather than in a shell transcript:
      frame is downsampled and scored for its share of theme-ground pixels.
   3. **The narration matches the picture.** Each section's rendered audio is transcribed and aligned
      against that section's own script line.
+  4. **Nothing on screen is frozen.** Measured frame(t) against frame(t + 1s), never a per-frame
+     delta — at one-frame spacing a slow camera and a still are the same picture.
+  5. **Every face was introduced before it appeared.** Only for a film with `interview:` beats: the
+     captions carry per-word timings, so the frame where a speaker's surname is on screen can be
+     compared with the first frame of their own clip.
+
+A black-frame count is printed alongside them and deliberately does not fail the run: the compositor
+leaves one or two at some video-cut heads, the shipped town film does the same, and that is issue
+#101 rather than any one film's defect. It is printed because check 2 is blind to it by construction
+(see the note below: a flat-black frame sails through a scan that only knows the theme ground).
 There is deliberately no fourth check on "how dark the picture goes at a cut", and the reason is
 worth keeping. Check 2 only knows one colour, so a frame that went flat BLACK would sail through it,
 and every seam in this film has 2-4 frames that measure ~96% one flat colour at luma ~1.5/255. That
@@ -52,6 +62,24 @@ PROJECT = ROOT / "projects" / "ohmsville-classroom"
 
 sys.path.insert(0, str(ROOT))
 from tools.tool_registry import registry  # noqa: E402
+
+# A picture that does not change by this many grey levels over a whole second is not moving.
+#
+# Calibrated at THIS module's own scan size (SCAN_W x SCAN_H), which is the mistake the first
+# version made: 0.5 was measured on 160x90 frames in a scratch script, and at 64x36 the extra
+# averaging pulls every delta down, so a correct film failed on a tightest real reading of 0.46.
+# Measured on the documentary at 64x36: the tightest moving beat reads 0.46, the end plate past its
+# fade reads 0.0026. 0.05 sits an order of magnitude clear of both — nine times under the slowest
+# real picture, nineteen times over the frozen one.
+#
+# Re-measure this if SCAN_W/SCAN_H change. It is a function of them, not a universal constant.
+STATIC_DELTA_MIN = 0.05
+# How long a picture beat may hold still. Zero: every beat carries a camera move, a parallax, a clip
+# or a talking head, so any run at all is a defect.
+STATIC_RUN_LIMIT = 0.0
+# The end plate fades in, and the fade is real motion the measurement is right to see. The control
+# starts after it — measured at 1.30 during the fade and 0.0000 a second later.
+PLATE_FADE_SECONDS = 1.0
 
 # Downsample every frame to this before scoring. The bug being hunted is a whole-frame one — the
 # ground showing through where a shot should be — so per-pixel detail is noise; this keeps a
@@ -157,6 +185,88 @@ def align(script: str, heard: str) -> float:
     return SequenceMatcher(None, normalise(script), normalise(heard)).ratio()
 
 
+def static_runs(fs: list, fps: int, end_frame: int) -> tuple:
+    """Longest stretch of picture that does not change, by frame(t) vs frame(t + 1s).
+
+    Not a per-frame delta. A picture moving half a pixel a frame is indistinguishable from a still
+    at one-frame spacing, and measuring it that way reported a film full of freezes that were not
+    there (#92 draft 4). One second apart is the rule the playbook states, and it is the spacing at
+    which a real camera move has visibly travelled.
+
+    Returns (longest run in seconds inside the picture beats, the tightest delta seen, its time).
+    """
+    grey = [f.astype(np.float32).mean(axis=-1) for f in fs]
+    deltas = [(i / fps, float(np.abs(grey[i] - grey[i + fps]).mean()))
+              for i in range(0, min(end_frame, len(grey) - fps))]
+    run = 0.0
+    worst = 0.0
+    for _, d in deltas:
+        run = run + 1 / fps if d < STATIC_DELTA_MIN else 0.0
+        worst = max(worst, run + 1.0 if run else 0.0)
+    tightest = min(deltas, key=lambda x: x[1]) if deltas else (0.0, 0.0)
+    return worst, tightest[1], tightest[0]
+
+
+def plate_deltas(fs: list, fps: int, end_frame: int) -> list:
+    """The end plate's own frame(t) vs frame(t+1s) deltas, past its fade-in.
+
+    The plate is the control for check 4: it is the one thing in the film that really is frozen, so
+    a measurement that cannot see it is not measuring anything. The fade has to be excluded or the
+    control reads its own motion and looks broken — measured at 1.30 on the documentary, dropping to
+    0.0000 a second later.
+    """
+    grey = [f.astype(np.float32).mean(axis=-1) for f in fs]
+    start = end_frame + int(PLATE_FADE_SECONDS * fps)
+    return [float(np.abs(grey[i] - grey[i + fps]).mean())
+            for i in range(start, len(grey) - fps)]
+
+
+def black_intervals(video: Path) -> list:
+    """Every run of black frames ffmpeg can find, as (start, duration) pairs.
+
+    Reported, not enforced. The compositor leaves one to two black frames at some video-cut heads
+    and at loop_clip's bounce pivot; the shipped town film does the same, so this is issue #101 and
+    not a given film's fault. It is printed because check 2 cannot see it: that scan only knows the
+    theme ground, and a flat-black frame sails through it.
+    """
+    proc = subprocess.run(
+        ["ffmpeg", "-hide_banner", "-i", str(video),
+         "-vf", "blackdetect=d=0.03:pic_th=0.99:pix_th=0.06", "-an", "-f", "null", "-"],
+        capture_output=True, text=True, check=False,
+    )
+    return [(float(s), float(d)) for s, d in
+            re.findall(r"black_start:([\d.]+) black_end:[\d.]+ black_duration:([\d.]+)", proc.stderr)]
+
+
+def introductions(comp: dict, shotlist: dict, caps: list) -> list:
+    """For each interview beat: when the speaker's surname is first on screen, and when their face is.
+
+    A film may not cut to a face the viewer has not been introduced to (docs/brand/FILMMAKING.md).
+    That is checkable on the finished film rather than on the script that was supposed to obey it,
+    because the captions carry per-word timings: find the frame where the surname is up, compare it
+    with the first frame of that person's own clip.
+
+    An earlier version of this sampled the preceding beat at fixed fractions and could miss the word
+    entirely — it did, and produced a sheet that looked like evidence. Read the timings.
+
+    Returns [(beat id, surname, named_at or None, face_at)].
+    """
+    by_id = {s["id"]: s for s in shotlist["sections"]}
+    cuts = {c["id"]: c for c in comp["cuts"]}
+    out = []
+    for sid, sec in by_id.items():
+        iv = sec.get("interview")
+        if not iv or sid not in cuts:
+            continue
+        surname = iv["film"].split("-")[-1]
+        face_at = cuts[sid]["in_seconds"]
+        said = [w["startMs"] / 1000 for w in caps
+                if w["word"].strip(".,:;—").lower() == surname.lower()
+                and w["startMs"] / 1000 < face_at]
+        out.append((sid, surname.title(), min(said) if said else None, face_at))
+    return sorted(out, key=lambda r: r[3])
+
+
 def check_contiguity(cuts: list[dict]) -> list[str]:
     """Faults in a cut table: a first cut that does not open at 0, and any seam that is not exact."""
     faults = []
@@ -252,6 +362,63 @@ def main(trailer_id: str) -> int:
           f"{'correctly rejected' if crossed < CONTROL_MAX else 'NOT REJECTED'}")
     if crossed >= CONTROL_MAX:
         ok = False
+
+    # ---- 4. nothing on screen is frozen, and the end plate proves the measurement works ---------
+    end_frame = int(cuts[-1]["out_seconds"] * fps)
+    longest, tightest, tightest_at = static_runs(fs, fps, end_frame)
+    print(f"\n[4] static run, frame(t) vs frame(t+1s) (limit {STATIC_RUN_LIMIT}s, "
+          f"delta floor {STATIC_DELTA_MIN}):")
+    print(f"    longest run {longest:.2f}s; tightest delta {tightest:.2f} grey levels at "
+          f"{tightest_at:.2f}s")
+    if longest > STATIC_RUN_LIMIT:
+        ok = False
+        print(f"    FAIL a picture beat holds still for {longest:.2f}s")
+    else:
+        print("    PASS no picture beat holds still")
+    plate = plate_deltas(fs, fps, end_frame)
+    if plate:
+        print(f"    control (the end plate, past its {PLATE_FADE_SECONDS}s fade): max delta "
+              f"{max(plate):.4f} over {len(plate) / fps:.1f}s, "
+              f"{'seen as frozen' if max(plate) < STATIC_DELTA_MIN else 'NOT SEEN AS FROZEN'}")
+        if max(plate) >= STATIC_DELTA_MIN:
+            ok = False
+    else:
+        ok = False
+        print("    control: no end plate to measure — the one frozen thing in the film is missing")
+
+    # ---- 5. every face was introduced before it appeared ---------------------------------------
+    intros = introductions(comp, shotlist, json.loads((art / "captions.json").read_text()))
+    if not intros:
+        print("\n[5] introductions: no interview beats in this film, nothing to check")
+    else:
+        print(f"\n[5] introductions ({len(intros)} interview beats):")
+        for sid, surname, named, face in intros:
+            if named is None:
+                ok = False
+                print(f"    {sid}  {surname:12} FAIL never named before the cut at {face:.2f}s")
+            else:
+                print(f"    {sid}  {surname:12} named {named:.2f}s, face {face:.2f}s  "
+                      f"PASS {face - named:.1f}s earlier")
+        # The control: the same search run against the words that come AFTER the face, which is
+        # where a name would be if the film had introduced somebody late. It must come back empty
+        # for at least one beat, or the search is matching something other than the introduction.
+        caps_all = json.loads((art / "captions.json").read_text())
+        late = []
+        for sid, surname, _named, face in intros:
+            after = [w for w in caps_all if w["word"].strip(".,:;—").lower() == surname.lower()
+                     and w["startMs"] / 1000 >= face]
+            late.append(f"{sid}:{len(after)}")
+        print(f"    control (the same search restricted to words after the face): "
+              f"{', '.join(late)} — a hit here is a later mention, never the introduction")
+
+    # ---- black frames: reported, because check 2 cannot see them (issue #101) -------------------
+    blacks = black_intervals(video)
+    n = sum(int(round(d * fps)) for _, d in blacks)
+    print(f"\n[-] black frames: {len(blacks)} interval(s), {n} frame(s) of {len(fs)} "
+          f"({n / max(len(fs), 1) * 100:.2f}%)"
+          + (f" at {', '.join(f'{s:.2f}s' for s, _ in blacks)}" if blacks else ""))
+    print("    reported, not enforced: the compositor leaves these at some video-cut heads and the "
+          "shipped town film does it too (#101). Check 2 cannot see them — it only knows the ground.")
 
     print(f"\n=== {'ALL CHECKS PASS, ALL CONTROLS BEHAVED' if ok else 'FAILED'}")
     return 0 if ok else 1
