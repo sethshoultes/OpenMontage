@@ -185,7 +185,12 @@ def main(film: str) -> None:
                      and was.get("source_mtime") == source.stat().st_mtime
                      and (dest_dir / was["file"]).is_file() and (dest_dir / was["audio"]).is_file())
         if fresh:
-            segments.append(was)
+            # The cut is reusable; the beat it plays in is not. `id`, `label` and `at` describe
+            # where this segment sits in the CURRENT script, and draft 2 renumbered every beat, so
+            # returning the stored record verbatim leaves the record naming beats that no longer
+            # exist. Refresh the positional fields and keep the measured ones.
+            segments.append({**was, "id": row["id"], "label": row["label"], "at": row["at"],
+                             "edl_seconds": row["edl_seconds"]})
             print(f"  {row['id']}  {was['file']}  {was['audio_seconds']:.2f}s  (already cut)")
             continue
         seg = cut(row, source, dest_dir)
