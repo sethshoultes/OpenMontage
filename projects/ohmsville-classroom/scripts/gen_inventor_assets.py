@@ -81,6 +81,42 @@ INVENTORS: dict[str, dict] = {
             ),
         },
     },
+    "heinrich-hertz": {
+        "assets": {
+            "s1-the-wave": (
+                "A dim university physics laboratory at night, 1880s Germany: a brass spark-gap "
+                "apparatus sits alone on a long wooden bench under a single hanging gas lamp, its "
+                "gap unlit and still. The rest of the long empty room stretches away into shadow, "
+                "suggesting an unseen field filling the space between the apparatus and the far "
+                "wall. A closed notebook and a pair of calipers rest beside it. Quiet, expectant "
+                "stillness, as if something is about to happen that no one can yet see."
+            ),
+            "s2-the-transmitter": (
+                "The same 1880s laboratory bench, now mid-experiment: a brass induction coil feeds "
+                "two polished spheres with a spark caught mid-jump between them, casting a bright "
+                "blue-white flash across the room. Across the bench, a separate small brass loop "
+                "with its own tiny gap sits several feet away with no wire connecting the two. "
+                "Figure seen from behind or in profile, sleeves rolled up, adjusting the coil. Dark "
+                "room, the spark the only bright light source."
+            ),
+            "s3-the-measurement": (
+                "A university lecture hall wall in the 1880s, used as a large reflecting surface: a "
+                "tall zinc sheet mounted upright, with chalk tick-marks (no legible text) along the "
+                "floor measuring distance from it. A brass receiver loop on a wooden stand faces "
+                "the sheet. A figure in shirtsleeves crouches beside the marks with a folding rule, "
+                "seen from behind or in silhouette against the dim room. Warm gaslight from one "
+                "side, the zinc sheet catching a cold pale gleam."
+            ),
+            "s4-of-no-use": (
+                "A modest German study at dusk, late 1880s: a writing desk with a closed leather "
+                "notebook, a pair of spectacles folded on top, and a candle burnt down low and "
+                "nearly out. A coat hangs on a chair pushed back as if just left. Through the "
+                "window behind the desk, a quiet evening street with a few distant lit windows. "
+                "No figure present in the room — an empty chair. Soft, melancholy candlelight, "
+                "the rest of the room in cool shadow."
+            ),
+        },
+    },
 }
 
 
