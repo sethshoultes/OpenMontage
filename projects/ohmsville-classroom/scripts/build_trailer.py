@@ -748,40 +748,69 @@ def detect_letterbox(src: Path) -> str:
 
 
 def loop_clip(src: Path, dest: Path, seconds: float) -> None:
-    """Make a five-second generated clip last a beat, without ever freezing on a frame.
+    """Make a generated clip last a beat: it plays once, then holds its last frame on a push-in.
 
-    Not `-stream_loop` on the clip itself: that hard-cuts back to frame 0 every five seconds, which
-    reads as a dropped shot. Forward-then-reversed does not — the motion simply runs back the way
-    it came — and because the bounce ends on the frame it started on, looping THAT is seamless. The
-    duplicated frame at the turn (forward's last is reverse's first) is trimmed, or the pivot
-    stutters for a frame.
+    A clip shorter than its cut HOLDS. It is never reversed and never looped (Seth, 2026-09-19).
+    This function used to fill the remainder by concatenating the clip with itself reversed, on the
+    theory that a bounce reads better than a hard cut back to frame 0. It does not: the picture is
+    of people, and people do not walk backwards. Seth watched The Founders of Ohmsville and saw the
+    boy in the shop door turn round and walk back out at eight seconds — `saturday-door.mp4` is
+    8.0s and s1's cut is 14.72s, so the bounce pivoted exactly there. There is no amount of a
+    person in shot for which running them backwards is the right answer, so the rule is now the
+    simple one: play the clip, then freeze on the frame it ended on.
+
+    The freeze is not motionless. OhmsvilleLesson.tsx's VideoCut is a bare OffthreadVideo — unlike
+    ImageCut and CardArt it applies no `motion` transform to a clip — so a held frame there really
+    would be a still, which is both dead on screen and the exact thing check_render.py's
+    static-run check exists to catch (limit 0.0s: every beat carries a move). So the push-in is
+    baked in here, over the held portion only: the live seconds pass through untouched (zoompan
+    never sees them), and the held frame is zoomed by motion_amount(hold) — the same
+    0.02-per-second ramp the `art:` beats' push-in uses, for what is, for those seconds, exactly
+    an art beat.
+
+    The tail is supersampled to 4K before zoompan because zoompan quantises its crop origin to
+    whole input pixels; at 2x that step is half an output pixel rather than a whole one, and a
+    static frame is where such a step would show.
 
     Also where the clip is normalised to the delivered frame: generated video arrives at 720p and
     at whatever frame rate the model chose, and every other cut in this film is 1920x1080 at 30.
     """
     crop = detect_letterbox(src)
-    bounce = dest.with_name(dest.stem + "-bounce.mp4")
+    source_seconds = ffprobe_duration(src)
+    hold_seconds = round(max(0.0, seconds - source_seconds), 3)
+    # cover, not stretch: the picture inside a generated clip keeps the 1.5:1 aspect of the still
+    # it grew out of, and every `art:` still in this film is fitted the same way (object-fit: cover
+    # in ImageCut). Filling by distortion would make one beat's people a different shape from the
+    # next beat's.
+    normalise = (f"{crop},scale=1920:1080:force_original_aspect_ratio=increase:flags=lanczos,"
+                 f"crop=1920:1080,fps=30,setsar=1")
+    if hold_seconds <= 0:
+        graph = f"[0:v]{normalise},trim=duration={seconds:.3f},setpts=PTS-STARTPTS[v]"
+    else:
+        amount = motion_amount(hold_seconds)
+        hold_frames = max(1, round(hold_seconds * 30))
+        # Split by FRAME index, not by time: after `fps=30` the indices are exact, and a
+        # float-seconds boundary here is one rounding away from either duplicating the pivot frame
+        # or dropping it. `live` is every frame but the last; `still` is that last frame alone,
+        # which tpad then clones for the remainder.
+        live_frames = max(1, round(source_seconds * 30))
+        graph = (
+            f"[0:v]{normalise},split[live][still];"
+            f"[live]trim=end_frame={live_frames - 1},setpts=PTS-STARTPTS[a];"
+            f"[still]trim=start_frame={live_frames - 1},setpts=PTS-STARTPTS,"
+            f"tpad=stop_mode=clone:stop_duration={hold_seconds + 0.5:.3f},"
+            f"scale=3840:2160:flags=lanczos,"
+            f"zoompan=z='min(1+{amount:.4f}*on/{hold_frames},{1 + amount:.4f})':"
+            f"x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':d=1:s=1920x1080:fps=30,setsar=1[b];"
+            f"[a][b]concat=n=2:v=1:a=0,trim=duration={seconds:.3f},setpts=PTS-STARTPTS[v]"
+        )
     run_ffmpeg([
-        "ffmpeg", "-y", "-i", str(src), "-filter_complex",
-        f"[0:v]{crop},split[a][b];[b]reverse,trim=start_frame=1,setpts=PTS-STARTPTS[r];[a][r]concat=n=2:v=1:a=0[v]",
-        "-map", "[v]", "-an", "-c:v", "libx264", "-crf", "16", "-preset", "medium",
-        "-pix_fmt", "yuv420p", str(bounce),
-    ])
-    run_ffmpeg([
-        "ffmpeg", "-y", "-stream_loop", "-1", "-i", str(bounce), "-t", f"{seconds:.3f}",
-        # cover, not stretch: the picture inside a generated clip keeps the 1.5:1 aspect of the
-        # still it grew out of, and every `art:` still in this film is fitted the same way
-        # (object-fit: cover in ImageCut). Filling by distortion would make one beat's people a
-        # different shape from the next beat's.
-        "-vf", "scale=1920:1080:force_original_aspect_ratio=increase:flags=lanczos,"
-               "crop=1920:1080,fps=30",
-        "-an",
+        "ffmpeg", "-y", "-i", str(src), "-filter_complex", graph, "-map", "[v]", "-an",
         "-c:v", "libx264", "-crf", "18", "-preset", "medium", "-pix_fmt", "yuv420p",
         "-movflags", "faststart", str(dest),
     ])
-    bounce.unlink()
     if not dest.is_file() or dest.stat().st_size < 50_000:
-        raise RuntimeError(f"looping {src.name} to {seconds:.1f}s produced nothing usable")
+        raise RuntimeError(f"fitting {src.name} to {seconds:.1f}s produced nothing usable")
 
 
 def snapshot(trailer_id: str, dest: Path) -> dict:
@@ -969,9 +998,9 @@ def main(trailer_id: str) -> None:
             #   - its audio is the segment's, laid into the narration bed at the top of this loop,
             #     so `start`/`end` here are derived from the segment's real ffprobe duration
             #     exactly as every other beat's are derived from its narration's;
-            #   - it is NOT looped. loop_clip exists because a generated clip is five seconds and a
-            #     beat is not; a segment is precisely as long as its own beat, because the beat was
-            #     built from it. Bouncing a talking head would run somebody's sentence backwards.
+            #   - it is NOT fitted. loop_clip exists because a generated clip is eight seconds and
+            #     a beat is not; a segment is precisely as long as its own beat, because the beat
+            #     was built from it, so there is nothing to hold and nothing to hold it for.
             #   - it carries a lower third, which no other trailer cut does ("a trailer names
             #     nothing the narration hasn't already said" — but here the narration is somebody
             #     else's voice arriving with no introduction, so the name IS the introduction).
@@ -997,12 +1026,19 @@ def main(trailer_id: str) -> None:
                 "label": f"{who[0]} · {who[1]}",
             })
         elif s.get("clip"):
-            # The clip model (#92 draft 4): a generated five-second video in place of a recorded
+            # The clip model (#92 draft 4): a generated eight-second video in place of a recorded
             # shot, for the beats Seth named as the film's hero moments (the kid at the counter,
             # the front door on a Saturday, the four shops going dark). The generated file is
-            # never the beat's own length, so it is looped out to it HERE rather than in the
+            # never the beat's own length, so it is fitted to it HERE rather than in the
             # composition: the staged mp4 is already exactly as long as the beat, which means the
             # existing "video" cut type renders it with no change to OhmsvilleLesson.tsx at all.
+            #
+            # Fitted means HELD, never reversed and never looped (Seth, 2026-09-19). The clip
+            # plays once and then freezes on its last frame for the remainder, on a push-in so the
+            # picture still moves. It used to bounce — forward, then the same footage reversed —
+            # and every one of these clips has people in it, so the bounce walked them backwards:
+            # Seth saw the boy in the shop door reverse at eight seconds in The Founders of
+            # Ohmsville, which is exactly where saturday-door.mp4's 8.0s ran out. See loop_clip.
             staged = out / "art" / s["clip"]
             loop_clip(art_source(trailer_id, s["clip"]), staged, end - start)
             video_start = start
