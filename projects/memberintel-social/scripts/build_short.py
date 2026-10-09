@@ -40,7 +40,8 @@ PUB = lambda n: f"mi-social/{n}"
 (P / "renders").mkdir(exist_ok=True)
 
 INK = "#0B0F14"; PAPER = "#F8FAFC"; TEAL = "#2DD4BF"; ORANGE = "#F97316"
-VOICES = {"W": "6aDn1KB0hjpdcocrUkmq", "M": "1SM7GgM6IMuvQlz2BwM3",
+VOICES = {"W": "h2OBoQqre8SPfGehinER",  # Nova: Melanie (2026-10-02 lead ruling; was Tiffany, now Nadia's alone)
+          "M": "1SM7GgM6IMuvQlz2BwM3",
           "S": "J8hhQxHTArNAtWDmol2o"}  # Seth (guest)
 AVATAR = {"W": "host-w.png", "M": "host-m.png", "S": "host-s.png"}
 
