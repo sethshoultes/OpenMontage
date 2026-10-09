@@ -40,7 +40,8 @@ PUB = lambda n: f"mi-social/{n}"
 (P / "renders").mkdir(exist_ok=True)
 
 INK = "#0B0F14"; PAPER = "#F8FAFC"; TEAL = "#2DD4BF"; ORANGE = "#F97316"
-VOICES = {"W": "6aDn1KB0hjpdcocrUkmq", "M": "1SM7GgM6IMuvQlz2BwM3",
+VOICES = {"W": "h2OBoQqre8SPfGehinER",  # Nova: Melanie (2026-10-02 lead ruling; was Tiffany, now Nadia's alone)
+          "M": "1SM7GgM6IMuvQlz2BwM3",
           "S": "J8hhQxHTArNAtWDmol2o"}  # Seth (guest)
 AVATAR = {"W": "host-w.png", "M": "host-m.png", "S": "host-s.png"}
 
@@ -54,6 +55,7 @@ OUTNAME = EP["output"]  # identity for TTS/art caches — stays constant across 
 RENDER_NAME = OUTNAME if PROFILE == DEFAULT_PROFILE else (
     f"{OUTNAME}-landscape" if PROFILE == "youtube_landscape" else f"{OUTNAME}-portrait")
 LINES = EP["lines"]
+OUT = P / f"renders/{RENDER_NAME}.mp4"
 
 
 def dur(p):
@@ -154,7 +156,25 @@ for i, ln in enumerate(LINES):
     for word, start_s, end_s in aligned:
         captions.append({"word": word, "startMs": int((ln["t0"] + start_s) * 1000),
                           "endMs": int((ln["t0"] + end_s) * 1000)})
-print(len(captions), "caption words")
+
+# Captions never burn into the picture (Seth, 2026-10-08): the word timing
+# ships as a SubRip sidecar next to the mp4, for upload as a caption track.
+def srt_time(ms):
+    return f"{ms // 3600000:02d}:{ms // 60000 % 60:02d}:{ms // 1000 % 60:02d},{ms % 1000:03d}"
+
+
+cues = []
+for w in captions:
+    cue = cues[-1] if cues else None
+    if cue is None or len(cue) >= 6 or w["endMs"] - cue[0]["startMs"] > 2500:
+        cues.append([w])
+    else:
+        cue.append(w)
+SRT = OUT.with_suffix(".srt")
+SRT.write_text("".join(
+    f"{n}\n{srt_time(c[0]['startMs'])} --> {srt_time(c[-1]['endMs'])}\n{' '.join(w['word'] for w in c)}\n\n"
+    for n, c in enumerate(cues, 1)))
+print(len(captions), "caption words ->", SRT.name)
 
 # cuts: one avatar scene per line; punch cards take the back ~55% of flagged
 # lines (minimum 1.6s or no split)
@@ -200,7 +220,7 @@ CUTS.append({"id": "end", "source": "", "type": "hero_title", "text": END["text"
 
 composition = {
     "version": "1.0", "render_runtime": "remotion", "renderer_family": "explainer-data",
-    "composition_mode": "templated", "cuts": CUTS, "overlays": [], "captions": captions,
+    "composition_mode": "templated", "cuts": CUTS, "overlays": [], "captions": [],
     "audio": {
         "narration": {"src": PUB(f"{OUTNAME}_narration.mp3"), "volume": 1.0},
         "music": {"src": PUB("social_bed.mp3"), "volume": 0.13, "fadeInSeconds": 0.3, "fadeOutSeconds": 1.5},
@@ -212,8 +232,6 @@ composition = {
         "chartColors": [TEAL, ORANGE, PAPER],
         "springConfig": {"damping": 16, "stiffness": 220, "mass": 0.8},
         "transitionDuration": 0.2,
-        "captionHighlightColor": TEAL, "captionTextColor": PAPER,
-        "captionBackgroundColor": "rgba(11, 15, 20, 0.82)",
     },
     "metadata": {"project_id": "memberintel-social", "video": OUTNAME,
                  "target_duration_seconds": TOTAL,
@@ -228,10 +246,10 @@ r = vc.execute({
     "asset_manifest": {"version": "1.0", "assets": []},
     "proposal_packet": proposal,
     "script_text": " ".join(re.sub(r"\[[^\]]+\]\s*", "", ln["text"]) for ln in LINES),
-    "profile": PROFILE, "output_path": str(P / f"renders/{RENDER_NAME}.mp4"),
+    "profile": PROFILE, "output_path": str(OUT),
     "remotion_timeout_ms": 600000,
 })
 if not r.success:
     print("RENDER FAILED:", r.error)
     sys.exit(1)
-print("RENDER OK", f"{TOTAL}s ->", P / f"renders/{RENDER_NAME}.mp4")
+print("RENDER OK", f"{TOTAL}s ->", OUT)
