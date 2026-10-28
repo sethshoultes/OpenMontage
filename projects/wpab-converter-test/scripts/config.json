@@ -1,0 +1,11 @@
+{
+  "voice_id": "b24f41fd-00a3-4cd8-992a-a0c9f13f3ef1",
+  "voice_note": "Cartesia 'Clive - Measured Expert': the narrator for the converter-test video (a narrator only, no Seth voice or likeness, memberintel-marketing#720). Not used by any cast character in data/voices.json.",
+  "tts_model": "sonic-3",
+  "speed": 0.95,
+  "repo": "https://github.com/sethshoultes/wp-html-converter-test",
+  "benchmark": "https://wpab.view.fast/choose/recommendations",
+  "theme": {"bg": "#0b0d10", "panel": "#14171c", "text": "#f4f4f5", "muted": "#a1a7b0", "accent": "#ff6b2c"},
+  "fade_seconds": 0.5,
+  "min_hold_seconds": 3.0
+}
