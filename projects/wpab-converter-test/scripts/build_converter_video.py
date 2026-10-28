@@ -23,6 +23,7 @@ P = HERE.parent
 CFG = json.load(open(HERE / "config.json"))
 T = CFG["theme"]
 W, H = 1920, 1080
+HOLDS = {"table": 10.0}  # the totals slide carries the sentence on screen; hold it long enough to read
 FONT = "/System/Library/Fonts/Helvetica.ttc"
 TOOLS = [  # SCORES.md name -> (results dir, who publishes it)
     ("rawhandler", "rawhandler", "built into WordPress"),
@@ -92,8 +93,7 @@ def slide_sample(repo):
 
 def slide_tool(repo, name, tool, score, mx, ne):
     im, d = canvas()
-    clean = name.replace(" †", "")
-    d.text((90, 50), clean, font=font(84), fill=T["accent"])
+    d.text((90, 50), name, font=font(84), fill=T["accent"])  # keeps the dagger on Static Site Importer
     big = f"{score} of {mx}"
     wbig = d.textlength(big, font=font(84))
     d.text((W - 90 - wbig, 50), big, font=font(84), fill=T["text"])
@@ -104,26 +104,31 @@ def slide_tool(repo, name, tool, score, mx, ne):
     for i, kind in enumerate(("original", "converted")):
         x = 60 + i * (cw + 0)
         im.paste(shot(repo, tool, kind, cw), (x, 290))
-        d.text((x, 218), kind.capitalize(), font=font(56), fill=T["text"])
+        d.text((x, 218), f"{kind.capitalize()}, home page", font=font(56), fill=T["text"])
     return im
 
 
 def slide_table(rows):
     im, d = canvas()
-    centered(d, "Totals, ten checks across four pages", 70, font(68), T["text"])
+    centered(d, "Totals, ten checks across four pages", 50, font(68), T["text"])
     x = [160, 960, 1300, 1620]
     for xi, h in zip(x, ("Tool", "Score", "Maximum", "No evidence")):
-        d.text((xi, 220), h, font=font(40), fill=T["muted"])
+        d.text((xi, 160), h, font=font(40), fill=T["muted"])
     for i, (name, tool, _) in enumerate(TOOLS):
-        y = 300 + i * 105
+        y = 225 + i * 88
         sc, mx, ne = rows[name]
-        d.rectangle((120, y - 14, W - 120, y + 78), fill=T["panel"])
+        d.rectangle((120, y - 10, W - 120, y + 68), fill=T["panel"])
         d.text((x[0], y), name, font=font(52), fill=T["text"])
         d.text((x[1], y), str(sc), font=font(52), fill=T["accent"])
         d.text((x[2], y), str(mx), font=font(52), fill=T["text"])
         d.text((x[3], y), str(ne), font=font(52), fill=T["muted"])
-    centered(d, "Plain sums of 0, 1 and 2 per check. No weights.", 850, font(44, False), T["muted"])
-    centered(d, "† Ran by its publisher's Playground route, under a newer PHP.", 930, font(44, False), T["muted"])
+    # what a lower score means is on screen, not only in the narration (a silent viewer reads it here)
+    y = 700
+    for ln in wrap(d, "A lower score means fewer of the ten checks passed on this one sample site.", font(60), W - 300):
+        centered(d, ln, y, font(60), T["text"])
+        y += 76
+    centered(d, "Plain sums of 0, 1 and 2 per check. No weights.", 880, font(46, False), T["muted"])
+    centered(d, "† Ran by its publisher's Playground route, under a newer PHP.", 950, font(48, False), T["muted"])
     return im
 
 
@@ -215,7 +220,7 @@ def main(repo, plan_only, silent=False):
         a = P / f"assets/{key}-{hashlib.sha1((CFG['voice_id'] + str(CFG['speed']) + text).encode()).hexdigest()[:8]}.mp3"
         if not (a.exists() and a.stat().st_size > 0):
             tts(text, a)
-        d = max(dur(a) + GAP, CFG["min_hold_seconds"])
+        d = max(dur(a) + GAP, CFG["min_hold_seconds"], HOLDS.get(key, 0))
         if key == "end":
             d += TAIL
         clip = P / f"assets/clip-{key}.mp4"
