@@ -1,22 +1,59 @@
 {
- "points": {
+ "beats": {
+  "_intro_outro": {
+   "intro": "More people now ask an AI assistant first. I help your business show up in the answers.",
+   "outro": {
+    "say": "Want to talk it through? Book a call at Seth Shoultes dot com.",
+    "caption": "Want to talk it through? Book a call at sethshoultes.com."
+   }
+  },
   "What AI search optimization is": [
-   "Assistants quote a few sources",
-   "Be the source they can find, trust and quote",
-   "Built on nearly 20 years of SEO"
+   {
+    "card": "A few sources get quoted",
+    "say": "When someone asks an assistant a question, it quotes a few sources."
+   },
+   {
+    "card": "Be the source they quote",
+    "say": "AI search optimization is making your pages the kind of source an assistant can find, trust and quote."
+   },
+   {
+    "card": "Built on 20 years of SEO",
+    "say": "I build on nearly twenty years of SEO."
+   }
   ],
   "What I do": [
-   "Pages made to be quoted",
-   "Structured data",
-   "Plain-text versions and an llms.txt file"
+   {
+    "card": "Pages made to be quoted",
+    "say": "I make pages to be quoted: plain answers to your customers' questions, in your voice."
+   },
+   {
+    "card": "Structured data",
+    "say": "I add structured data that says who you are, what you offer and where."
+   },
+   {
+    "card": "Plain text and llms.txt",
+    "say": "And plain-text versions, with an llms.txt file."
+   }
   ],
   "What I have seen": [
-   "Garage Door Science: gaining ground in AI answers",
-   "Garage Door Pro Services: number one in three months"
+   {
+    "card": "Garage Door Science",
+    "say": "Garage Door Science, a guide site I built, is gaining ground in search and in AI answers."
+   },
+   {
+    "card": "Number one in 3 months",
+    "say": "Before that, I took Garage Door Pro Services to number one within the first three months."
+   }
   ],
   "How we start": [
-   "A call about your business",
-   "What I would change first, said plainly"
+   {
+    "card": "A call about your business",
+    "say": "We start with a call about your business."
+   },
+   {
+    "card": "What I would change first",
+    "say": "I tell you plainly what I would change first."
+   }
   ]
  }
 }
