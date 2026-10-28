@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" href="/assets/site.css">
+<style>
+  /* the page's own scenes with no copy, for the video background; the video adds its own scrim */
+  .flow-hero { min-height: 100vh; padding: 0; }
+  .flow-hero::after { display: none; }
+  .flow-gap { height: 70vh; }
+  .orb-section { min-height: 100vh; }
+  body { overflow-x: hidden; }
+</style></head>
+<body>
+<section class="flow-hero"><canvas class="flow-canvas" data-flow aria-hidden="true"></canvas></section>
+<div class="flow-gap"></div>
+<section class="orb-section"><canvas class="orb-canvas" data-orb aria-hidden="true"></canvas></section>
+<script type="module" src="/assets/flow.js"></script>
+</body></html>

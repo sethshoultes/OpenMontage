@@ -114,6 +114,35 @@ def plan(url):
                                            "caption": f"Want to talk it through? Book a call at {CFG['site']}."}}
 
 
+def build_background(src_dir, out, total, orb_at):
+    """Flow clips, trimmed and crossfaded, up to the end card; then the orb forming, landing as the end card opens."""
+    XF = 1.0
+    flow = [src_dir / "flow-idle.webm", src_dir / "flow-sweep.webm"]
+    assert all(f.exists() for f in flow + [src_dir / "orb-form.webm"]), f"record the loops first: bg/record_flow_bg.mjs -> {src_dir}"
+    SEG = 13.0  # seconds taken from each loop (1.5s in, to skip the mount)
+    n, cover = 0, 0.0
+    while cover < orb_at + XF:
+        cover += SEG - (XF if n else 0)
+        n += 1
+    ins, fc = [], []
+    for i in range(n):
+        ins += ["-ss", "1.5", "-t", str(SEG), "-i", str(flow[i % 2])]
+        fc.append(f"[{i}:v]fps=30,scale=1920:1080,format=yuv420p,setpts=PTS-STARTPTS[v{i}]")
+    ins += ["-ss", "5.5", "-i", str(src_dir / "orb-form.webm")]
+    fc.append(f"[{n}:v]fps=30,scale=1920:1080,format=yuv420p,setpts=PTS-STARTPTS[v{n}]")
+    chain, last, t = None, "v0", SEG
+    for i in range(1, n):
+        off = round(t - XF, 2)
+        fc.append(f"[{last}][v{i}]xfade=transition=fade:duration={XF}:offset={off}[x{i}]")
+        last, t = f"x{i}", t + SEG - XF
+    # the flow ends where the orb begins: cut the flow at orb_at + XF, crossfade into the orb clip
+    fc.append(f"[{last}]trim=duration={orb_at + XF:.2f},setpts=PTS-STARTPTS[fl]")
+    fc.append(f"[fl][v{n}]xfade=transition=fade:duration={XF}:offset={orb_at:.2f}[all]")
+    fc.append(f"[all]trim=duration={total:.2f},setpts=PTS-STARTPTS[o]")
+    subprocess.run(["nice", "ffmpeg", "-y", "-v", "error", *ins, "-filter_complex", ";".join(fc), "-map", "[o]", "-an",
+                    "-c:v", "libx264", "-crf", "20", "-preset", "medium", "-pix_fmt", "yuv420p", "-r", "30", str(out)], check=True)
+
+
 def dur(p):
     return float(subprocess.check_output(["ffprobe", "-v", "quiet", "-show_entries", "format=duration", "-of", "csv=p=0", str(p)]).strip())
 
@@ -130,7 +159,7 @@ def main(url, plan_only):
     for n, sc in enumerate(pl["scenes"], 1):
         beats.append((f"h{n}", sc["heading"], None, None, n, (T["accent"], 100)))
         beats += [(f"b{n}-{i}", b["card"], b["say"], b["say"], n, (T["text"], 120)) for i, b in enumerate(sc["beats"])]
-    beats.append(("outro", f"{CFG['site']}  ·  {CFG['cta']}", pl["outro"]["say"], pl["outro"]["caption"], 0, (T["accent"], 110)))
+    beats.append(("outro", f"{CFG['site']}  ·  {CFG['cta']}", pl["outro"]["say"], pl["outro"]["caption"], 0, (T["text"], 110)))
     words = sum(len((b[2] or "").split()) for b in beats)
     print(json.dumps(pl, indent=1))
     print(f"narration {words} words, about {words / 2.5:.0f}s at 150 wpm")
@@ -144,7 +173,15 @@ def main(url, plan_only):
     pub = ROOT / f"remotion-composer/public/seo-{slug}"
     pub.mkdir(parents=True, exist_ok=True)
 
-    GAP, HOLD, TAIL = 0.35, 1.2, 2.5
+    GAP, TAIL = 0.35, 2.5
+
+    def min_hold(card):
+        """Every on-screen title stays at least 3s, plus 0.3s per word over 6 (Seth, 2026-10-28, #145)."""
+        return CFG["title_hold_seconds"] + CFG["title_hold_per_extra_word"] * max(0, len(card.split()) - CFG["title_hold_free_words"])
+
+    def silence(path, sec):
+        subprocess.run(["ffmpeg", "-y", "-v", "error", "-f", "lavfi", "-i", "anullsrc=r=44100:cl=mono", "-t", f"{sec:.2f}",
+                        "-c:a", "libmp3lame", str(path)], check=True)
     sil = P / "assets/gap.mp3"
     subprocess.run(["ffmpeg", "-y", "-v", "error", "-f", "lavfi", "-i", "anullsrc=r=44100:cl=mono", "-t", str(GAP), "-c:a", "libmp3lame", str(sil)], check=True)
     spans, files, t = [], [], 0.0
@@ -158,10 +195,15 @@ def main(url, plan_only):
                 assert r.success, f"{key}: {r.error}"
             d = dur(out)
             files.append(out)
+            if d < min_hold(card):  # a short line keeps its card up: the voice, then silence to the minimum
+                pad = P / f"assets/pad-{min_hold(card) - d:.2f}.mp3"
+                silence(pad, min_hold(card) - d)
+                files.append(pad)
+                d = min_hold(card)
         else:
-            out = P / "assets/hold.mp3"
-            subprocess.run(["ffmpeg", "-y", "-v", "error", "-f", "lavfi", "-i", "anullsrc=r=44100:cl=mono", "-t", str(HOLD), "-c:a", "libmp3lame", str(out)], check=True)
-            d = HOLD
+            out = P / f"assets/hold-{min_hold(card):.2f}.mp3"
+            silence(out, min_hold(card))
+            d = min_hold(card)
             files.append(out)
         spans.append((t, t + d + GAP))
         files.append(sil)
@@ -175,6 +217,12 @@ def main(url, plan_only):
     subprocess.run(["ffmpeg", "-y", "-v", "error", "-f", "concat", "-safe", "0", "-i", str(lst), "-af", f"apad=whole_dur={total}",
                     "-c:a", "libmp3lame", "-q:a", "2", str(narr)], check=True)
 
+    # Moving background: the site's own data-flow scene and scroll orb (#149, PR #150), recorded by bg/record_flow_bg.mjs.
+    # The flow plays under every card; the orb assembles under the end card. The cards sit over it on a dark scrim.
+    bg = pub / "bg.mp4"
+    orb_at = spans[-1][0]
+    build_background(P / "assets/bg", bg, total, orb_at)
+
     # The shared hero_title and callout components hard-code their own colours and sizes, so every card is a
     # text_card in the site's own colours.
     cuts, first_of = [], {}
@@ -186,6 +234,8 @@ def main(url, plan_only):
             f = pub / f"s{n}{ext}"
             f.write_bytes(urllib.request.urlopen(img, timeout=30).read())
             extra["backgroundImage"] = f"seo-{slug}/{f.name}"  # the page's own image behind the section
+        extra.update(backgroundVideo=f"seo-{slug}/bg.mp4", backgroundVideoStart=round(a, 2),
+                     backgroundOverlay=0.25 if key == "outro" else 0.45, vignette=False)
         cuts.append({"id": key, "source": "", "backgroundColor": T["bg"], "in_seconds": round(a, 2),
                      "out_seconds": total if key == "outro" else round(b, 2), "transition_in": "fade", "transition_out": "fade",
                      "type": "text_card", "text": card, "color": color, "fontSize": size, **extra})
@@ -197,7 +247,7 @@ def main(url, plan_only):
                             "surfaceColor": T["surface"], "textColor": T["text"], "mutedTextColor": T["muted"],
                             "headingFont": "Inter", "bodyFont": "Inter", "monoFont": "JetBrains Mono",
                             "chartColors": [T["accent"], T["text"], T["muted"]],
-                            "springConfig": {"damping": 22, "stiffness": 150, "mass": 1}, "transitionDuration": 0.35},
+                            "springConfig": {"damping": 22, "stiffness": 150, "mass": 1}, "transitionDuration": CFG["fade_seconds"]},
             "metadata": {"project_id": "seo-page-videos", "video": slug, "target_duration_seconds": total}}
     json.dump(comp, open(P / f"artifacts/{slug}-composition.json", "w"), indent=2)
 
