@@ -75,8 +75,8 @@ def shot(repo, tool, kind, w):
 
 def slide_title():
     im, d = canvas()
-    centered(d, "Five HTML-to-WordPress converters", 380, font(96), T["accent"])
-    centered(d, "One sample site, ten fixed checks", 520, font(64), T["text"])
+    centered(d, "Five HTML-to-WordPress converters", 435, font(96), T["accent"])
+    centered(d, "One sample site, ten fixed checks", 575, font(64), T["text"])
     return im
 
 
@@ -97,13 +97,13 @@ def slide_tool(repo, name, tool, score, mx, ne):
     wbig = d.textlength(big, font=font(84))
     d.text((W - 90 - wbig, 50), big, font=font(84), fill=T["text"])
     sub = f"{ne} checks had no evidence, left out of the maximum" if ne else "all ten checks had evidence"
-    wsub = d.textlength(sub, font=font(36, False))
-    d.text((W - 90 - wsub, 150), sub, font=font(36, False), fill=T["muted"])
+    wsub = d.textlength(sub, font=font(48, False))
+    d.text((W - 90 - wsub, 150), sub, font=font(48, False), fill=T["muted"])
     cw = 900
     for i, kind in enumerate(("original", "converted")):
         x = 60 + i * (cw + 0)
-        im.paste(shot(repo, tool, kind, cw), (x, 250))
-        d.text((x, 205), kind.capitalize(), font=font(40), fill=T["muted"])
+        im.paste(shot(repo, tool, kind, cw), (x, 290))
+        d.text((x, 218), kind.capitalize(), font=font(56), fill=T["text"])
     return im
 
 
@@ -117,28 +117,32 @@ def slide_table(rows):
         y = 300 + i * 105
         sc, mx, ne = rows[name]
         d.rectangle((120, y - 14, W - 120, y + 78), fill=T["panel"])
-        d.text((x[0], y), name.replace(" †", ""), font=font(52), fill=T["text"])
+        d.text((x[0], y), name, font=font(52), fill=T["text"])
         d.text((x[1], y), str(sc), font=font(52), fill=T["accent"])
         d.text((x[2], y), str(mx), font=font(52), fill=T["text"])
         d.text((x[3], y), str(ne), font=font(52), fill=T["muted"])
-    centered(d, "Plain sums of 0, 1 and 2 per check. No weights.", 880, font(44, False), T["muted"])
+    centered(d, "Plain sums of 0, 1 and 2 per check. No weights.", 850, font(44, False), T["muted"])
+    centered(d, "† Ran by its publisher's Playground route, under a newer PHP.", 930, font(44, False), T["muted"])
     return im
 
 
 def slide_disclosures():
-    im, d = canvas()
-    d.text((120, 70), "Read these first", font=font(80), fill=T["accent"])
     items = ["One sample site, four pages.",
-             "Four tools were given each page's body markup; Static Site Importer was given the whole site.",
-             "Static Site Importer ran by its publisher's own Playground route, under a newer PHP.",
+             "Four tools got each page's body markup; Static Site Importer got the whole site.",
+             "Static Site Importer ran by its publisher's Playground route, under a newer PHP.",
              "Run 2026-10-28, every tool pinned to a version."]
-    y = 220
-    for it in items:
-        for j, ln in enumerate(wrap(d, it, font(52, False), W - 320)):
-            d.text((120 + (0 if j == 0 else 50), y), ("•  " if j == 0 else "") + ln, font=font(52, False), fill=T["text"])
-            y += 70
-        y += 40
-    return im
+    for size in range(88, 56, -2):  # the largest type that fits the frame, never under 1.6x the old 52
+        im, d = canvas()
+        d.text((120, 60), "Read these first", font=font(96), fill=T["accent"])
+        y, f = 210, font(size, False)
+        for it in items:
+            for j, ln in enumerate(wrap(d, it, f, W - 300)):
+                d.text((120 + (0 if j == 0 else size * 0.7), y), ("•  " if j == 0 else "") + ln, font=f, fill=T["text"])
+                y += int(size * 1.2)
+            y += int(size * 0.3)
+        if y < H - 40:
+            return im
+    raise SystemExit("disclosures do not fit")
 
 
 def slide_end():
