@@ -238,6 +238,9 @@ interface Cut {
   backgroundImage?: string; // AI-generated or stock image rendered behind the component
   backgroundVideo?: string; // Video clip rendered behind the component (takes priority over backgroundImage)
   backgroundVideoStart?: number; // Seek position in seconds for background video (default 0)
+  fadeOutSeconds?: number; // text_card: fade the text out over the last N seconds
+  topOffset?: number; // text_card: top of the text as a fraction of frame height (default: centred)
+  leftOffset?: number; // text_card: left-align the text at this fraction of frame width
   backgroundOverlay?: number; // Opacity of dark overlay on backgroundImage/backgroundVideo (0-1, default 0.55)
   color?: string;
   accentColor?: string;
@@ -566,7 +569,7 @@ const SceneRenderer: React.FC<{ cut: Cut; theme: ThemeConfig }> = ({ cut, theme 
   // Explicit component types — use theme-derived defaults for colors
   if (cut.type === "text_card" && cut.text) {
     return maybeWrapWithBg(
-      <TextCard text={cut.text} fontSize={cut.fontSize} color={textColor} backgroundColor={bgColor} />
+      <TextCard text={cut.text} fontSize={cut.fontSize} color={textColor} backgroundColor={bgColor} fadeOutSeconds={cut.fadeOutSeconds} topOffset={cut.topOffset} leftOffset={cut.leftOffset} />
     );
   }
   if (cut.type === "stat_card" && cut.stat) {

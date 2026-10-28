@@ -129,15 +129,16 @@ def build_background(src_dir, out, total, orb_at):
         ins += ["-ss", "1.5", "-t", str(SEG), "-i", str(flow[i % 2])]
         fc.append(f"[{i}:v]fps=30,scale=1920:1080,format=yuv420p,setpts=PTS-STARTPTS[v{i}]")
     ins += ["-ss", "5.5", "-i", str(src_dir / "orb-form.webm")]
-    fc.append(f"[{n}:v]fps=30,scale=1920:1080,format=yuv420p,setpts=PTS-STARTPTS[v{n}]")
+    # the orb clip is shrunk to 85% and shifted right so the end card's text sits in clear space on the left
+    fc.append(f"[{n}:v]fps=30,scale=1632:918,pad=1920:1080:288:81:color=0x0b0d10,format=yuv420p,setpts=PTS-STARTPTS[v{n}]")
     chain, last, t = None, "v0", SEG
     for i in range(1, n):
         off = round(t - XF, 2)
         fc.append(f"[{last}][v{i}]xfade=transition=fade:duration={XF}:offset={off}[x{i}]")
         last, t = f"x{i}", t + SEG - XF
     # the flow ends where the orb begins: cut the flow at orb_at + XF, crossfade into the orb clip
-    fc.append(f"[{last}]trim=duration={orb_at + XF:.2f},setpts=PTS-STARTPTS[fl]")
-    fc.append(f"[fl][v{n}]xfade=transition=fade:duration={XF}:offset={orb_at:.2f}[all]")
+    fc.append(f"[{last}]trim=duration={orb_at:.2f},setpts=PTS-STARTPTS[fl]")
+    fc.append(f"[fl][v{n}]xfade=transition=fade:duration={XF}:offset={orb_at - XF:.2f}[all]")
     fc.append(f"[all]trim=duration={total:.2f},setpts=PTS-STARTPTS[o]")
     subprocess.run(["nice", "ffmpeg", "-y", "-v", "error", *ins, "-filter_complex", ";".join(fc), "-map", "[o]", "-an",
                     "-c:v", "libx264", "-crf", "20", "-preset", "medium", "-pix_fmt", "yuv420p", "-r", "30", str(out)], check=True)
@@ -155,11 +156,11 @@ def main(url, plan_only):
     pl = plan(url)
     slug = urlparse(url).path.strip("/").replace("/", "-") or "home"
     # beats: (key, card text, spoken line or None for a silent card, caption text, section number, card colour/size)
-    beats = [("intro", pl["title"], pl["intro"], pl["intro"], 0, (T["accent"], 150))]
+    beats = [("intro", pl["title"], pl["intro"], pl["intro"], 0, (T["accent"], 110))]
     for n, sc in enumerate(pl["scenes"], 1):
         beats.append((f"h{n}", sc["heading"], None, None, n, (T["accent"], 100)))
-        beats += [(f"b{n}-{i}", b["card"], b["say"], b["say"], n, (T["text"], 120)) for i, b in enumerate(sc["beats"])]
-    beats.append(("outro", f"{CFG['site']}  ·  {CFG['cta']}", pl["outro"]["say"], pl["outro"]["caption"], 0, (T["text"], 110)))
+        beats += [(f"b{n}-{i}", b["card"], b["say"], b["say"], n, (T["text"], 100)) for i, b in enumerate(sc["beats"])]
+    beats.append(("outro", f"{CFG['site']}  ·  {CFG['cta']}", pl["outro"]["say"], pl["outro"]["caption"], 0, (T["text"], 76)))
     words = sum(len((b[2] or "").split()) for b in beats)
     print(json.dumps(pl, indent=1))
     print(f"narration {words} words, about {words / 2.5:.0f}s at 150 wpm")
@@ -238,7 +239,9 @@ def main(url, plan_only):
                      backgroundOverlay=0.25 if key == "outro" else 0.45, vignette=False)
         cuts.append({"id": key, "source": "", "backgroundColor": T["bg"], "in_seconds": round(a, 2),
                      "out_seconds": total if key == "outro" else round(b, 2), "transition_in": "fade", "transition_out": "fade",
-                     "type": "text_card", "text": card, "color": color, "fontSize": size, **extra})
+                     "type": "text_card", "text": card.replace("  ·  ", "\n") if key == "outro" else card, "color": color,
+                     "fontSize": size, "fadeOutSeconds": CFG["fade_seconds"],
+                     **({"leftOffset": 0.05, "topOffset": 0.34} if key == "outro" else {"topOffset": 0.17}), **extra})
         first_of.setdefault(n if key != "outro" else "end", a)
     comp = {"version": "1.0", "render_runtime": "remotion", "renderer_family": "explainer-data", "composition_mode": "templated",
             "cuts": cuts, "overlays": [], "captions": [],
