@@ -1,6 +1,7 @@
 """Results video for the HTML-to-WordPress converter test (memberintel-marketing#720, piece 2 of #8803).
 
-Usage: build_converter_video.py <wp-html-converter-test checkout> [--plan-only]
+Usage: build_converter_video.py <wp-html-converter-test checkout> [--plan-only] [--silent]
+  --silent: the same slides, numbers, order and timings with no voice and no audio track; slides cross-dissolve.
 Env:   CARTESIA_SECRET_KEY (source ~/.config/dev-secrets/secrets.env)
 Out:   projects/wpab-converter-test/renders/converter-test.mp4 (+ .srt sidecar, never burned in)
 
@@ -191,7 +192,7 @@ def srt_time(s):
     return f"{ms // 3600000:02d}:{ms // 60000 % 60:02d}:{ms // 1000 % 60:02d},{ms % 1000:03d}"
 
 
-def main(repo, plan_only):
+def main(repo, plan_only, silent=False):
     import hashlib
     rows = scores(repo)
     lines = script(rows)
@@ -207,7 +208,7 @@ def main(repo, plan_only):
     for name, tool, _ in TOOLS:
         builders[tool] = (lambda n=name, t=tool: slide_tool(repo, n, t, *rows[n]))
     GAP, TAIL, F = 0.4, 2.5, CFG["fade_seconds"]
-    clips, t, cues = [], 0.0, []
+    clips, t, cues, durs = [], 0.0, [], []
     for key, _, text in lines:
         slide = P / f"slides/{key}.png"
         builders[key]().save(slide)
@@ -218,9 +219,10 @@ def main(repo, plan_only):
         if key == "end":
             d += TAIL
         clip = P / f"assets/clip-{key}.mp4"
-        subprocess.run(["ffmpeg", "-y", "-v", "error", "-loop", "1", "-framerate", "30", "-t", f"{d:.2f}", "-i", str(slide),
-                        "-vf", f"fade=t=in:st=0:d={F},fade=t=out:st={d - F:.2f}:d={F},format=yuv420p",
-                        "-c:v", "libx264", "-crf", "18", str(clip)], check=True)
+        vf = "format=yuv420p" if silent else f"fade=t=in:st=0:d={F},fade=t=out:st={d - F:.2f}:d={F},format=yuv420p"
+        subprocess.run(["ffmpeg", "-y", "-v", "error", "-loop", "1", "-framerate", "30", "-t", f"{d + (F if silent else 0):.2f}", "-i", str(slide),
+                        "-vf", vf, "-c:v", "libx264", "-crf", "18", str(clip)], check=True)
+        durs.append(d)
         pad = P / f"assets/pad-{key}.mp3"
         subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", str(a), "-af", f"apad=whole_dur={d:.2f}", "-t", f"{d:.2f}",
                         "-c:a", "libmp3lame", "-q:a", "2", str(pad)], check=True)
@@ -231,6 +233,20 @@ def main(repo, plan_only):
         for i, c in enumerate(chunks):
             cues.append((t + (end - t) * i / len(chunks), t + (end - t) * (i + 1) / len(chunks), " ".join(c)))
         t += d
+    if silent:
+        # cross-dissolve: slide i covers [t_i, t_i + d_i + F] and fades over the next one for its last F seconds
+        out = P / "renders/converter-test-silent.mp4"
+        ins, fc, last, off = [], [], "0:v", 0.0
+        for i, (clip, _) in enumerate(clips):
+            ins += ["-i", str(clip)]
+        for i in range(1, len(clips)):
+            off += durs[i - 1]
+            fc.append(f"[{last}][{i}:v]xfade=transition=fade:duration={F}:offset={off:.2f}[x{i}]")
+            last = f"x{i}"
+        subprocess.run(["ffmpeg", "-y", "-v", "error", *ins, "-filter_complex", ";".join(fc), "-map", f"[{last}]", "-an",
+                        "-c:v", "libx264", "-crf", "18", "-pix_fmt", "yuv420p", "-movflags", "+faststart", str(out)], check=True)
+        print("OK", f"{dur(out):.1f}s", out)
+        return
     for ext, kind, f in (("v", "video", "clips-v.txt"), ("a", "audio", "clips-a.txt")):
         (P / f"assets/{f}").write_text("".join(f"file '{c[0 if ext == 'v' else 1]}'\n" for c in clips))
     out = P / "renders/converter-test.mp4"
@@ -245,4 +261,4 @@ if __name__ == "__main__":
     a = [x for x in sys.argv[1:] if not x.startswith("--")]
     if len(a) != 1:
         sys.exit(__doc__)
-    main(a[0], "--plan-only" in sys.argv)
+    main(a[0], "--plan-only" in sys.argv, "--silent" in sys.argv)
