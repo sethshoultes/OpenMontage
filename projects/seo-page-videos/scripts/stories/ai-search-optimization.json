@@ -1,0 +1,377 @@
+{
+ "page": "https://sethshoultes.com/ai-search-optimization/",
+ "title": "AI Search Optimization",
+ "arc": "Hook (who do you ask first?) > stakes (assistants quote a few sources) > guide (this is what I do) > demonstration (quoted pages, structured data, plain text) > proof (two sites) > honesty (no guarantees) > invitation (a call). Mood arc: cool dark ground until the guide arrives, then the warm orange takes over.",
+ "style": "Dark charcoal ground (#0b0d10), one orange accent (#ff6b2c), crisp editorial 3D UI mock-ups and clean illustration, soft rim light, shallow depth, 16:9. Generic unbranded chat panels and browser windows. No people, no logos, no real company marks, no real text except the short words named in the prompt.",
+ "shots": [
+  {
+   "id": "s01",
+   "mood": "dark",
+   "vo": "[curious] Quick question. When you want to know something... who do you ask first?",
+   "image": "A glowing empty search bar on the left and an empty chat input box on the right, a single blinking cursor floating between them, dark void, orange rim light",
+   "motion": "slow push in toward the gap between the two boxes, the cursor blinking",
+   "transition": "push-left",
+   "kinetic": [
+    [
+     "WHO DO YOU",
+     "who"
+    ],
+    [
+     "ASK FIRST?",
+     "ask"
+    ]
+   ],
+   "still": "s01.png"
+  },
+  {
+   "id": "s02",
+   "mood": "dark",
+   "vo": "[warmly] More and more people ask an AI assistant.",
+   "image": "Three floating unbranded chat windows at different depths, each showing a question bubble and a short answer bubble as abstract grey bars, faint orange glow behind them",
+   "motion": "parallax: the three windows drift at different speeds",
+   "transition": "zoom-through",
+   "kinetic": [
+    [
+     "THEY ASK AN",
+     "ask"
+    ],
+    [
+     "AI ASSISTANT",
+     "assistant"
+    ]
+   ],
+   "still": "s02.png"
+  },
+  {
+   "id": "s03",
+   "mood": "dark",
+   "vo": "And it doesn't hand back ten links. It quotes... [pause] a few sources.",
+   "image": "One large chat answer card; above it a stack of ten faded grey link rows sliding away, and only three rows lit in orange with a small quote-mark glyph, the rest in shadow",
+   "motion": "the grey rows slide out of frame, the three orange rows stay and glow",
+   "transition": "wipe-up",
+   "kinetic": [
+    [
+     "NOT TEN LINKS",
+     "ten"
+    ],
+    [
+     "A FEW SOURCES",
+     "few"
+    ]
+   ],
+   "still": "s03.png"
+  },
+  {
+   "id": "s04",
+   "mood": "dark",
+   "vo": "[excited] Just a few! So here's the question. [confident] Are you one of them?",
+   "image": "Three lit orange source cards in a row, and a fourth empty outlined card with a pulsing question mark, a crowd of dim grey cards behind",
+   "motion": "the empty card pulses, slow push in",
+   "transition": "orb-burst",
+   "kinetic": [
+    [
+     "JUST A FEW",
+     "just"
+    ],
+    [
+     "ARE YOU",
+     "are"
+    ],
+    [
+     "ONE OF THEM?",
+     "one"
+    ]
+   ],
+   "cam": [
+    [
+     0,
+     1.0,
+     0.5,
+     0.5
+    ],
+    [
+     0.6,
+     1.0,
+     0.5,
+     0.5
+    ],
+    [
+     1,
+     1.7,
+     0.64,
+     0.5
+    ]
+   ],
+   "still": "s04.png"
+  },
+  {
+   "id": "s05",
+   "mood": "turn",
+   "vo": "That's my job. It's called AI search optimization. Or GEO, if you like acronyms.",
+   "image": "A magnifying lens made of concentric orange rings floating over a clean web page, the page lit warm behind the lens, particles drifting in from the left",
+   "motion": "the lens rings expand slowly and the page brightens",
+   "transition": "circle-open",
+   "kinetic": [
+    [
+     "MY JOB",
+     "job"
+    ],
+    [
+     "AI SEARCH",
+     "ai"
+    ],
+    [
+     "OPTIMIZATION",
+     "optimization"
+    ]
+   ],
+   "still": "s05.png"
+  },
+  {
+   "id": "s06",
+   "mood": "bright",
+   "vo": "I build pages made to be quoted. Plain answers to what your customers actually ask... in your voice.",
+   "image": "A clean web page mock-up where one question-and-answer block is highlighted in orange with a large quotation-mark glyph lifting off the page toward the viewer",
+   "motion": "the quote glyph lifts and glows, slight camera orbit",
+   "transition": "push-right",
+   "kinetic": [
+    [
+     "MADE TO",
+     "made"
+    ],
+    [
+     "BE QUOTED",
+     "quoted"
+    ],
+    [
+     "IN YOUR VOICE",
+     "voice"
+    ]
+   ],
+   "cam": [
+    [
+     0,
+     1.0,
+     0.45,
+     0.5
+    ],
+    [
+     0.45,
+     1.05,
+     0.5,
+     0.5
+    ],
+    [
+     1,
+     1.9,
+     0.8,
+     0.45
+    ]
+   ],
+   "still": "s06.png"
+  },
+  {
+   "id": "s07",
+   "mood": "bright",
+   "vo": "Then structured data, so assistants know who you are, what you offer, and where.",
+   "image": "Three labeled data blocks (shown only as the short words WHO, WHAT, WHERE) snapping onto the edge of a web page like puzzle pieces, orange connector lines, warm light",
+   "motion": "the three blocks slide in and click onto the page one after another",
+   "transition": "slide-left",
+   "kinetic": [
+    [
+     "WHO YOU ARE",
+     "who"
+    ],
+    [
+     "WHAT YOU OFFER",
+     "what"
+    ],
+    [
+     "WHERE",
+     "where"
+    ]
+   ],
+   "still": "s07.png"
+  },
+  {
+   "id": "s08",
+   "mood": "bright",
+   "vo": "Plus plain-text versions, and an llms-dot-txt file. I run it all on my own site.",
+   "image": "A web page on the left and its plain-text twin on the right as simple lines of monospace text, a small file icon labeled llms.txt between them, orange thread connecting all three",
+   "motion": "the orange thread draws across, then the file icon pops",
+   "transition": "wipe-right",
+   "kinetic": [
+    [
+     "PLAIN TEXT",
+     "plain"
+    ],
+    [
+     "LLMS.TXT",
+     "llms"
+    ]
+   ],
+   "still": "s08.png"
+  },
+  {
+   "id": "s09",
+   "mood": "bright",
+   "vo": "It sits on nearly twenty years of SEO. Same foundation. Clearer pages.",
+   "image": "A stack of solid stone blocks forming a foundation, a neat tower of web pages built on top of it, orange light along the seams, warm sunrise glow behind",
+   "motion": "slow rise up the tower",
+   "transition": "zoom-through",
+   "kinetic": [
+    [
+     "NEARLY 20 YEARS",
+     "nearly"
+    ],
+    [
+     "OF SEO",
+     "seo"
+    ]
+   ],
+   "still": "s09.png"
+  },
+  {
+   "id": "s10",
+   "mood": "bright",
+   "vo": "Garage Door Science, a site I built, is gaining ground in search and AI answers. Garage Door Pro Services? Number one within three months.",
+   "image": "Two abstract dashboard cards side by side, each with a rising sparkline with no numbers, the right card carrying a small orange rosette badge, warm light, dark ground",
+   "motion": "the sparklines draw upward, the badge pops in",
+   "transition": "push-left",
+   "kinetic": [
+    [
+     "GAINING GROUND",
+     "gaining"
+    ],
+    [
+     "IN AI ANSWERS",
+     "answers"
+    ],
+    [
+     "NO. 1 WITHIN",
+     "number"
+    ],
+    [
+     "3 MONTHS",
+     "three"
+    ]
+   ],
+   "cam": [
+    [
+     0,
+     1.4,
+     0.27,
+     0.5
+    ],
+    [
+     0.42,
+     1.4,
+     0.27,
+     0.5
+    ],
+    [
+     0.58,
+     1.4,
+     0.73,
+     0.5
+    ],
+    [
+     1,
+     1.4,
+     0.73,
+     0.5
+    ]
+   ],
+   "still": "s10.png"
+  },
+  {
+   "id": "s11",
+   "mood": "bright",
+   "vo": "Can I promise ChatGPT will name you? No. Nobody can.",
+   "image": "A round GUARANTEED-style stamp shown only as an empty circular seal with a bold orange strike-through line across it, dark ground, a hand-drawn feel",
+   "motion": "the strike-through line slashes across the seal",
+   "transition": "wipe-up",
+   "kinetic": [
+    [
+     "CAN I PROMISE?",
+     "promise"
+    ],
+    [
+     "NOBODY CAN.",
+     "nobody"
+    ]
+   ],
+   "still": "s11.png"
+  },
+  {
+   "id": "s12",
+   "mood": "bright",
+   "vo": "I can make your pages clear, accurate, and easy to quote. And tell you what I'd change first.",
+   "image": "A clean checklist card with three ticks drawn in orange, the first line highlighted, a pen cursor ready to edit, warm light",
+   "motion": "the three ticks draw on one by one",
+   "transition": "orb-burst",
+   "kinetic": [
+    [
+     "CLEAR.",
+     "clear"
+    ],
+    [
+     "ACCURATE.",
+     "accurate"
+    ],
+    [
+     "EASY TO QUOTE.",
+     "easy"
+    ]
+   ],
+   "cam": [
+    [
+     0,
+     1.0,
+     0.5,
+     0.5
+    ],
+    [
+     1,
+     1.5,
+     0.4,
+     0.3
+    ]
+   ],
+   "still": "s12.png"
+  },
+  {
+   "id": "s13",
+   "mood": "bright",
+   "vo": "[warmly] So let's start with a call about your business. [confident] Seth Shoultes dot com.",
+   "image": "A phone standing upright with a calendar slot glowing orange on its screen, a soft orb of particles forming behind it, warm light",
+   "motion": "slow push in as the orb forms behind the phone",
+   "transition": "end",
+   "kinetic": [
+    [
+     "LET'S START",
+     "start"
+    ],
+    [
+     "WITH A CALL",
+     "call"
+    ]
+   ],
+   "cam": [
+    [
+     0,
+     1.0,
+     0.5,
+     0.5
+    ],
+    [
+     1,
+     1.35,
+     0.5,
+     0.5
+    ]
+   ],
+   "still": "s13.png"
+  }
+ ]
+}
