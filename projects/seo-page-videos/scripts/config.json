@@ -1,0 +1,11 @@
+{
+  "voice_id": "J8hhQxHTArNAtWDmol2o",
+  "voice_note": "Seth's own ElevenLabs clone (category: cloned). Seth, 2026-10-28, sethshoultes.github.io#145: his site, his voice.",
+  "tts_model": "eleven_v3",
+  "theme": {"bg": "#0b0d10", "surface": "#14171c", "text": "#f4f4f5", "muted": "#a1a7b0", "accent": "#ff6b2c"},
+  "site": "sethshoultes.com",
+  "cta": "Book a call",
+  "min_seconds": 45,
+  "max_seconds": 90,
+  "max_sections": 4
+}
