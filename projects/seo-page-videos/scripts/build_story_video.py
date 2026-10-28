@@ -26,7 +26,7 @@ BEAT_T, INTRA_T = 0.5, 0.3   # transition length between beats, and between the 
 INTRA = ["slide-left", "wipe-right", "circle-open", "push-right", "wipe-up"]
 GAP = 0.18                    # breath after each line
 LEAD = 0.35
-TAIL = 3.2
+TAIL = 1.4
 HOLD_MIN = 1.5                # a kinetic title stays at least 1.5 s
 ART_W, ART_H = 1680, 950      # the still is shown in the top 950 px; the bottom 130 px is the type band, so type never covers art
 ART_X = (W - ART_W) // 2
@@ -157,6 +157,88 @@ def type_overlay(phrases, t, font, beat_end):
     return layer
 
 
+ORANGE_PX = lambda a: (np.abs(a[..., 0].astype(int) - 255) < 45) & (np.abs(a[..., 1].astype(int) - 107) < 55) & (np.abs(a[..., 2].astype(int) - 44) < 60)
+
+
+def apply_fx(img, fx, t):
+    """Animate inside a still without any new asset: 'rows' (ten link rows slide away, three stay and light up),
+    'draw' (the orange line of a chart draws left to right), 'pulse' (a hard ring at the line's end)."""
+    a = np.asarray(img).copy()
+    h, w, _ = a.shape
+    ground = a[4, 4].copy()
+    if fx["type"] == "rows":
+        light = (a.min(axis=2) > 150)
+        ys, xs = np.where(light)
+        x0, x1, y0, y1 = xs.min(), xs.max(), ys.min(), ys.max()
+        n = 10
+        bh = (y1 - y0 + 1) / n
+        out = a.copy()
+        out[y0:y1 + 1, x0:x1 + 1] = ground
+        for k in range(n):
+            ya, yb = int(y0 + k * bh), int(y0 + (k + 1) * bh)
+            band = a[ya:yb, x0:x1 + 1].copy()
+            if k >= n - 3:   # the three that stay light up
+                m = band.min(axis=2) > 150
+                band[m] = ORANGE
+                out[ya:yb, x0:x1 + 1] = band
+            else:
+                e = ease((t - fx["at"] - k * 0.07) / 0.55)
+                dx = int(e * (w * 0.7)) * (1 if k % 2 else -1)
+                xa = x0 + dx
+                lo, hi = max(xa, 0), min(xa + band.shape[1], w)
+                if hi > lo:
+                    out[ya:yb, lo:hi] = band[:, lo - xa:hi - xa]
+        return Image.fromarray(out)
+    if fx["type"] in ("draw", "pulse"):
+        m = ORANGE_PX(a)
+        ys, xs = np.where(m)
+        if len(xs) == 0:
+            return img
+        xmin, xmax = xs.min(), xs.max()
+        if fx["type"] == "draw":
+            prog = ease((t - fx["at"]) / fx.get("dur", 1.3))
+            cut = xmin + (xmax - xmin) * prog
+            hide = m.copy()
+            hide[:, :int(cut)] = False
+            # only the chart line: keep the title bar and tag (orange-free here anyway)
+            a[hide] = ground
+            return Image.fromarray(a)
+        # pulse: hard ring at the line's right end, twice
+        tip = xs >= xmax - 25
+        cx, cy = int(xs[tip].mean()), int(ys[tip].mean())
+        im = Image.fromarray(a)
+        d = ImageDraw.Draw(im)
+        for k in range(2):
+            u = (t - fx["at"] - k * 0.55) / 0.5
+            if 0 <= u <= 1:
+                r = int(50 + 260 * ease(u))
+                d.ellipse((cx - r, cy - r, cx + r, cy + r), outline=ORANGE, width=max(4, int(26 * (1 - u))))
+        return im
+    return img
+
+
+def chip(frame_img, kind, k):
+    """The through-line object: an orange quote chip that rides every beat change, then is gone."""
+    d = ImageDraw.Draw(frame_img)
+    size = 270
+    if kind in ("push-left", "slide-left"):
+        cx, cy, sc = W * (1 - k) - 0, H * 0.45, 1.0
+    elif kind in ("push-right", "wipe-right"):
+        cx, cy, sc = W * k, H * 0.45, 1.0
+    elif kind == "wipe-up":
+        cx, cy, sc = W / 2, H * (1 - k), 1.0
+    else:   # circle-open, orb-burst, zoom-through: it punches out from the centre
+        cx, cy, sc = W / 2, H * 0.45, math.sin(math.pi * k) * 1.5
+    if sc <= 0.05:
+        return frame_img
+    s = int(size * sc)
+    box = (cx - s / 2, cy - s / 2, cx + s / 2, cy + s / 2)
+    d.rounded_rectangle((box[0] + 12, box[1] + 12, box[2] + 12, box[3] + 12), s // 6, fill=(60, 30, 14))
+    d.rounded_rectangle(box, s // 6, fill=ORANGE)
+    d.text((cx, cy + s * 0.12), "\u201c", font=ImageFont.truetype(FONT, int(s * 1.1), index=1), fill=(255, 255, 255), anchor="mm")
+    return frame_img
+
+
 def endcard(t, site, label):
     """The closing card, animated: a rule draws, the address slides up, the button pops with a little overshoot and presses."""
     ground = (23, 17, 12)
@@ -171,7 +253,7 @@ def endcard(t, site, label):
         d.text((W / 2, 480 + int((1 - k) * 46)), site, font=ImageFont.truetype(FONT, 168, index=1), fill=cream, anchor="mm")
     kb = min(1.0, max(0.0, (t - 0.9) / 0.35))
     if kb > 0:
-        sc = back(kb) * (0.94 if 2.3 < t < 2.45 else 1.0)
+        sc = back(kb) * (0.94 if 1.9 < t < 2.05 else 1.0)
         bw, bh = int(700 * sc), int(170 * sc)
         cx, cy = W / 2, 690
         d.rounded_rectangle((cx - bw / 2 + 12, cy - bh / 2 + 12, cx + bw / 2 + 12, cy + bh / 2 + 12), bh // 2, fill=(70, 38, 20))
@@ -206,7 +288,7 @@ def main(story_path, stills, vo_dir, out, music=None, sfx_files=None):
                     sys.exit(f"{bt['id']}: anchor {sh['at']!r} not found in {[w for w, _ in bt['words']]}")
                 at = bt["start"] + bt["words"][m][1] - 0.12
                 j = m + 1
-            shots.append({"beat": bn, "still": sh["still"], "at": at, "cam": sh.get("cam"), "notype": sh.get("notype", False),
+            shots.append({"beat": bn, "still": sh["still"], "at": at, "cam": sh.get("cam"), "notype": sh.get("notype", False), "fx": sh.get("fx", []),
                           "tr": bt["to_next"] if k == len(bt["shots"]) - 1 else sh.get("tr", INTRA[(len(shots)) % len(INTRA)])})
         # kinetic phrases for the beat, absolute time, anchored on the spoken word (searched in order)
         ph, j = [], 0
@@ -234,7 +316,10 @@ def main(story_path, stills, vo_dir, out, music=None, sfx_files=None):
             return endcard(max(0.0, tt - sh["at"]), CFG["site"], CFG["cta"])
         u = (tt - sh["at"]) / max(1e-6, sh["end"] - sh["at"])
         z, cx, cy = camera(sh, min(max(u, 0), 1), i)
-        return view(imgs[i], z, cx, cy)
+        src = imgs[i]
+        for fx in sh.get("fx", []):
+            src = apply_fx(src, fx, max(0.0, tt - sh["at"]))
+        return view(src, z, cx, cy)
 
     for f in range(nframes):
         tt = f / FPS
@@ -247,6 +332,8 @@ def main(story_path, stills, vo_dir, out, music=None, sfx_files=None):
         else:
             frame = np.asarray(frame_of(i, tt), dtype=np.float32)
         img = Image.fromarray(np.clip(frame, 0, 255).astype(np.uint8))
+        if i + 1 < n and tt >= sh["end"] - sh["T"]:
+            img = chip(img, sh["tr"], (tt - (sh["end"] - sh["T"])) / sh["T"])
         if not sh["notype"] or (i + 1 < n and tt >= sh["end"] - sh["T"] and not shots[i + 1]["notype"]):
             bt = beats[sh["beat"]]
             ov = type_overlay(bt["phrases"], tt, font, bt["start"] + bt["d"])

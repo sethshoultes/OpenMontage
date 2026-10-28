@@ -82,7 +82,13 @@
    ],
    "shots": [
     {
-     "still": "s03a.png"
+     "still": "s03a.png",
+     "fx": [
+      {
+       "type": "rows",
+       "at": 1.0
+      }
+     ]
     },
     {
      "still": "s03b.png",
@@ -350,6 +356,17 @@
        0.56,
        0.54
       ]
+     ],
+     "fx": [
+      {
+       "type": "draw",
+       "at": 0.8,
+       "dur": 1.4
+      },
+      {
+       "type": "pulse",
+       "at": 2.4
+      }
      ]
     },
     {
