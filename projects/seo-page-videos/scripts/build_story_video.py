@@ -1,13 +1,13 @@
 """Designed motion explainer from a story file: one concept still per narration beat, camera moves, real transitions,
 kinetic type timed to the voice, a ducked music bed (v3 of the page video, sethshoultes.github.io#145).
 
-Usage: build_story_video.py <story.json> <stills-dir> <vo-dir> <out.mp4> [--music bed.mp3] [--bg <dir with flow-sweep.webm, orb-form.webm>] [--sfx a.mp3,b.mp3]
-  story.json   shots[]: id, vo, still, transition, kinetic [[text, anchor word]], cam [[t, zoom, cx, cy]] (see stories/)
+Usage: build_story_video.py <story.json> <stills-dir> <vo-dir> <out.mp4> [--music bed.mp3] [--sfx a.mp3,b.mp3]
+  story.json   beats[]: id, vo, to_next (transition), kinetic [[text, anchor word]], shots[] {still, at (anchor word), cam, notype} (see stories/)
   stills-dir   <id>.png per shot, 16:9, 2k or larger (made on Higgsfield / Nano Banana Pro; see the story's image prompts)
   vo-dir       picked.json + <id>-tN.mp3/.json from gen_vo.py (the takes' character timings drive the type)
 Everything visual is drawn per frame here (crop, transition, type), so edges stay pin-sharp: no upscaler, no blur, no glow.
-The data-flow scene and the orb (recorded from the site's own page by scripts/bg/record_flow_bg.mjs) are screen-blended over
-the transitions as connective tissue, and the orb forms under the last shot. Captions are written as a sidecar .srt, never burned in.
+No overlay of any kind is blended over the art (no haze, no glow): transitions are hard-edged pushes, wipes and circle reveals.
+Captions are written as a sidecar .srt, never burned in.
 """
 import json
 import math
@@ -22,12 +22,12 @@ from PIL import Image, ImageDraw, ImageFont
 HERE = Path(__file__).parent
 CFG = json.load(open(HERE / "config.json"))
 W, H, FPS = 1920, 1080, 30
-T = 0.5                       # transition length (s)
+BEAT_T, INTRA_T = 0.5, 0.3   # transition length between beats, and between the sub-shots of one beat (s)
+INTRA = ["slide-left", "wipe-right", "circle-open", "push-right", "wipe-up"]
 GAP = 0.18                    # breath after each line
 LEAD = 0.35
 TAIL = 3.2
-HOLD_MIN, HOLD_MAX = 1.5, 2.0 # a kinetic title stays 1.5 to 2 s unless the next one arrives first
-BG = (11, 13, 16)
+HOLD_MIN = 1.5                # a kinetic title stays at least 1.5 s
 ART_W, ART_H = 1680, 950      # the still is shown in the top 950 px; the bottom 130 px is the type band, so type never covers art
 ART_X = (W - ART_W) // 2
 ORANGE = (255, 107, 44)
@@ -62,12 +62,18 @@ def camera(shot, u, n):
     pts = shot.get("cam")
     if not pts:
         side = (-1) ** n
-        pts = [[0, 1.0, 0.5 - 0.03 * side, 0.5], [1, 1.12, 0.5 + 0.03 * side, 0.49]]
+        pts = [[0, 1.0, 0.5 - 0.02 * side, 0.5], [1, 1.07, 0.5 + 0.02 * side, 0.495]]
     for a, b in zip(pts, pts[1:]):
         if u <= b[0]:
             k = ease((u - a[0]) / max(1e-6, b[0] - a[0]))
             return tuple(a[i] + (b[i] - a[i]) * k for i in (1, 2, 3))
     return tuple(pts[-1][1:])
+
+
+def ground_of(img):
+    """The still's own ground colour (its border), so the frame around the art has no visible edge."""
+    px = [img.getpixel((x, y)) for x in (3, 40, 80) for y in (3, 40, 80, img.size[1] - 4)]
+    return tuple(int(sum(c[i] for c in px) / len(px)) for i in range(3))
 
 
 def view(img, z, cx, cy):
@@ -76,7 +82,7 @@ def view(img, z, cx, cy):
     x0 = min(max(cx * w - cw / 2, 0), w - cw)
     y0 = min(max(cy * h - ch / 2, 0), h - ch)
     art = img.transform((ART_W, ART_H), Image.EXTENT, (x0, y0, x0 + cw, y0 + ch), Image.BICUBIC)
-    canvas = Image.new("RGB", (W, H), BG)
+    canvas = Image.new("RGB", (W, H), ground_of(img))
     canvas.paste(art, (ART_X, 0))
     return canvas
 
@@ -121,13 +127,14 @@ def blend(a, b, kind, k):
     return a * (1 - k) + b * k
 
 
-def type_overlay(phrases, t, font):
-    """RGBA kinetic title for time t: the active phrase pops in word by word, holds, then rises and fades."""
+def type_overlay(phrases, t, font, beat_end):
+    """RGBA kinetic title for time t. Each phrase pops in word by word and holds until the next phrase arrives (the band is never
+    empty while he is speaking); the last one holds to the end of the line. A title is on screen at least HOLD_MIN seconds."""
     act = None
     for i, (text, t0) in enumerate(phrases):
-        t1 = phrases[i + 1][1] if i + 1 < len(phrases) else 1e9
-        end = min(t1, t0 + HOLD_MAX) if t1 - t0 >= HOLD_MIN else t1
-        if t0 <= t < end + 0.25:
+        end = phrases[i + 1][1] if i + 1 < len(phrases) else beat_end + 0.3
+        end = max(end, t0 + HOLD_MIN) if i + 1 == len(phrases) else end
+        if t0 <= t < end + 0.12:
             act = (text, t0, end)
     if not act:
         return None
@@ -137,167 +144,172 @@ def type_overlay(phrases, t, font):
     d = ImageDraw.Draw(layer)
     widths = [d.textlength(w + " ", font=font) for w in words]
     x0, y0 = ART_X + 28, ART_H + 12
-    fade = 1.0 if t < end else max(0, 1 - (t - end) / 0.25)
-    rise = 0 if t < end else int(24 * (t - end) / 0.25)
+    fade = 1.0 if t < end else max(0, 1 - (t - end) / 0.12)
+    rise = 0 if t < end else int(24 * (t - end) / 0.12)
     d.rectangle((ART_X - 6, y0 + 10, ART_X + 4, y0 + 96), fill=ORANGE + (int(255 * fade),))
     x = x0
     for idx, (w, wd) in enumerate(zip(words, widths)):
-        k = ease((t - t0 - 0.07 * idx) / 0.16)
+        k = ease((t - t0 - 0.05 * idx) / 0.10)
         if k > 0:
             yoff = int((1 - k) * 30) - rise
-            d.text((x, y0 + yoff), w, font=font, fill=(255, 255, 255, int(255 * k * fade)))
+            d.text((x, y0 + yoff), w, font=font, fill=(255, 255, 255, int(255 * fade)))
         x += wd
     return layer
 
 
-def stream(path, ss, loop=True):
-    """Generator of 1920x1080 RGB frames at 30 fps from a recording; loops when it ends."""
-    while True:
-        p = subprocess.Popen(["ffmpeg", "-v", "error", "-ss", str(ss), "-i", str(path), "-vf", f"fps={FPS},scale={W}:{H}", "-f", "rawvideo",
-                              "-pix_fmt", "rgb24", "-"], stdout=subprocess.PIPE)
-        while True:
-            raw = p.stdout.read(W * H * 3)
-            if len(raw) < W * H * 3:
-                break
-            yield np.frombuffer(raw, dtype=np.uint8).reshape(H, W, 3)
-        p.wait()
-        if not loop:
-            return
+def endcard(t, site, label):
+    """The closing card, animated: a rule draws, the address slides up, the button pops with a little overshoot and presses."""
+    ground = (23, 17, 12)
+    im = Image.new("RGB", (W, H), ground)
+    d = ImageDraw.Draw(im)
+    cream = (241, 230, 214)
+    back = lambda x: 1 + 2.70158 * (x - 1) ** 3 + 1.70158 * (x - 1) ** 2   # ease-out-back
+    rw = int(150 * ease(t / 0.4))
+    d.rectangle((W / 2 - rw, 372, W / 2 + rw, 380), fill=ORANGE)
+    k = ease((t - 0.15) / 0.45)
+    if k > 0:
+        d.text((W / 2, 480 + int((1 - k) * 46)), site, font=ImageFont.truetype(FONT, 168, index=1), fill=cream, anchor="mm")
+    kb = min(1.0, max(0.0, (t - 0.9) / 0.35))
+    if kb > 0:
+        sc = back(kb) * (0.94 if 2.3 < t < 2.45 else 1.0)
+        bw, bh = int(700 * sc), int(170 * sc)
+        cx, cy = W / 2, 690
+        d.rounded_rectangle((cx - bw / 2 + 12, cy - bh / 2 + 12, cx + bw / 2 + 12, cy + bh / 2 + 12), bh // 2, fill=(70, 38, 20))
+        d.rounded_rectangle((cx - bw / 2, cy - bh / 2, cx + bw / 2, cy + bh / 2), bh // 2, fill=ORANGE)
+        d.text((cx, cy), label, font=ImageFont.truetype(FONT, int(84 * sc), index=1), fill=ground, anchor="mm")
+    return im
 
 
-def screen(a, b, w):
-    """Screen-blend b over a at weight w: only brightens, so the dark recording leaves the art untouched."""
-    return 255 - (255 - a) * (255 - b * w) / 255
-
-
-def main(story_path, stills, vo_dir, out, music=None, bg_dir=None, sfx_files=None):
+def main(story_path, stills, vo_dir, out, music=None, sfx_files=None):
     story = json.load(open(story_path))
     picked = json.load(open(Path(vo_dir) / "picked.json"))
-    shots = story["shots"]
-    font = ImageFont.truetype(FONT, 84, index=1)
-    # timeline: each line starts after the last one plus a breath; a shot lasts its line
-    starts, t = [], LEAD
-    info = []
-    for s in shots:
-        pk = picked[s["id"]]
+    beats = story["beats"]
+    font = ImageFont.truetype(FONT, 96, index=1)
+    # beat timeline: each line starts after the last one plus a breath
+    t = LEAD
+    for bt in beats:
+        pk = picked["s" + bt["id"][1:]]
         mp3 = Path(vo_dir) / pk["file"]
-        d = dur(mp3)
         al = json.load(open(str(mp3)[:-4] + ".json"))
-        wt = word_times(al)
-        starts.append(t)
-        info.append({"mp3": mp3, "d": d, "words": wt, "start": t})
-        t += d + GAP
+        bt["mp3"], bt["d"], bt["words"], bt["start"] = mp3, dur(mp3), word_times(al), t
+        t += bt["d"] + GAP
     total = round(t + TAIL, 2)
-    starts_v = [0.0] + [info[i]["start"] - 0.0 for i in range(1, len(shots))]
-    # kinetic phrases in absolute time, anchored on the spoken word
-    for s, inf in zip(shots, info):
+    # flat shot list; a sub-shot starts at its anchor word (a hair early, so the picture leads the voice)
+    shots, bi = [], 0
+    for bn, bt in enumerate(beats):
+        j = 0
+        for k, sh in enumerate(bt["shots"]):
+            at = bt["start"]
+            if sh.get("at"):
+                m = next((i for i in range(j, len(bt["words"])) if bt["words"][i][0].startswith(sh["at"].lower())), None)
+                if m is None:
+                    sys.exit(f"{bt['id']}: anchor {sh['at']!r} not found in {[w for w, _ in bt['words']]}")
+                at = bt["start"] + bt["words"][m][1] - 0.12
+                j = m + 1
+            shots.append({"beat": bn, "still": sh["still"], "at": at, "cam": sh.get("cam"), "notype": sh.get("notype", False),
+                          "tr": bt["to_next"] if k == len(bt["shots"]) - 1 else sh.get("tr", INTRA[(len(shots)) % len(INTRA)])})
+        # kinetic phrases for the beat, absolute time, anchored on the spoken word (searched in order)
         ph, j = [], 0
-        for text, anchor in s["kinetic"]:
-            k = next((i for i in range(j, len(inf["words"])) if inf["words"][i][0].startswith(anchor.lower())), None)
-            ph.append((text, inf["start"] + (inf["words"][k][1] if k is not None else 0.0)))
-            j = (k or j) + 1
-        inf["phrases"] = ph
-    imgs = [Image.open(Path(stills) / s["still"]).convert("RGB") for s in shots]
+        for text, anchor in bt["kinetic"]:
+            m = next((i for i in range(j, len(bt["words"])) if bt["words"][i][0].startswith(anchor.lower())), None)
+            if m is None:
+                sys.exit(f"{bt['id']}: kinetic anchor {anchor!r} not found")
+            ph.append((text, bt["start"] if not ph else bt["start"] + bt["words"][m][1]))
+            j = m + 1
+        bt["phrases"] = ph
     n = len(shots)
-    # shot i is on screen [bound[i], bound[i+1]); a transition of T seconds ends at bound[i+1] and begins T earlier
-    bound = [0.0] + [info[i]["start"] for i in range(1, n)] + [total]
+    for i, sh in enumerate(shots):
+        sh["end"] = shots[i + 1]["at"] if i + 1 < n else total
+        sh["T"] = BEAT_T if i + 1 < n and shots[i + 1]["beat"] != sh["beat"] else INTRA_T
+    shots[0]["at"] = 0.0
+    imgs = [None if sh["still"].startswith("proc:") else Image.open(Path(stills) / sh["still"]).convert("RGB") for sh in shots]
     nframes = int(total * FPS)
-    flow = stream(Path(bg_dir) / "flow-sweep.webm", 1.5) if bg_dir else None
-    orb = stream(Path(bg_dir) / "orb-form.webm", 5.5, loop=False) if bg_dir else None
-    orb_t0 = bound[n - 1] + 0.2
-    trans_windows = [(bound[k + 1] - T - 0.15, bound[k + 1] + 0.25) for k in range(n - 1)]
     tmp = Path(out).with_suffix(".silent.mp4")
     ff = subprocess.Popen(["ffmpeg", "-v", "error", "-y", "-f", "rawvideo", "-pix_fmt", "rgb24", "-s", f"{W}x{H}", "-r", str(FPS), "-i", "-",
                            "-c:v", "libx264", "-crf", "14", "-preset", "medium", "-pix_fmt", "yuv420p", str(tmp)], stdin=subprocess.PIPE)
 
     def frame_of(i, tt):
-        u = (tt - bound[i]) / max(1e-6, bound[i + 1] - bound[i])
-        z, cx, cy = camera(shots[i], min(max(u, 0), 1), i)
+        sh = shots[i]
+        if imgs[i] is None:   # procedural shot: the animated end card
+            return endcard(max(0.0, tt - sh["at"]), CFG["site"], CFG["cta"])
+        u = (tt - sh["at"]) / max(1e-6, sh["end"] - sh["at"])
+        z, cx, cy = camera(sh, min(max(u, 0), 1), i)
         return view(imgs[i], z, cx, cy)
 
     for f in range(nframes):
         tt = f / FPS
-        i = max(k for k in range(n) if bound[k] <= tt + 1e-9)
-        nxt = i + 1 < n and tt >= bound[i + 1] - T
-        if nxt:
-            a = np.asarray(frame_of(i, min(tt, bound[i + 1] - 1e-3)), dtype=np.float32)
+        i = max(k for k in range(n) if shots[k]["at"] <= tt + 1e-9)
+        sh = shots[i]
+        if i + 1 < n and tt >= sh["end"] - sh["T"]:
+            a = np.asarray(frame_of(i, min(tt, sh["end"] - 1e-3)), dtype=np.float32)
             b = np.asarray(frame_of(i + 1, tt), dtype=np.float32)
-            frame = blend(a, b, shots[i]["transition"], (tt - (bound[i + 1] - T)) / T)
+            frame = blend(a, b, sh["tr"], (tt - (sh["end"] - sh["T"])) / sh["T"])
         else:
             frame = np.asarray(frame_of(i, tt), dtype=np.float32)
-        if flow is not None:
-            fl = next(flow)
-            wgt = 0.0
-            for a0, b0 in trans_windows:
-                if a0 <= tt <= b0:  # a soft ramp in and out around each transition
-                    wgt = 0.75 * math.sin(math.pi * (tt - a0) / (b0 - a0)) ** 1.5
-            if wgt > 0.01:
-                frame = screen(frame, fl.astype(np.float32), wgt)
-            if tt >= orb_t0:
-                ob = next(orb, None)
-                if ob is not None:
-                    frame = screen(frame, ob.astype(np.float32), min(1.0, 0.95 * ease((tt - orb_t0) / 0.8)))
         img = Image.fromarray(np.clip(frame, 0, 255).astype(np.uint8))
-        for inf in info:
-            if inf["phrases"] and inf["start"] - 0.1 <= tt <= inf["start"] + inf["d"] + 1.0:
-                ov = type_overlay(inf["phrases"], tt, font)
-                if ov is not None:
-                    img = Image.alpha_composite(img.convert("RGBA"), ov).convert("RGB")
-                break
+        if not sh["notype"] or (i + 1 < n and tt >= sh["end"] - sh["T"] and not shots[i + 1]["notype"]):
+            bt = beats[sh["beat"]]
+            ov = type_overlay(bt["phrases"], tt, font, bt["start"] + bt["d"])
+            if ov is not None:
+                img = Image.alpha_composite(img.convert("RGBA"), ov).convert("RGB")
         ff.stdin.write(img.tobytes())
     ff.stdin.close()
     ff.wait()
-    # audio: the voice at each start, music ducked under it
+    # audio: the voice at each start, the music ducked under it, a whoosh on each beat change
     ins, fl = [], []
-    for k, inf in enumerate(info):
-        ins += ["-i", str(inf["mp3"])]
-        ms = int(inf["start"] * 1000)
-        fl.append(f"[{k}:a]adelay={ms}|{ms},volume=1.0[v{k}]")
-    fl.append("".join(f"[v{k}]" for k in range(n)) + f"amix=inputs={n}:normalize=0,apad=whole_dur={total}[vo]")
+    for k, bt in enumerate(beats):
+        ins += ["-i", str(bt["mp3"])]
+        ms = int(bt["start"] * 1000)
+        fl.append(f"[{k}:a]adelay={ms}|{ms}[v{k}]")
+    nb = len(beats)
+    fl.append("".join(f"[v{k}]" for k in range(nb)) + f"amix=inputs={nb}:normalize=0,apad=whole_dur={total}[vo]")
+    nin = nb
     if music:
         ins += ["-i", str(music)]
-    sfx = [(sfx_files[k % len(sfx_files)], bound[k + 1] - T) for k in range(n - 1)] if sfx_files else []
-    if sfx:
-        for q, (k, tw) in enumerate(sfx):
-            ins += ["-i", str(k)]
+        mi, nin = nin, nin + 1
+    changes = [sh["end"] - sh["T"] for i, sh in enumerate(shots) if i + 1 < n and shots[i + 1]["beat"] != sh["beat"]]
+    if sfx_files:
+        for q, tw in enumerate(changes):
+            ins += ["-i", str(sfx_files[q % len(sfx_files)])]
             ms = int(tw * 1000)
-            fl.append(f"[{n + (1 if music else 0) + q}:a]adelay={ms}|{ms},volume=0.5[x{q}]")
-        fl.append("".join(f"[x{q}]" for q in range(len(sfx))) + f"amix=inputs={len(sfx)}:normalize=0,apad=whole_dur={total}[sfxbus]")
+            fl.append(f"[{nin + q}:a]adelay={ms}|{ms},volume=0.5[x{q}]")
+        fl.append("".join(f"[x{q}]" for q in range(len(changes))) + f"amix=inputs={len(changes)}:normalize=0,apad=whole_dur={total}[sfxbus]")
         fl.append("[vo][sfxbus]amix=inputs=2:normalize=0[vo]")
     if music:
-        fl.append(f"[{n}:a]atrim=0:{total},volume=0.55,afade=t=out:st={total - 2.5}:d=2.5[m];[vo]asplit[vo1][vo2];"
+        fl.append(f"[{mi}:a]atrim=0:{total},volume=0.55,afade=t=out:st={total - 2.5}:d=2.5[m];[vo]asplit[vo1][vo2];"
                   f"[m][vo1]sidechaincompress=threshold=0.02:ratio=9:attack=15:release=350[md];[vo2][md]amix=inputs=2:normalize=0[mix]")
         last = "mix"
     else:
         last = "vo"
     fl.append(f"[{last}]loudnorm=I=-16:TP=-1.5:LRA=9[aout]")
-    subprocess.run(["ffmpeg", "-v", "error", "-y", *ins, "-filter_complex", ";".join(fl), "-map", "[aout]", "-c:a", "aac", "-b:a", "192k",
-                    str(Path(out).with_suffix(".audio.m4a"))], check=True)
-    subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", str(tmp), "-i", str(Path(out).with_suffix(".audio.m4a")), "-c:v", "copy", "-c:a", "copy",
-                    "-shortest", "-movflags", "+faststart", str(out)], check=True)
+    aud = Path(out).with_suffix(".audio.m4a")
+    subprocess.run(["ffmpeg", "-v", "error", "-y", *ins, "-filter_complex", ";".join(fl), "-map", "[aout]", "-c:a", "aac", "-b:a", "192k", str(aud)], check=True)
+    subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", str(tmp), "-i", str(aud), "-c:v", "copy", "-c:a", "copy", "-shortest",
+                    "-movflags", "+faststart", str(out)], check=True)
     # sidecar captions from the script text on the spoken timings (never burned in)
     def tc(s):
         ms = int(s * 1000)
         return f"{ms // 3600000:02d}:{ms // 60000 % 60:02d}:{ms // 1000 % 60:02d},{ms % 1000:03d}"
     cues = []
-    for s, inf in zip(shots, info):
-        ws = re.sub(r"\s+", " ", re.sub(r"\[[^\]]*\]", "", s["vo"])).strip().split()
+    for bt in beats:
+        ws = re.sub(r"\s+", " ", re.sub(r"\[[^\]]*\]", "", bt["vo"])).strip().split()
         ch = [ws[i:i + 6] for i in range(0, len(ws), 6)]
         for k, c in enumerate(ch):
-            cues.append((inf["start"] + inf["d"] * k / len(ch), inf["start"] + inf["d"] * (k + 1) / len(ch), " ".join(c)))
+            cues.append((bt["start"] + bt["d"] * k / len(ch), bt["start"] + bt["d"] * (k + 1) / len(ch), " ".join(c)))
     Path(out).with_suffix(".srt").write_text("".join(f"{i}\n{tc(a)} --> {tc(b)}\n{x}\n\n" for i, (a, b, x) in enumerate(cues, 1)))
-    json.dump({"total": total, "shots": [{"id": s["id"], "start": round(inf["start"], 2), "dur": round(inf["d"], 2)} for s, inf in zip(shots, info)]},
+    json.dump({"total": total, "shots": [{"still": sh["still"], "at": round(sh["at"], 2), "end": round(sh["end"], 2)} for sh in shots],
+               "beats": [{"id": bt["id"], "start": round(bt["start"], 2), "dur": round(bt["d"], 2)} for bt in beats]},
               open(Path(out).with_suffix(".timeline.json"), "w"), indent=1)
-    print("OK", total, out)
+    print("OK", total, "s,", n, "shots,", out)
 
 
 if __name__ == "__main__":
     argv, opts = sys.argv[1:], {}
-    for key in ("--music", "--bg", "--sfx"):
+    for key in ("--music", "--sfx"):
         if key in argv:
             i = argv.index(key)
             opts[key] = argv[i + 1].split(",") if key == "--sfx" else argv[i + 1]
             del argv[i:i + 2]
     if len(argv) != 4:
         sys.exit(__doc__)
-    main(*argv, music=opts.get("--music"), bg_dir=opts.get("--bg"), sfx_files=opts.get("--sfx"))
+    main(*argv, music=opts.get("--music"), sfx_files=opts.get("--sfx"))

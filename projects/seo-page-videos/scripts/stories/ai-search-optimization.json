@@ -1,17 +1,18 @@
 {
  "page": "https://sethshoultes.com/ai-search-optimization/",
  "title": "AI Search Optimization",
- "arc": "Hook (who do you ask first?) > stakes (assistants quote a few sources) > guide (this is what I do) > demonstration (quoted pages, structured data, plain text) > proof (two sites) > honesty (no guarantees) > invitation (a call). Mood arc: cool dark ground until the guide arrives, then the warm orange takes over.",
- "style": "Dark charcoal ground (#0b0d10), one orange accent (#ff6b2c), crisp editorial 3D UI mock-ups and clean illustration, soft rim light, shallow depth, 16:9. Generic unbranded chat panels and browser windows. No people, no logos, no real company marks, no real text except the short words named in the prompt.",
- "shots": [
+ "arc": "Hook (a giant question, who do you ask first?) > stakes (assistants quote a few sources) > guide (this is my job) > demonstration (quoted pages, structured data, plain text) > proof (two sites) > honesty (no one can promise) > invitation (a call). Colour arc: cool charcoal until 'That's my job', then warm cream-on-brown, and a warm end card.",
+ "style": "Bold flat editorial vector illustration, razor-sharp hard edges, precise geometry, crisp thin outlines, high contrast. Cool beats: charcoal #0b0d10, grey, orange #ff6b2c. Warm beats: ground #17110c, cream #f1e6d6, orange #ff6b2c. No glow, bloom, haze, blur, gradients, soft shadows or depth of field. No people, no logos.",
+ "beats": [
   {
-   "id": "s01",
-   "mood": "dark",
-   "vo": "[curious] Quick question. When you want to know something... who do you ask first?",
-   "image": "A glowing empty search bar on the left and an empty chat input box on the right, a single blinking cursor floating between them, dark void, orange rim light",
-   "motion": "slow push in toward the gap between the two boxes, the cursor blinking",
-   "transition": "push-left",
+   "id": "b01",
+   "vo": "Quick question. When you want to know something... who do you ask first?",
+   "to_next": "push-left",
    "kinetic": [
+    [
+     "QUICK QUESTION.",
+     "quick"
+    ],
     [
      "WHO DO YOU",
      "who"
@@ -21,34 +22,54 @@
      "ask"
     ]
    ],
-   "still": "s01.png"
+   "shots": [
+    {
+     "still": "s01a.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.16,
+       0.56,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "s01b.png",
+     "at": "when"
+    }
+   ]
   },
   {
-   "id": "s02",
-   "mood": "dark",
-   "vo": "[warmly] More and more people ask an AI assistant.",
-   "image": "Three floating unbranded chat windows at different depths, each showing a question bubble and a short answer bubble as abstract grey bars, faint orange glow behind them",
-   "motion": "parallax: the three windows drift at different speeds",
-   "transition": "zoom-through",
+   "id": "b02",
+   "vo": "More and more people ask an AI assistant.",
+   "to_next": "zoom-through",
    "kinetic": [
     [
-     "THEY ASK AN",
-     "ask"
+     "MORE AND MORE",
+     "more"
     ],
     [
-     "AI ASSISTANT",
-     "assistant"
+     "ASK AN AI ASSISTANT",
+     "ask"
     ]
    ],
-   "still": "s02.png"
+   "shots": [
+    {
+     "still": "s02.png"
+    }
+   ]
   },
   {
-   "id": "s03",
-   "mood": "dark",
-   "vo": "And it doesn't hand back ten links. It quotes... [pause] a few sources.",
-   "image": "One large chat answer card; above it a stack of ten faded grey link rows sliding away, and only three rows lit in orange with a small quote-mark glyph, the rest in shadow",
-   "motion": "the grey rows slide out of frame, the three orange rows stay and glow",
-   "transition": "wipe-up",
+   "id": "b03",
+   "vo": "And it doesn't hand back ten links. It quotes... a few sources.",
+   "to_next": "wipe-up",
    "kinetic": [
     [
      "NOT TEN LINKS",
@@ -59,15 +80,20 @@
      "few"
     ]
    ],
-   "still": "s03.png"
+   "shots": [
+    {
+     "still": "s03a.png"
+    },
+    {
+     "still": "s03b.png",
+     "at": "quotes"
+    }
+   ]
   },
   {
-   "id": "s04",
-   "mood": "dark",
-   "vo": "[excited] Just a few! So here's the question. [confident] Are you one of them?",
-   "image": "Three lit orange source cards in a row, and a fourth empty outlined card with a pulsing question mark, a crowd of dim grey cards behind",
-   "motion": "the empty card pulses, slow push in",
-   "transition": "orb-burst",
+   "id": "b04",
+   "vo": "Just a few! So here's the question. Are you one of them?",
+   "to_next": "circle-open",
    "kinetic": [
     [
      "JUST A FEW",
@@ -82,102 +108,111 @@
      "one"
     ]
    ],
-   "cam": [
-    [
-     0,
-     1.0,
-     0.5,
-     0.5
-    ],
-    [
-     0.6,
-     1.0,
-     0.5,
-     0.5
-    ],
-    [
-     1,
-     1.7,
-     0.64,
-     0.5
-    ]
-   ],
-   "still": "s04.png"
+   "shots": [
+    {
+     "still": "s04a.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       0.16,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       0.2,
+       1.3,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.34,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "s04b.png",
+     "at": "so"
+    }
+   ]
   },
   {
-   "id": "s05",
-   "mood": "turn",
+   "id": "b05",
    "vo": "That's my job. It's called AI search optimization. Or GEO, if you like acronyms.",
-   "image": "A magnifying lens made of concentric orange rings floating over a clean web page, the page lit warm behind the lens, particles drifting in from the left",
-   "motion": "the lens rings expand slowly and the page brightens",
-   "transition": "circle-open",
+   "to_next": "push-right",
    "kinetic": [
     [
      "MY JOB",
      "job"
     ],
     [
-     "AI SEARCH",
+     "AI SEARCH OPTIMIZATION",
      "ai"
     ],
     [
-     "OPTIMIZATION",
-     "optimization"
+     "OR GEO",
+     "geo"
     ]
    ],
-   "still": "s05.png"
+   "shots": [
+    {
+     "still": "s05a.png"
+    },
+    {
+     "still": "s05b.png",
+     "at": "or"
+    }
+   ]
   },
   {
-   "id": "s06",
-   "mood": "bright",
+   "id": "b06",
    "vo": "I build pages made to be quoted. Plain answers to what your customers actually ask... in your voice.",
-   "image": "A clean web page mock-up where one question-and-answer block is highlighted in orange with a large quotation-mark glyph lifting off the page toward the viewer",
-   "motion": "the quote glyph lifts and glows, slight camera orbit",
-   "transition": "push-right",
+   "to_next": "slide-left",
    "kinetic": [
     [
-     "MADE TO",
+     "MADE TO BE QUOTED",
      "made"
     ],
     [
-     "BE QUOTED",
-     "quoted"
+     "PLAIN ANSWERS",
+     "plain"
     ],
     [
      "IN YOUR VOICE",
-     "voice"
+     "in"
     ]
    ],
-   "cam": [
-    [
-     0,
-     1.0,
-     0.45,
-     0.5
-    ],
-    [
-     0.45,
-     1.05,
-     0.5,
-     0.5
-    ],
-    [
-     1,
-     1.9,
-     0.8,
-     0.45
-    ]
-   ],
-   "still": "s06.png"
+   "shots": [
+    {
+     "still": "s06a.png"
+    },
+    {
+     "still": "s06b.png",
+     "at": "plain"
+    },
+    {
+     "still": "s06c.png",
+     "at": "in"
+    }
+   ]
   },
   {
-   "id": "s07",
-   "mood": "bright",
+   "id": "b07",
    "vo": "Then structured data, so assistants know who you are, what you offer, and where.",
-   "image": "Three labeled data blocks (shown only as the short words WHO, WHAT, WHERE) snapping onto the edge of a web page like puzzle pieces, orange connector lines, warm light",
-   "motion": "the three blocks slide in and click onto the page one after another",
-   "transition": "slide-left",
+   "to_next": "wipe-right",
    "kinetic": [
+    [
+     "STRUCTURED DATA",
+     "structured"
+    ],
     [
      "WHO YOU ARE",
      "who"
@@ -187,110 +222,184 @@
      "what"
     ],
     [
-     "WHERE",
+     "AND WHERE",
      "where"
     ]
    ],
-   "still": "s07.png"
+   "shots": [
+    {
+     "still": "s07b.png"
+    },
+    {
+     "still": "s07a.png",
+     "at": "who"
+    }
+   ]
   },
   {
-   "id": "s08",
-   "mood": "bright",
+   "id": "b08",
    "vo": "Plus plain-text versions, and an llms-dot-txt file. I run it all on my own site.",
-   "image": "A web page on the left and its plain-text twin on the right as simple lines of monospace text, a small file icon labeled llms.txt between them, orange thread connecting all three",
-   "motion": "the orange thread draws across, then the file icon pops",
-   "transition": "wipe-right",
+   "to_next": "zoom-through",
    "kinetic": [
     [
-     "PLAIN TEXT",
+     "PLAIN-TEXT VERSIONS",
      "plain"
     ],
     [
      "LLMS.TXT",
      "llms"
+    ],
+    [
+     "ON MY OWN SITE",
+     "on"
     ]
    ],
-   "still": "s08.png"
+   "shots": [
+    {
+     "still": "s08a.png"
+    },
+    {
+     "still": "s08b.png",
+     "at": "llms"
+    }
+   ]
   },
   {
-   "id": "s09",
-   "mood": "bright",
+   "id": "b09",
    "vo": "It sits on nearly twenty years of SEO. Same foundation. Clearer pages.",
-   "image": "A stack of solid stone blocks forming a foundation, a neat tower of web pages built on top of it, orange light along the seams, warm sunrise glow behind",
-   "motion": "slow rise up the tower",
-   "transition": "zoom-through",
+   "to_next": "push-left",
    "kinetic": [
     [
-     "NEARLY 20 YEARS",
+     "NEARLY 20 YEARS OF SEO",
      "nearly"
     ],
     [
-     "OF SEO",
-     "seo"
+     "SAME FOUNDATION",
+     "same"
+    ],
+    [
+     "CLEARER PAGES",
+     "clearer"
     ]
    ],
-   "still": "s09.png"
+   "shots": [
+    {
+     "still": "s09a.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.8
+      ],
+      [
+       1,
+       1.35,
+       0.5,
+       0.25
+      ]
+     ]
+    },
+    {
+     "still": "s09b.png",
+     "at": "clearer"
+    }
+   ]
   },
   {
-   "id": "s10",
-   "mood": "bright",
+   "id": "b10",
    "vo": "Garage Door Science, a site I built, is gaining ground in search and AI answers. Garage Door Pro Services? Number one within three months.",
-   "image": "Two abstract dashboard cards side by side, each with a rising sparkline with no numbers, the right card carrying a small orange rosette badge, warm light, dark ground",
-   "motion": "the sparklines draw upward, the badge pops in",
-   "transition": "push-left",
+   "to_next": "wipe-up",
    "kinetic": [
     [
      "GAINING GROUND",
      "gaining"
     ],
     [
-     "IN AI ANSWERS",
-     "answers"
+     "IN SEARCH AND AI ANSWERS",
+     "search"
     ],
     [
-     "NO. 1 WITHIN",
+     "NO. 1",
      "number"
     ],
     [
-     "3 MONTHS",
-     "three"
+     "WITHIN 3 MONTHS",
+     "within"
     ]
    ],
-   "cam": [
-    [
-     0,
-     1.4,
-     0.27,
-     0.5
-    ],
-    [
-     0.42,
-     1.4,
-     0.27,
-     0.5
-    ],
-    [
-     0.58,
-     1.4,
-     0.73,
-     0.5
-    ],
-    [
-     1,
-     1.4,
-     0.73,
-     0.5
-    ]
-   ],
-   "still": "s10.png"
+   "shots": [
+    {
+     "still": "s10a.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       0.55,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.1,
+       0.56,
+       0.54
+      ]
+     ]
+    },
+    {
+     "still": "s10b.png",
+     "at": "pro",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       0.43,
+       1.02,
+       0.5,
+       0.5
+      ],
+      [
+       0.47,
+       1.5,
+       0.5,
+       0.62
+      ],
+      [
+       0.72,
+       1.5,
+       0.5,
+       0.62
+      ],
+      [
+       0.76,
+       1.2,
+       0.5,
+       0.6
+      ],
+      [
+       1,
+       1.2,
+       0.5,
+       0.6
+      ]
+     ]
+    }
+   ]
   },
   {
-   "id": "s11",
-   "mood": "bright",
+   "id": "b11",
    "vo": "Can I promise ChatGPT will name you? No. Nobody can.",
-   "image": "A round GUARANTEED-style stamp shown only as an empty circular seal with a bold orange strike-through line across it, dark ground, a hand-drawn feel",
-   "motion": "the strike-through line slashes across the seal",
-   "transition": "wipe-up",
+   "to_next": "circle-open",
    "kinetic": [
     [
      "CAN I PROMISE?",
@@ -301,15 +410,20 @@
      "nobody"
     ]
    ],
-   "still": "s11.png"
+   "shots": [
+    {
+     "still": "s11a.png"
+    },
+    {
+     "still": "s11b.png",
+     "at": "no"
+    }
+   ]
   },
   {
-   "id": "s12",
-   "mood": "bright",
+   "id": "b12",
    "vo": "I can make your pages clear, accurate, and easy to quote. And tell you what I'd change first.",
-   "image": "A clean checklist card with three ticks drawn in orange, the first line highlighted, a pen cursor ready to edit, warm light",
-   "motion": "the three ticks draw on one by one",
-   "transition": "orb-burst",
+   "to_next": "push-right",
    "kinetic": [
     [
      "CLEAR.",
@@ -322,56 +436,69 @@
     [
      "EASY TO QUOTE.",
      "easy"
-    ]
-   ],
-   "cam": [
-    [
-     0,
-     1.0,
-     0.5,
-     0.5
     ],
     [
-     1,
-     1.5,
-     0.4,
-     0.3
+     "WHAT I'D CHANGE FIRST",
+     "change"
     ]
    ],
-   "still": "s12.png"
+   "shots": [
+    {
+     "still": "s12a.png"
+    },
+    {
+     "still": "s12b.png",
+     "at": "tell"
+    }
+   ]
   },
   {
-   "id": "s13",
-   "mood": "bright",
-   "vo": "[warmly] So let's start with a call about your business. [confident] Seth Shoultes dot com.",
-   "image": "A phone standing upright with a calendar slot glowing orange on its screen, a soft orb of particles forming behind it, warm light",
-   "motion": "slow push in as the orb forms behind the phone",
-   "transition": "end",
+   "id": "b13",
+   "vo": "So let's start with a call about your business. Seth Shoultes dot com.",
+   "to_next": "end",
    "kinetic": [
     [
-     "LET'S START",
+     "LET'S START WITH A CALL",
      "start"
-    ],
-    [
-     "WITH A CALL",
-     "call"
     ]
    ],
-   "cam": [
-    [
-     0,
-     1.0,
-     0.5,
-     0.5
-    ],
-    [
-     1,
-     1.35,
-     0.5,
-     0.5
-    ]
-   ],
-   "still": "s13.png"
+   "shots": [
+    {
+     "still": "s13a.png",
+     "tr": "circle-open",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       0.45,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       0.52,
+       1.5,
+       0.52,
+       0.6
+      ],
+      [
+       1,
+       1.5,
+       0.52,
+       0.6
+      ]
+     ]
+    },
+    {
+     "still": "proc:endcard",
+     "at": "about",
+     "notype": true
+    }
+   ]
   }
  ]
 }
