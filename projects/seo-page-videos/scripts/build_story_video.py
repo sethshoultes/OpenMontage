@@ -145,7 +145,7 @@ def type_overlay(phrases, t, font, beat_end):
     layer = Image.new("RGBA", (W, H), (0, 0, 0, 0))
     d = ImageDraw.Draw(layer)
     widths = [d.textlength(w + " ", font=font) for w in words]
-    x0, y0 = ART_X + 28, ART_H + 12
+    x0, y0 = ART_X + 28, ART_H - 33   # the band sits clear of title-safe on a phone or player
     fade = 1.0 if t < end else max(0, 1 - (t - end) / 0.12)
     rise = 0 if t < end else int(24 * (t - end) / 0.12)
     d.rectangle((ART_X - 6, y0 + 10, ART_X + 4, y0 + 96), fill=ORANGE + (int(255 * fade),))
