@@ -1,0 +1,410 @@
+{
+ "page": "https://sethshoultes.com/wordpress-development/",
+ "title": "WordPress Development in Southern Utah",
+ "arc": "Hook (does your site do it all?) > stakes > guide (that's my job, 25+ years) > proof (Event Espresso 2009-2021, 2011 grand prize, senior PM for leading WP tools, meetups 15+ years) > what I build > invitation (a call, what I'd build and leave alone). Cool until 'That's my job', warm after. Claims only from _data/services/wordpress-development.yml.",
+ "style": "Bold flat editorial vector illustration, razor-sharp hard edges, crisp thin outlines, high contrast. Cool: #0b0d10 + grey + orange; warm: #17110c + cream #f1e6d6 + orange #ff6b2c. Flat solid ground, art centered ~60% width, nothing touching an edge; no glow, haze, gradients, soft shadows; no people, no logos.",
+ "beats": [
+  {
+   "id": "b01",
+   "vo": "Quick question. Does your WordPress site do everything you need it to?",
+   "to_next": "push-left",
+   "kinetic": [
+    [
+     "QUICK QUESTION.",
+     "quick"
+    ],
+    [
+     "DOES YOUR SITE DO IT ALL?",
+     "does"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "w01.png",
+     "cam": [
+      [
+       0,
+       1.3,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.5,
+       0.5,
+       0.5
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "b02",
+   "vo": "A feature that won't fit. A plugin that doesn't exist. A site nobody can change.",
+   "to_next": "zoom-through",
+   "kinetic": [
+    [
+     "A FEATURE THAT WON'T FIT",
+     "feature"
+    ],
+    [
+     "A SITE NOBODY CAN CHANGE",
+     "nobody"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "w02.png",
+     "cam": [
+      [
+       0,
+       1.3,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.5,
+       0.5,
+       0.5
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "b03",
+   "vo": "That's my job. I've built WordPress products for over twenty-five years. I can build or improve yours.",
+   "to_next": "wipe-up",
+   "kinetic": [
+    [
+     "THAT'S MY JOB.",
+     "that's"
+    ],
+    [
+     "OVER 25 YEARS",
+     "twenty"
+    ],
+    [
+     "BUILD OR IMPROVE",
+     "improve"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "w03.png",
+     "cam": [
+      [
+       0,
+       1.2,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.4,
+       0.5,
+       0.5
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "b04",
+   "vo": "From 2009 to 2021, I co-founded and built Event Espresso, an event management plugin for WordPress.",
+   "to_next": "push-left",
+   "kinetic": [
+    [
+     "EVENT ESPRESSO",
+     "event"
+    ],
+    [
+     "2009 TO 2021",
+     "2009"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "w04.png",
+     "cam": [
+      [
+       0,
+       1.2,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.4,
+       0.5,
+       0.5
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "b05",
+   "vo": "In 2011, we won the forty thousand dollar grand prize in the Utah Entrepreneur Challenge.",
+   "to_next": "slide-left",
+   "kinetic": [
+    [
+     "THE UTAH ENTREPRENEUR CHALLENGE",
+     "utah"
+    ],
+    [
+     "2011 GRAND PRIZE",
+     "grand"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "w05.png",
+     "cam": [
+      [
+       0,
+       1.2,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.4,
+       0.5,
+       0.5
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "b06",
+   "vo": "Today I'm a Senior Project Manager for leading WordPress tools, including AccessAlly, MemberMouse, Wishlist Member and PrettyLinks.",
+   "to_next": "wipe-right",
+   "kinetic": [
+    [
+     "SENIOR PROJECT MANAGER",
+     "senior"
+    ],
+    [
+     "LEADING WORDPRESS TOOLS",
+     "leading"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "w06.png",
+     "cam": [
+      [
+       0,
+       1.15,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.3,
+       0.5,
+       0.5
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "b07",
+   "vo": "I've organized WordPress meetups for over fifteen years, and I run the monthly AI and WordPress meetup.",
+   "to_next": "push-left",
+   "kinetic": [
+    [
+     "MEETUPS FOR OVER 15 YEARS",
+     "meetups"
+    ],
+    [
+     "THE MONTHLY AI + WORDPRESS MEETUP",
+     "monthly"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "w07.png",
+     "cam": [
+      [
+       0,
+       1.2,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.4,
+       0.5,
+       0.5
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "b08",
+   "vo": "What I build. Plugins and features. WordPress and AI together, tools that write inside the editor in your voice. And sites built to be found.",
+   "to_next": "zoom-through",
+   "kinetic": [
+    [
+     "PLUGINS AND FEATURES",
+     "plugins"
+    ],
+    [
+     "WORDPRESS AND AI",
+     "wordpress"
+    ],
+    [
+     "BUILT TO BE FOUND",
+     "found"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "w08a.png",
+     "cam": [
+      [
+       0,
+       1.2,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.4,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "w08b.png",
+     "at": "wordpress",
+     "cam": [
+      [
+       0,
+       1.2,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.4,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "d17.png",
+     "at": "found",
+     "cam": [
+      [
+       0,
+       1.1,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.3,
+       0.5,
+       0.5
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "b09",
+   "vo": "We start with a call about your site. I'll tell you what I'd build... and what I'd leave alone.",
+   "to_next": "wipe-up",
+   "kinetic": [
+    [
+     "A CALL ABOUT YOUR SITE",
+     "call"
+    ],
+    [
+     "WHAT I'D BUILD",
+     "build"
+    ],
+    [
+     "WHAT I'D LEAVE ALONE",
+     "leave"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "d14.png",
+     "cam": [
+      [
+       0,
+       1.15,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.3,
+       0.5,
+       0.5
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "b10",
+   "vo": "So let's start with that call. Seth Shoultes dot com.",
+   "to_next": "push-left",
+   "kinetic": [
+    [
+     "LET'S START WITH A CALL",
+     "start"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "c05.png",
+     "tr": "circle-open",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       0.45,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       0.52,
+       1.15,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.15,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "proc:endcard",
+     "at": "call",
+     "notype": true
+    }
+   ]
+  }
+ ]
+}

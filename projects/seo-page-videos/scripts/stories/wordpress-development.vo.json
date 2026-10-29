@@ -1,0 +1,54 @@
+{
+ "shots": [
+  {
+   "id": "s01",
+   "vo": "Quick question. Does your WordPress site do everything you need it to?",
+   "pace": 1.0
+  },
+  {
+   "id": "s02",
+   "vo": "A feature that won't fit. A plugin that doesn't exist. A site nobody can change.",
+   "pace": 0.97
+  },
+  {
+   "id": "s03",
+   "vo": "That's my job. I've built WordPress products for over twenty-five years. I can build or improve yours.",
+   "pace": 0.95
+  },
+  {
+   "id": "s04",
+   "vo": "From 2009 to 2021, I co-founded and built Event Espresso, an event management plugin for WordPress.",
+   "pace": 1.0
+  },
+  {
+   "id": "s05",
+   "vo": "In 2011, we won the forty thousand dollar grand prize in the Utah Entrepreneur Challenge.",
+   "pace": 0.95
+  },
+  {
+   "id": "s06",
+   "vo": "Today I'm a Senior Project Manager for leading WordPress tools, including AccessAlly, MemberMouse, Wishlist Member and PrettyLinks.",
+   "pace": 1.02
+  },
+  {
+   "id": "s07",
+   "vo": "I've organized WordPress meetups for over fifteen years, and I run the monthly AI and WordPress meetup.",
+   "pace": 1.0
+  },
+  {
+   "id": "s08",
+   "vo": "What I build. Plugins and features. WordPress and AI together, tools that write inside the editor in your voice. And sites built to be found.",
+   "pace": 1.03
+  },
+  {
+   "id": "s09",
+   "vo": "We start with a call about your site. I'll tell you what I'd build... and what I'd leave alone.",
+   "pace": 0.97
+  },
+  {
+   "id": "s10",
+   "vo": "So let's start with that call. Seth Shoultes dot com.",
+   "pace": 0.95
+  }
+ ]
+}
