@@ -230,6 +230,23 @@ def normalise(text: str) -> list[str]:
     return _numerals(re.sub(r"[^a-z0-9 ]+", " ", text.lower()).split())
 
 
+def spoken_words(word_timestamps: list[dict]) -> str:
+    """What Whisper heard, minus a repetition tail (circuit-city#117).
+
+    At the end of a clip Whisper can repeat the last sentence and stamp every repeated word onto the
+    final instant: Founders s13 came back as 21 extra words between 25.10 s and 25.10 s of a 25.12 s
+    clip, twenty of them zero-length, and a correct take scored 0.847 against 0.90. Nobody speaks twenty
+    words in no time, so a run of zero-length words that reaches the end of the list is not speech and
+    is dropped. A zero-length word anywhere else is kept, and so is a repeat with real timings: that is
+    a take that really says it twice, and it should still score low. Measured over every cached
+    transcript (138), s13 is the only one that has a zero-length word at all.
+    """
+    words = list(word_timestamps)
+    while words and words[-1].get("end", 0) - words[-1].get("start", 0) <= 0:
+        words.pop()
+    return " ".join(w["word"] for w in words)
+
+
 def align(script: str, heard: str) -> float:
     return SequenceMatcher(None, normalise(script), normalise(heard)).ratio()
 
@@ -398,7 +415,7 @@ def main(trailer_id: str) -> int:
                                                  "output_dir": str(art / "transcripts")})
         if not r.success:
             raise RuntimeError(f"transcriber failed on {mp3}: {r.error}")
-        heard[s["id"]] = " ".join(w["word"] for w in r.data["word_timestamps"])
+        heard[s["id"]] = spoken_words(r.data["word_timestamps"])
         scores[s["id"]] = align(s["narration"], heard[s["id"]])
         verdict = "PASS" if scores[s["id"]] >= ALIGN_MIN else "FAIL"
         if verdict == "FAIL":
