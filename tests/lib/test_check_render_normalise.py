@@ -62,3 +62,51 @@ def test_the_alignment_still_rejects_the_wrong_take():
     script = "I fixed televisions in this town for thirty-one years, and this is the shop."
     assert align(script, "I fixed televisions in this town for 31 years, and this is the shop.") == 1.0
     assert align(script, "Breathe in: solder, hot dust, and the cardboard the kits come in.") < 0.6
+
+
+# --- circuit-city#117: Whisper's repetition tail --------------------------------------------------
+# At the end of a clip Whisper can repeat the last sentence, stamping every repeated word onto the final
+# instant: Founders s13 had 21 words between 25.10 s and 25.10 s of a 25.12 s clip, the last 20 of them
+# zero-length. Nobody speaks 20 words in no time, so a trailing run of zero-length words is not speech.
+spoken_words = check_render.spoken_words
+
+
+def _w(word, start, end):
+    return {"word": word, "start": start, "end": end}
+
+
+def test_a_trailing_run_of_zero_length_words_is_not_speech():
+    words = [_w(" a", 0.0, 0.2), _w(" b", 0.2, 0.4), _w(" c", 0.4, 0.6),
+             _w(" c", 0.6, 0.6), _w(" d", 0.6, 0.6), _w(" e", 0.6, 0.6)]
+    assert spoken_words(words).split() == ["a", "b", "c"]
+
+
+def test_a_zero_length_word_inside_the_clip_is_kept():
+    # only a run that reaches the end of the list is dropped: a stray zero-length word mid-clip is real
+    words = [_w(" a", 0.0, 0.2), _w(" b", 0.2, 0.2), _w(" c", 0.2, 0.4), _w(" d", 0.4, 0.6)]
+    assert spoken_words(words).split() == ["a", "b", "c", "d"]
+
+
+def test_nothing_is_dropped_from_a_clip_with_real_timings_to_the_end():
+    words = [_w(" a", 0.0, 0.2), _w(" b", 0.2, 0.4), _w(" c", 0.4, 0.6)]
+    assert spoken_words(words).split() == ["a", "b", "c"]
+    assert spoken_words([]) == ""
+
+
+def test_a_clip_that_is_only_zero_length_words_is_empty_not_an_error():
+    assert spoken_words([_w(" a", 1.0, 1.0), _w(" b", 1.0, 1.0)]) == ""
+
+
+def test_the_tail_no_longer_fails_a_correct_section_and_a_real_repeat_still_does():
+    script = "Thirteen and a half hours is a laboratory result, not something you sell a family. Lewis Latimer patented a way of making filaments."
+    said = [_w(f" {t}", i * 0.3, i * 0.3 + 0.28) for i, t in enumerate(
+        "13 and a half hours is a laboratory result, not something you sell a family. Lewis Latimer patented a way of making filaments.".split())]
+    tail_at = said[-1]["end"]
+    echo = [_w(f" {t}", tail_at, tail_at) for t in
+            "13 and a half hours is a laboratory result, not something you sell a family, not something you sell a family.".split()]
+    with_tail = " ".join(w["word"] for w in said + echo)
+    assert align(script, with_tail) < 0.9                    # the bug: a correct take fails
+    assert align(script, spoken_words(said + echo)) >= 0.99  # the fix
+    # control: the same words spoken twice with real timings are a real repeat and still score low
+    spoken_twice = said + [_w(w["word"], tail_at + k * 0.3, tail_at + k * 0.3 + 0.28) for k, w in enumerate(echo)]
+    assert align(script, spoken_words(spoken_twice)) < 0.9
