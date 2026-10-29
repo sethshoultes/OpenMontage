@@ -180,8 +180,12 @@
      "interactive"
     ],
     [
-     "A QUOTE TOOL, A BOOKING FLOW",
+     "A QUOTE TOOL",
      "quote"
+    ],
+    [
+     "A BOOKING FLOW",
+     "booking"
     ]
    ],
    "shots": [
