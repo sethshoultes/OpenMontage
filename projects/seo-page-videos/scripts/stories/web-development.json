@@ -1,0 +1,438 @@
+{
+ "page": "https://sethshoultes.com/web-development/",
+ "title": "Web Development in Southern Utah",
+ "arc": "Hook (does your site do anything?) > stakes (slow, empty, unfound) > guide (that's my job) > what I build > why trust the build (25+ years, agency, own web businesses, projects) > invitation (a call, what I'd build and leave out). Same cool-to-warm arc: cool until 'That's my job', warm after. Claims only from _data/services/web-development.yml.",
+ "style": "Bold flat editorial vector illustration, razor-sharp hard edges, crisp thin outlines, high contrast. Cool beats: charcoal #0b0d10, grey, orange #ff6b2c. Warm beats: ground #17110c, cream #f1e6d6, orange #ff6b2c. Flat solid ground with a wide empty margin; no glow, bloom, haze, blur, gradients, soft shadows. No people, no logos.",
+ "beats": [
+  {
+   "id": "b01",
+   "vo": "Quick question. Does your website do anything for your customers... or does it just sit there?",
+   "to_next": "push-left",
+   "kinetic": [
+    [
+     "QUICK QUESTION.",
+     "quick"
+    ],
+    [
+     "DOES IT DO ANYTHING?",
+     "does"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "n01.png",
+     "cam": [
+      [
+       0,
+       1.385,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.7,
+       0.5,
+       0.5
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "b02",
+   "vo": "A site that loads slowly, says little, and can't be found... isn't doing its job.",
+   "to_next": "zoom-through",
+   "kinetic": [
+    [
+     "LOADS SLOWLY",
+     "slowly"
+    ],
+    [
+     "CAN'T BE FOUND",
+     "found"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "n02.png",
+     "cam": [
+      [
+       0,
+       1.33,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.6,
+       0.5,
+       0.5
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "b03",
+   "vo": "That's my job. I build websites and web tools that load fast and do something for your customers.",
+   "to_next": "wipe-up",
+   "kinetic": [
+    [
+     "THAT'S MY JOB.",
+     "that's"
+    ],
+    [
+     "LOAD FAST",
+     "fast"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "n03.png",
+     "cam": [
+      [
+       0,
+       1.33,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.6,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "n04.png",
+     "at": "websites",
+     "cam": [
+      [
+       0,
+       1.275,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.5,
+       0.5,
+       0.5
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "b04",
+   "vo": "I build three things. Websites. Interactive tools, like a quote tool or a booking flow. And the content to fill them, so the site isn't an empty shell.",
+   "to_next": "push-left",
+   "kinetic": [
+    [
+     "WEBSITES",
+     "websites"
+    ],
+    [
+     "INTERACTIVE TOOLS",
+     "interactive"
+    ],
+    [
+     "CONTENT TO FILL THEM",
+     "content"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "n04.png",
+     "cam": [
+      [
+       0,
+       1.275,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.5,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "n05.png",
+     "at": "interactive",
+     "cam": [
+      [
+       0,
+       1.165,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.3,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "n06.png",
+     "at": "content",
+     "cam": [
+      [
+       0,
+       1.1375,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.25,
+       0.5,
+       0.5
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "b05",
+   "vo": "A page that answers the questions your customers keep asking.",
+   "to_next": "slide-left",
+   "kinetic": [
+    [
+     "ANSWERS THE QUESTIONS",
+     "answers"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "n07.png",
+     "cam": [
+      [
+       0,
+       1.275,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.5,
+       0.5,
+       0.5
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "b06",
+   "vo": "Why trust the build? I've been building websites for over twenty-five years.",
+   "to_next": "wipe-right",
+   "kinetic": [
+    [
+     "WHY TRUST THE BUILD?",
+     "why"
+    ],
+    [
+     "OVER 25 YEARS",
+     "over"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "n08.png",
+     "cam": [
+      [
+       0,
+       1.066,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.12,
+       0.5,
+       0.5
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "b07",
+   "vo": "I owned a website development agency. And I've run web businesses of my own.",
+   "to_next": "push-left",
+   "kinetic": [
+    [
+     "A WEB AGENCY",
+     "owned"
+    ],
+    [
+     "MY OWN WEB BUSINESSES",
+     "web"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "d15.png",
+     "cam": [
+      [
+       0,
+       1.1375,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.25,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "n10.png",
+     "at": "web",
+     "cam": [
+      [
+       0,
+       1.3025,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.55,
+       0.5,
+       0.5
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "b08",
+   "vo": "I also build for fun, and for work. You can see what I've made on my projects page.",
+   "to_next": "zoom-through",
+   "kinetic": [
+    [
+     "FOR FUN. FOR WORK.",
+     "fun"
+    ],
+    [
+     "MY PROJECTS PAGE",
+     "projects"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "n11.png",
+     "cam": [
+      [
+       0,
+       1.2475,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.45,
+       0.5,
+       0.5
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "b09",
+   "vo": "We start with a call about what you need the site to do. I'll tell you what I'd build... and what I'd leave out.",
+   "to_next": "wipe-up",
+   "kinetic": [
+    [
+     "A CALL FIRST",
+     "call"
+    ],
+    [
+     "WHAT I'D BUILD",
+     "build"
+    ],
+    [
+     "WHAT I'D LEAVE OUT",
+     "leave"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "n13.png",
+     "cam": [
+      [
+       0,
+       1.22,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.4,
+       0.5,
+       0.5
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "b10",
+   "vo": "So let's start with that call. Seth Shoultes dot com.",
+   "to_next": "push-left",
+   "kinetic": [
+    [
+     "LET'S START WITH A CALL",
+     "start"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "c05.png",
+     "tr": "circle-open",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       0.45,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       0.52,
+       1.15,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.15,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "proc:endcard",
+     "at": "call",
+     "notype": true
+    }
+   ]
+  }
+ ]
+}

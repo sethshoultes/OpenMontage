@@ -1,0 +1,54 @@
+{
+ "shots": [
+  {
+   "id": "s01",
+   "vo": "Quick question. Does your website do anything for your customers... or does it just sit there?",
+   "pace": 1.0
+  },
+  {
+   "id": "s02",
+   "vo": "A site that loads slowly, says little, and can't be found... isn't doing its job.",
+   "pace": 0.97
+  },
+  {
+   "id": "s03",
+   "vo": "That's my job. I build websites and web tools that load fast and do something for your customers.",
+   "pace": 0.95
+  },
+  {
+   "id": "s04",
+   "vo": "I build three things. Websites. Interactive tools, like a quote tool or a booking flow. And the content to fill them, so the site isn't an empty shell.",
+   "pace": 1.03
+  },
+  {
+   "id": "s05",
+   "vo": "A page that answers the questions your customers keep asking.",
+   "pace": 1.0
+  },
+  {
+   "id": "s06",
+   "vo": "Why trust the build? I've been building websites for over twenty-five years.",
+   "pace": 0.95
+  },
+  {
+   "id": "s07",
+   "vo": "I owned a website development agency. And I've run web businesses of my own.",
+   "pace": 1.0
+  },
+  {
+   "id": "s08",
+   "vo": "I also build for fun, and for work. You can see what I've made on my projects page.",
+   "pace": 1.0
+  },
+  {
+   "id": "s09",
+   "vo": "We start with a call about what you need the site to do. I'll tell you what I'd build... and what I'd leave out.",
+   "pace": 0.97
+  },
+  {
+   "id": "s10",
+   "vo": "So let's start with that call. Seth Shoultes dot com.",
+   "pace": 0.95
+  }
+ ]
+}
