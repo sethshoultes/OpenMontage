@@ -242,8 +242,12 @@
    "to_next": "wipe-right",
    "kinetic": [
     [
-     "I STILL BUILD THINGS THAT MOVE",
+     "I STILL BUILD",
      "still"
+    ],
+    [
+     "THINGS THAT MOVE",
+     "things"
     ]
    ],
    "shots": [
