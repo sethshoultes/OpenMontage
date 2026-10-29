@@ -87,7 +87,7 @@ def scene_dots():
     assert gy + rows * pitch <= 1180
     head = block(f"AI agents built {SITES} sites without WordPress.", 62, 215, lead=1.15)
     big = block("80%", 150, 1190, fill=ACCENT)
-    cap = block("chose how to build without asking who would edit it.", 58, 1355, lead=1.15)
+    cap = block("chose how to build without asking who would edit it.", 58, 1350, lead=1.3)
     n_on = round(SITES * SHARE)
 
     def draw(frame, t, dur):
@@ -110,14 +110,15 @@ def scene_dots():
 
 
 def build(out):
-    q1 = block("ONE QUESTION FIRST", 52, 520, fill=MUTED)
+    q1 = block("ONE QUESTION FIRST", 56, 520, fill=TEXT)
     q2 = block("Who will edit this site once it's live?", 118, 640, lead=1.12)
-    s1 = scene_text([(0.3, q1), (0.9, q2)], 5.0)
+    s1 = scene_text([(0.3, q1), (0.9, q2)], 6.0)
 
-    quote = block("“If easy self-service updates are your priority, I'd favor WordPress for this bakery site.”", 74, 330, lead=1.2)
-    who = block("An AI agent, asked afterwards", 52, 940, fill=MUTED, bold=False)
-    knew = block("They knew. The question never came up.", 70, 1130, fill=ACCENT, lead=1.18)
-    s3 = scene_text([(0.3, quote), (2.6, who), (4.6, knew)], 8.0)
+    asked = block("Asked afterwards, 54% named owners editing without code as the case for WordPress.", 56, 250, lead=1.2)
+    quote = block("“If easy self-service updates are your priority, I'd favor WordPress for this bakery site.”", 72, 590, lead=1.2)
+    who = block("An AI agent, asked afterwards", 54, 1010, fill=TEXT, bold=False)
+    knew = block("They knew. The question never came up.", 70, 1170, fill=ACCENT, lead=1.18)
+    s3 = scene_text([(0.3, asked), (2.6, quote), (5.0, who), (6.2, knew)], 10.0)
 
     h4 = block("WordPress fits when…", 92, 260)
     fit = ["You or your team edit it, with no code", "Several people publish", "You run a membership or sell courses", "A site exists that nobody can change"]
@@ -141,11 +142,10 @@ def build(out):
     b = block("If it's you, WordPress fits.", 78, 1000, fill=ACCENT)
     s6 = scene_text([(0.3, a), (2.0, b)], 5.5)
 
-    c1 = block("The question and every number come from WordPress Agent Benchmarks, started by Andy Peatling.", 56, 560, lead=1.2)
-    c2 = block("wpab.view.fast/choose/recommendations", 46, 1010, fill=MUTED, bold=False)
-    s7 = scene_text([(0.3, c1), (1.2, c2)], 4.0)
+    c1 = block("The question and every number come from WordPress Agent Benchmarks, an open source project started by Andy Peatling.", 58, 560, lead=1.2)
+    s7 = scene_text([(0.3, c1)], 4.0)
 
-    scenes = [(s1, 5.0), (scene_dots(), 9.0), (s3, 8.0), (s4, 9.0), (s5, 7.0), (s6, 5.5), (s7, 4.0)]
+    scenes = [(s1, 6.0), (scene_dots(), 9.0), (s3, 10.0), (s4, 9.0), (s5, 7.0), (s6, 5.5), (s7, 4.0)]
     ff = subprocess.Popen(["nice", "ffmpeg", "-v", "error", "-y", "-f", "rawvideo", "-pix_fmt", "rgb24", "-s", f"{W}x{H}", "-r", str(FPS), "-i", "-",
                            "-c:v", "libx264", "-crf", "16", "-preset", "medium", "-pix_fmt", "yuv420p", "-movflags", "+faststart", str(out)],
                           stdin=subprocess.PIPE)
