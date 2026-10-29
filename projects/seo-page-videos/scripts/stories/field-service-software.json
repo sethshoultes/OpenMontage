@@ -1,0 +1,446 @@
+{
+ "page": "https://sethshoultes.com/field-service-software/",
+ "title": "ServiceTitan and Housecall Pro Expert for Home Service Businesses",
+ "arc": "Hook (is your software working?) > guide (that's my job) > the software I know (ServiceTitan, Housecall Pro, Superpro) > the web side (neighborhood pages, rank reports, staff apps, knowledge base) > where it comes from (owned and sold a garage door company; 25+ years) > anywhere > invitation (a call). Cool until 'That's my job', warm after. Claims only from _data/services/field-service-software.yml. Third-party names appear in voice and captions only; no logos and not the page's Superpro badge photo.",
+ "style": "Flat editorial vector, hard edges, flat solid ground, art centered ~70% width, nothing touching an edge; no glow, haze, gradients, soft shadows; no people, no logos.",
+ "beats": [
+  {
+   "id": "b01",
+   "vo": "Quick question. Is the software your home service company runs on... actually working for you?",
+   "to_next": "push-left",
+   "kinetic": [
+    [
+     "QUICK QUESTION.",
+     "quick"
+    ],
+    [
+     "IS YOUR SOFTWARE WORKING?",
+     "software"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "f01.png",
+     "cam": [
+      [
+       0,
+       1.05,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.15,
+       0.5,
+       0.5
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "b02",
+   "vo": "Your company runs on it. The question is how much you get out of it.",
+   "to_next": "zoom-through",
+   "kinetic": [
+    [
+     "YOUR COMPANY RUNS ON IT",
+     "runs"
+    ],
+    [
+     "HOW MUCH DO YOU GET?",
+     "much"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "f02.png",
+     "cam": [
+      [
+       0,
+       1.05,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.15,
+       0.5,
+       0.5
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "b03",
+   "vo": "That's my job. I help home service businesses get more out of the software they run on.",
+   "to_next": "wipe-up",
+   "kinetic": [
+    [
+     "THAT'S MY JOB.",
+     "that's"
+    ],
+    [
+     "GET MORE OUT OF IT",
+     "more"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "f03.png",
+     "cam": [
+      [
+       0,
+       1.05,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.15,
+       0.5,
+       0.5
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "b04",
+   "vo": "ServiceTitan. I'm an expert with it. Housecall Pro. I'm an expert with that too.",
+   "to_next": "push-left",
+   "kinetic": [
+    [
+     "SERVICETITAN",
+     "servicetitan"
+    ],
+    [
+     "HOUSECALL PRO",
+     "housecall"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "f04a.png",
+     "cam": [
+      [
+       0,
+       1.05,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.15,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "f04b.png",
+     "at": "housecall",
+     "cam": [
+      [
+       0,
+       1.05,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.15,
+       0.5,
+       0.5
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "b05",
+   "vo": "And I hold Housecall Pro Superpro status. It's awarded every month to home service companies committed to a dependable, transparent customer experience.",
+   "to_next": "slide-left",
+   "kinetic": [
+    [
+     "SUPERPRO STATUS",
+     "superpro"
+    ],
+    [
+     "AWARDED EVERY MONTH",
+     "every"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "f05.png",
+     "cam": [
+      [
+       0,
+       1.05,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.15,
+       0.5,
+       0.5
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "b06",
+   "vo": "I know the web side of a service company too. Neighborhood pages. Rank reports. Staff apps, and a company knowledge base. Built for a garage door company over three years.",
+   "to_next": "wipe-right",
+   "kinetic": [
+    [
+     "NEIGHBORHOOD PAGES",
+     "neighborhood"
+    ],
+    [
+     "RANK REPORTS",
+     "rank"
+    ],
+    [
+     "STAFF APPS",
+     "staff"
+    ],
+    [
+     "A KNOWLEDGE BASE",
+     "knowledge"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "f06a.png",
+     "cam": [
+      [
+       0,
+       1.05,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.15,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "f06b.png",
+     "at": "staff",
+     "cam": [
+      [
+       0,
+       1.05,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.15,
+       0.5,
+       0.5
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "b07",
+   "vo": "I owned a garage door company for a time, grew its search traffic and online presence, and then sold it.",
+   "to_next": "push-left",
+   "kinetic": [
+    [
+     "I OWNED A COMPANY",
+     "owned"
+    ],
+    [
+     "GREW ITS SEARCH TRAFFIC",
+     "grew"
+    ],
+    [
+     "THEN SOLD IT",
+     "sold"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "c12.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "g09.png",
+     "at": "grew",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.1,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "c12.png",
+     "at": "sold",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "b08",
+   "vo": "And I've built on the web for over twenty-five years.",
+   "to_next": "zoom-through",
+   "kinetic": [
+    [
+     "OVER 25 YEARS",
+     "twenty"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "n08b.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.1,
+       0.5,
+       0.5
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "b09",
+   "vo": "Southern Utah is home, and I work with home service businesses anywhere.",
+   "to_next": "wipe-up",
+   "kinetic": [
+    [
+     "SOUTHERN UTAH IS HOME",
+     "utah"
+    ],
+    [
+     "ANYWHERE",
+     "anywhere"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "g11.png",
+     "cam": [
+      [
+       0,
+       1.05,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.15,
+       0.5,
+       0.5
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "b10",
+   "vo": "We start with a call about your business and the software you run it on. I'll tell you what I see, and what I'd do first. Seth Shoultes dot com.",
+   "to_next": "push-left",
+   "kinetic": [
+    [
+     "A CALL ABOUT YOUR BUSINESS",
+     "call"
+    ],
+    [
+     "WHAT I'D DO FIRST",
+     "first"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "c05.png",
+     "tr": "circle-open",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       0.45,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       0.52,
+       1.12,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.12,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "proc:endcard",
+     "at": "seth",
+     "notype": true
+    }
+   ]
+  }
+ ]
+}

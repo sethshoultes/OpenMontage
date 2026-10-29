@@ -1,0 +1,54 @@
+{
+ "shots": [
+  {
+   "id": "s01",
+   "vo": "Quick question. Is the software your home service company runs on... actually working for you?",
+   "pace": 1.0
+  },
+  {
+   "id": "s02",
+   "vo": "Your company runs on it. The question is how much you get out of it.",
+   "pace": 0.97
+  },
+  {
+   "id": "s03",
+   "vo": "That's my job. I help home service businesses get more out of the software they run on.",
+   "pace": 0.95
+  },
+  {
+   "id": "s04",
+   "vo": "ServiceTitan. I'm an expert with it. Housecall Pro. I'm an expert with that too.",
+   "pace": 0.97
+  },
+  {
+   "id": "s05",
+   "vo": "And I hold Housecall Pro Superpro status. It's awarded every month to home service companies committed to a dependable, transparent customer experience.",
+   "pace": 1.02
+  },
+  {
+   "id": "s06",
+   "vo": "I know the web side of a service company too. Neighborhood pages. Rank reports. Staff apps, and a company knowledge base. Built for a garage door company over three years.",
+   "pace": 1.03
+  },
+  {
+   "id": "s07",
+   "vo": "I owned a garage door company for a time, grew its search traffic and online presence, and then sold it.",
+   "pace": 1.0
+  },
+  {
+   "id": "s08",
+   "vo": "And I've built on the web for over twenty-five years.",
+   "pace": 1.0
+  },
+  {
+   "id": "s09",
+   "vo": "Southern Utah is home, and I work with home service businesses anywhere.",
+   "pace": 1.0
+  },
+  {
+   "id": "s10",
+   "vo": "We start with a call about your business and the software you run it on. I'll tell you what I see, and what I'd do first. Seth Shoultes dot com.",
+   "pace": 0.96
+  }
+ ]
+}
