@@ -1,0 +1,59 @@
+{
+ "shots": [
+  {
+   "id": "s01",
+   "vo": "Quick question. Where could AI save you hours... and win you customers?",
+   "pace": 1.0
+  },
+  {
+   "id": "s02",
+   "vo": "And no, you don't need a technical team.",
+   "pace": 0.97
+  },
+  {
+   "id": "s03",
+   "vo": "That's my job. I offer AI services with SEO built in, so what I build for you is made to be found.",
+   "pace": 0.95
+  },
+  {
+   "id": "s04",
+   "vo": "Content generation. Pages, posts and answers, written in your voice, about your town and your customers.",
+   "pace": 1.0
+  },
+  {
+   "id": "s05",
+   "vo": "Media production. Images and video for your site, made so they load fast and say what you do.",
+   "pace": 1.0
+  },
+  {
+   "id": "s06",
+   "vo": "And interactive websites. A quote tool, a booking flow, a page that answers your customers' questions.",
+   "pace": 1.0
+  },
+  {
+   "id": "s07",
+   "vo": "Every month, I work alongside you to find where AI saves you hours. Then I build it, and keep it running.",
+   "pace": 1.0
+  },
+  {
+   "id": "s08",
+   "vo": "Start with advice. Have me lead the work with you. Or have my team of AI agents do the building.",
+   "pace": 1.0
+  },
+  {
+   "id": "s09",
+   "vo": "I run that team on my own sites first, so I've already hit the problems. And MemberPress dot A I is an AI assistant that runs a membership site.",
+   "pace": 1.02
+  },
+  {
+   "id": "s10",
+   "vo": "I've built websites and run businesses for over twenty-five years, and worked on search for almost twenty. I know what a small business needs from AI, because I've been one.",
+   "pace": 1.0
+  },
+  {
+   "id": "s11",
+   "vo": "So let's start with a call about your business. Seth Shoultes dot com.",
+   "pace": 0.95
+  }
+ ]
+}

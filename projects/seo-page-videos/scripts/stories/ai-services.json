@@ -1,0 +1,436 @@
+{
+ "page": "https://sethshoultes.com/ai-services/",
+ "title": "AI Services for Small Businesses in Southern Utah",
+ "arc": "Hook (where could AI save you hours?) > no technical team > guide (that's my job, AI services with SEO built in) > what I build (content, media, interactive sites) > how we work (monthly; advice, lead, or agents) > proof (own agents; MemberPress.ai; 25+ years; ~20 of search) > invitation (a call). Cool until 'That's my job', warm after. Claims only from _data/services/ai-services.yml. The page's client example (A+ Garage Doors) is left out on purpose: client media does not go on the public preview host.",
+ "style": "Flat editorial vector, hard edges, flat solid ground, art centered ~70% width, nothing touching an edge; no glow, haze, gradients, soft shadows; no people, no logos.",
+ "beats": [
+  {
+   "id": "b01",
+   "vo": "Quick question. Where could AI save you hours... and win you customers?",
+   "to_next": "push-left",
+   "kinetic": [
+    [
+     "QUICK QUESTION.",
+     "quick"
+    ],
+    [
+     "SAVE HOURS. WIN CUSTOMERS.",
+     "save"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "a01.png",
+     "cam": [
+      [
+       0,
+       1.05,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.18,
+       0.5,
+       0.5
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "b02",
+   "vo": "And no, you don't need a technical team.",
+   "to_next": "zoom-through",
+   "kinetic": [
+    [
+     "NO TECHNICAL TEAM",
+     "technical"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "a02.png",
+     "cam": [
+      [
+       0,
+       1.05,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.18,
+       0.5,
+       0.5
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "b03",
+   "vo": "That's my job. I offer AI services with SEO built in, so what I build for you is made to be found.",
+   "to_next": "wipe-up",
+   "kinetic": [
+    [
+     "THAT'S MY JOB.",
+     "that's"
+    ],
+    [
+     "SEO BUILT IN",
+     "seo"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "a03.png",
+     "cam": [
+      [
+       0,
+       1.05,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.2,
+       0.5,
+       0.5
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "b04",
+   "vo": "Content generation. Pages, posts and answers, written in your voice, about your town and your customers.",
+   "to_next": "push-left",
+   "kinetic": [
+    [
+     "CONTENT GENERATION",
+     "content"
+    ],
+    [
+     "IN YOUR VOICE",
+     "voice"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "a04.png",
+     "cam": [
+      [
+       0,
+       1.05,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.2,
+       0.5,
+       0.5
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "b05",
+   "vo": "Media production. Images and video for your site, made so they load fast and say what you do.",
+   "to_next": "slide-left",
+   "kinetic": [
+    [
+     "MEDIA PRODUCTION",
+     "media"
+    ],
+    [
+     "LOAD FAST",
+     "load"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "a05.png",
+     "cam": [
+      [
+       0,
+       1.05,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.2,
+       0.5,
+       0.5
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "b06",
+   "vo": "And interactive websites. A quote tool, a booking flow, a page that answers your customers' questions.",
+   "to_next": "wipe-right",
+   "kinetic": [
+    [
+     "INTERACTIVE WEBSITES",
+     "interactive"
+    ],
+    [
+     "A QUOTE TOOL, A BOOKING FLOW",
+     "quote"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "n05.png",
+     "cam": [
+      [
+       0,
+       1.15,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.3,
+       0.5,
+       0.5
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "b07",
+   "vo": "Every month, I work alongside you to find where AI saves you hours. Then I build it, and keep it running.",
+   "to_next": "push-left",
+   "kinetic": [
+    [
+     "EVERY MONTH, TOGETHER",
+     "month"
+    ],
+    [
+     "BUILT AND KEPT RUNNING",
+     "build"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "a07.png",
+     "cam": [
+      [
+       0,
+       1.05,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.2,
+       0.5,
+       0.5
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "b08",
+   "vo": "Start with advice. Have me lead the work with you. Or have my team of AI agents do the building.",
+   "to_next": "zoom-through",
+   "kinetic": [
+    [
+     "START WITH ADVICE",
+     "advice"
+    ],
+    [
+     "LEAD THE WORK WITH YOU",
+     "lead"
+    ],
+    [
+     "MY TEAM OF AI AGENTS",
+     "agents"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "a08.png",
+     "cam": [
+      [
+       0,
+       1.05,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.2,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "a09a.png",
+     "at": "agents",
+     "cam": [
+      [
+       0,
+       1.05,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.2,
+       0.5,
+       0.5
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "b09",
+   "vo": "I run that team on my own sites first, so I've already hit the problems. And MemberPress dot A I is an AI assistant that runs a membership site.",
+   "to_next": "wipe-up",
+   "kinetic": [
+    [
+     "MY OWN SITES FIRST",
+     "own"
+    ],
+    [
+     "MEMBERPRESS.AI",
+     "memberpress"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "a09a.png",
+     "cam": [
+      [
+       0,
+       1.1,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.25,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "a09b.png",
+     "at": "memberpress",
+     "cam": [
+      [
+       0,
+       1.05,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.2,
+       0.5,
+       0.5
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "b10",
+   "vo": "I've built websites and run businesses for over twenty-five years, and worked on search for almost twenty. I know what a small business needs from AI, because I've been one.",
+   "to_next": "push-left",
+   "kinetic": [
+    [
+     "OVER 25 YEARS",
+     "over"
+    ],
+    [
+     "ALMOST 20 ON SEARCH",
+     "almost"
+    ],
+    [
+     "I'VE BEEN A SMALL BUSINESS",
+     "been"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "n08b.png",
+     "cam": [
+      [
+       0,
+       1.05,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.15,
+       0.5,
+       0.5
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "b11",
+   "vo": "So let's start with a call about your business. Seth Shoultes dot com.",
+   "to_next": "push-left",
+   "kinetic": [
+    [
+     "LET'S START WITH A CALL",
+     "start"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "c05.png",
+     "tr": "circle-open",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       0.45,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       0.52,
+       1.15,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.15,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "proc:endcard",
+     "at": "seth",
+     "notype": true
+    }
+   ]
+  }
+ ]
+}
