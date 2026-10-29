@@ -222,6 +222,40 @@
   },
   {
    "id": "b05",
+   "vo": "SEO is the foundation of my work. Ads and SEO are best planned together.",
+   "to_next": "wipe-right",
+   "kinetic": [
+    [
+     "SEO IS THE FOUNDATION",
+     "foundation"
+    ],
+    [
+     "BEST PLANNED TOGETHER",
+     "together"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "g03.png",
+     "cam": [
+      [
+       0,
+       1.05,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.2,
+       0.5,
+       0.5
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "b06",
    "vo": "This comes from building on the web for over twenty-five years.",
    "to_next": "slide-left",
    "kinetic": [
@@ -255,7 +289,7 @@
    ]
   },
   {
-   "id": "b06",
+   "id": "b07",
    "vo": "I owned a website development agency. And I grew the search traffic of a garage door company.",
    "to_next": "wipe-right",
    "kinetic": [
@@ -307,7 +341,41 @@
    ]
   },
   {
-   "id": "b07",
+   "id": "b08",
+   "vo": "Southern Utah is home, and I work with businesses anywhere.",
+   "to_next": "zoom-through",
+   "kinetic": [
+    [
+     "SOUTHERN UTAH IS HOME",
+     "utah"
+    ],
+    [
+     "BUSINESSES ANYWHERE",
+     "anywhere"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "g11.png",
+     "cam": [
+      [
+       0,
+       1.05,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.2,
+       0.5,
+       0.5
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "b09",
    "vo": "We start with a call about your business, and what you want your ads to do.",
    "to_next": "wipe-up",
    "kinetic": [
@@ -341,7 +409,7 @@
    ]
   },
   {
-   "id": "b08",
+   "id": "b10",
    "vo": "I'll tell you what I'd look at first. Seth Shoultes dot com.",
    "to_next": "push-left",
    "kinetic": [
