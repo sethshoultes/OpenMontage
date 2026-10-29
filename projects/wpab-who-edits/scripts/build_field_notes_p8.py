@@ -53,7 +53,7 @@ def build(data_path, out):
                            (1.3, lambda y: block(["Tell us whether it worked.", "We haven't looked yet."], 62, y, marker=("dash", ACCENT), lead=1.15)),
                            (3.4, lambda y: block("Switch itself off.", 62, y, marker=("dash", ACCENT), lead=1.15), 14),
                            (4.0, lambda y: block([f"Switched off {d['off_date']}.", f"Still off as of {d['as_of']}."], 54, y, lead=1.2, x=MARGIN + 62)),
-                           (6.2, lambda y: block("Choose why we do this.", 62, y, marker=("dash", ACCENT), lead=1.15))], 300, 70), 9.0)
+                           (6.2, lambda y: block("Choose why we do this.", 62, y, marker=("dash", ACCENT), lead=1.15))], 300, 70), 10.5)
 
     s6 = scene_text(stack([(0.3, lambda y: block("Why we do this is one sentence. It's Seth's.", 70, y, lead=1.15)),
                            (1.6, lambda y: block("“" + d["sentence"] + "”", 74, y, fill=ACCENT, lead=1.2))], 420, 90), 8.0)
@@ -66,7 +66,7 @@ def build(data_path, out):
     s8 = scene_text(stack([(0.3, lambda y: block("MemberPress.ai", 100, y, fill=ACCENT)),
                            (1.0, lambda y: block(["helps you spend your week", "with your members,", "not in settings."], 62, y, lead=1.15))], 560, 70), 4.5)
 
-    scenes = [(s1, 5.0), (s2, 5.0), (s3, 11.0), (s4, 6.0), (s5, 9.0), (s6, 8.0), (s7, 8.5), (s8, 4.5)]
+    scenes = [(s1, 5.0), (s2, 5.0), (s3, 11.0), (s4, 6.0), (s5, 10.5), (s6, 8.0), (s7, 8.5), (s8, 4.5)]
     ff = subprocess.Popen(["nice", "ffmpeg", "-v", "error", "-y", "-f", "rawvideo", "-pix_fmt", "rgb24", "-s", f"{W}x{H}", "-r", str(FPS), "-i", "-",
                            "-c:v", "libx264", "-crf", "16", "-preset", "medium", "-pix_fmt", "yuv420p", "-movflags", "+faststart", str(out)],
                           stdin=subprocess.PIPE)
