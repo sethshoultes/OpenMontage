@@ -52,7 +52,7 @@ def build(data_path, out):
     s5 = scene_text(stack([(0.3, lambda y: block("What it didn't do", 92, y)),
                            (1.3, lambda y: block(["Tell us whether it worked.", "We haven't looked yet."], 62, y, marker=("dash", ACCENT), lead=1.15)),
                            (3.4, lambda y: block("Switch itself off.", 62, y, marker=("dash", ACCENT), lead=1.15), 14),
-                           (4.0, lambda y: block([f"Switched off {d['off_date']}.", f"Still off as of {d['as_of']}."], 54, y, lead=1.2, x=MARGIN + 62)),
+                           (4.0, lambda y: block(["Video writer switched off", f"{d['writer_off_date']}.", f"Blog drafter off as of {d['as_of']}."], 54, y, lead=1.2, x=MARGIN + 62)),
                            (6.2, lambda y: block("Choose why we do this.", 62, y, marker=("dash", ACCENT), lead=1.15))], 300, 70), 10.5)
 
     s6 = scene_text(stack([(0.3, lambda y: block("Why we do this is one sentence. It's Seth's.", 70, y, lead=1.15)),
