@@ -1,0 +1,59 @@
+{
+ "shots": [
+  {
+   "id": "s01",
+   "vo": "Quick question. Do you think you have to be technical to learn AI?",
+   "pace": 1.0
+  },
+  {
+   "id": "s02",
+   "vo": "You don't. I teach in plain words, and we start from your real work.",
+   "pace": 0.97
+  },
+  {
+   "id": "s03",
+   "vo": "That's my job. I help you learn AI by doing real work.",
+   "pace": 0.95
+  },
+  {
+   "id": "s04",
+   "vo": "Business owners who want AI working in their business, not just a demo. People changing careers, who want to learn what matters and skip what doesn't. And anyone curious.",
+   "pace": 1.02
+  },
+  {
+   "id": "s05",
+   "vo": "One-on-one coaching. Tell me where you are and where you want to be, and we work out a plan together.",
+   "pace": 1.0
+  },
+  {
+   "id": "s06",
+   "vo": "A workshop for your team. A hands-on session for you and your people.",
+   "pace": 1.0
+  },
+  {
+   "id": "s07",
+   "vo": "The monthly meetup. AI and WordPress, in Southern Utah. Everyone is welcome.",
+   "pace": 1.0
+  },
+  {
+   "id": "s08",
+   "vo": "And my writing. I write about building with AI.",
+   "pace": 1.0
+  },
+  {
+   "id": "s09",
+   "vo": "Why learn from me? I've spoken and run workshops inside companies, on and off, for over twenty years.",
+   "pace": 0.97
+  },
+  {
+   "id": "s10",
+   "vo": "And I build with a team of AI agents I created, so I teach what I actually use.",
+   "pace": 0.97
+  },
+  {
+   "id": "s11",
+   "vo": "So let's start with a call. Tell me where you are with AI. Seth Shoultes dot com.",
+   "pace": 0.95
+  }
+ ]
+}

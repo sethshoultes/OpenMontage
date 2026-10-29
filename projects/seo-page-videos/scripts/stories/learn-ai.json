@@ -1,0 +1,436 @@
+{
+ "page": "https://sethshoultes.com/learn-ai/",
+ "title": "Learn AI and Succeed With It",
+ "arc": "Hook (must you be technical?) > plain words, real work > guide (that's my job) > who it's for > ways to learn (coaching, team workshop, monthly meetup, writing) > why me (20+ years of speaking and workshops; a team of AI agents) > invitation (a call). Cool until 'That's my job', warm after. Claims only from _data/services/learn-ai.yml.",
+ "style": "Flat editorial vector, hard edges, flat solid ground, art centered ~70% width, nothing touching an edge; no glow, haze, gradients, soft shadows; no people, no logos.",
+ "beats": [
+  {
+   "id": "b01",
+   "vo": "Quick question. Do you think you have to be technical to learn AI?",
+   "to_next": "push-left",
+   "kinetic": [
+    [
+     "QUICK QUESTION.",
+     "quick"
+    ],
+    [
+     "MUST YOU BE TECHNICAL?",
+     "technical"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "l01.png",
+     "cam": [
+      [
+       0,
+       1.05,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.18,
+       0.5,
+       0.5
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "b02",
+   "vo": "You don't. I teach in plain words, and we start from your real work.",
+   "to_next": "zoom-through",
+   "kinetic": [
+    [
+     "PLAIN WORDS",
+     "plain"
+    ],
+    [
+     "YOUR REAL WORK",
+     "real"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "l02.png",
+     "cam": [
+      [
+       0,
+       1.05,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.18,
+       0.5,
+       0.5
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "b03",
+   "vo": "That's my job. I help you learn AI by doing real work.",
+   "to_next": "wipe-up",
+   "kinetic": [
+    [
+     "THAT'S MY JOB.",
+     "that's"
+    ],
+    [
+     "LEARN BY DOING",
+     "doing"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "l03.png",
+     "cam": [
+      [
+       0,
+       1.05,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.2,
+       0.5,
+       0.5
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "b04",
+   "vo": "Business owners who want AI working in their business, not just a demo. People changing careers, who want to learn what matters and skip what doesn't. And anyone curious.",
+   "to_next": "push-left",
+   "kinetic": [
+    [
+     "BUSINESS OWNERS",
+     "business"
+    ],
+    [
+     "CAREER CHANGERS",
+     "careers"
+    ],
+    [
+     "ANYONE CURIOUS",
+     "curious"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "l04a.png",
+     "cam": [
+      [
+       0,
+       1.05,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.2,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "l04b.png",
+     "at": "careers",
+     "cam": [
+      [
+       0,
+       1.05,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.2,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "l04c.png",
+     "at": "curious",
+     "cam": [
+      [
+       0,
+       1.05,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.2,
+       0.5,
+       0.5
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "b05",
+   "vo": "One-on-one coaching. Tell me where you are and where you want to be, and we work out a plan together.",
+   "to_next": "slide-left",
+   "kinetic": [
+    [
+     "ONE-ON-ONE COACHING",
+     "one-on-one"
+    ],
+    [
+     "A PLAN TOGETHER",
+     "plan"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "l05.png",
+     "cam": [
+      [
+       0,
+       1.05,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.2,
+       0.5,
+       0.5
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "b06",
+   "vo": "A workshop for your team. A hands-on session for you and your people.",
+   "to_next": "wipe-right",
+   "kinetic": [
+    [
+     "A TEAM WORKSHOP",
+     "workshop"
+    ],
+    [
+     "HANDS-ON",
+     "hands-on"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "l06.png",
+     "cam": [
+      [
+       0,
+       1.05,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.2,
+       0.5,
+       0.5
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "b07",
+   "vo": "The monthly meetup. AI and WordPress, in Southern Utah. Everyone is welcome.",
+   "to_next": "push-left",
+   "kinetic": [
+    [
+     "THE MONTHLY MEETUP",
+     "monthly"
+    ],
+    [
+     "EVERYONE IS WELCOME",
+     "everyone"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "w07.png",
+     "cam": [
+      [
+       0,
+       1.05,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.2,
+       0.5,
+       0.5
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "b08",
+   "vo": "And my writing. I write about building with AI.",
+   "to_next": "zoom-through",
+   "kinetic": [
+    [
+     "MY WRITING",
+     "writing"
+    ],
+    [
+     "BUILDING WITH AI",
+     "building"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "l08.png",
+     "cam": [
+      [
+       0,
+       1.05,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.2,
+       0.5,
+       0.5
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "b09",
+   "vo": "Why learn from me? I've spoken and run workshops inside companies, on and off, for over twenty years.",
+   "to_next": "wipe-up",
+   "kinetic": [
+    [
+     "WHY LEARN FROM ME?",
+     "why"
+    ],
+    [
+     "OVER 20 YEARS",
+     "twenty"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "l09.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.12,
+       0.5,
+       0.5
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "b10",
+   "vo": "And I build with a team of AI agents I created, so I teach what I actually use.",
+   "to_next": "push-left",
+   "kinetic": [
+    [
+     "A TEAM OF AI AGENTS",
+     "agents"
+    ],
+    [
+     "I TEACH WHAT I USE",
+     "teach"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "a09a.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.47
+      ],
+      [
+       1,
+       1.05,
+       0.5,
+       0.47
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "b11",
+   "vo": "So let's start with a call. Tell me where you are with AI. Seth Shoultes dot com.",
+   "to_next": "push-left",
+   "kinetic": [
+    [
+     "LET'S START WITH A CALL",
+     "start"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "c05.png",
+     "tr": "circle-open",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       0.45,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       0.52,
+       1.15,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.15,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "proc:endcard",
+     "at": "seth",
+     "notype": true
+    }
+   ]
+  }
+ ]
+}
