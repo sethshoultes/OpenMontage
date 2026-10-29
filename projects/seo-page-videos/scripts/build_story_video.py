@@ -303,6 +303,11 @@ def main(story_path, stills, vo_dir, out, music, sfx_files):
             ph.append((text, bt["start"] if not ph else bt["start"] + bt["words"][m][1]))
             j = m + 1
         bt["phrases"] = ph
+    for bt in beats:   # a caption wider than the frame is clipped on screen, so refuse to build it
+        for text, _ in bt["phrases"]:
+            w = ImageDraw.Draw(Image.new("RGB", (1, 1))).textlength(text + " ", font=font)
+            if w > ART_W - 80:
+                sys.exit(f"{bt['id']}: caption {text!r} is {int(w)} px wide, the frame allows {ART_W - 80}; shorten it")
     n = len(shots)
     for i, sh in enumerate(shots):
         sh["end"] = shots[i + 1]["at"] if i + 1 < n else total
