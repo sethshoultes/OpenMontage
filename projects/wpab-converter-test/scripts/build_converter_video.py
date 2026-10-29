@@ -17,6 +17,7 @@ import sys
 import urllib.request
 from pathlib import Path
 
+import numpy as np
 from PIL import Image, ImageDraw, ImageFont
 
 HERE = Path(__file__).resolve().parent
@@ -174,10 +175,24 @@ def pcentered(d, text, y, f, fill):
     d.text(((PW - w) / 2, y), text, font=f, fill=fill)
 
 
-def pshot(repo, tool, kind, w, h):
+def clean_cut(im, lo, hi):
+    """A crop height in [lo, hi] (source px) that lands on a quiet band of rows, so no line of text or card is cut in half.
+    Prefers the lowest such boundary; falls back to hi if the page never goes quiet."""
+    g = np.asarray(im.convert("L")).astype(int)
+    for y in range(min(hi, g.shape[0] - 8), lo, -1):
+        band = g[y:y + 8]
+        if (band.max(axis=1) - band.min(axis=1)).max() <= 6:
+            return y
+    return hi
+
+
+def pshot(repo, tool, kind, w, max_h, src_lo=380):
+    """The top of a 1280-wide screenshot, scaled to w, at most max_h tall, cut at a clean boundary."""
     im = Image.open(Path(repo) / f"results/{tool}/{kind}-index-1280.png").convert("RGB")
-    im = im.crop((0, 0, 1280, int(1280 * h / w)))
-    return im.resize((w, h), Image.LANCZOS)
+    hi = int(1280 * max_h / w)
+    cut = clean_cut(im, min(src_lo, hi - 1), hi)
+    im = im.crop((0, 0, 1280, cut))
+    return im.resize((w, round(cut * w / 1280)), Image.LANCZOS)
 
 
 def pwrap_center(d, text, y, f, fill, width, lead):
@@ -196,23 +211,32 @@ def pslide_title():
 
 def pslide_sample(repo):
     im, d = pcanvas()
-    pwrap_center(d, "The sample: Quillfern Cycle Works", 150, font(80), T["text"], PW - 120, 98)
-    pcentered(d, "a made-up bike shop, hand-coded HTML", 330, font(50, False), T["muted"])
-    im.paste(pshot(repo, "rawhandler", "original", 960, 1160), (60, 450))
+    pwrap_center(d, "The sample: Quillfern Cycle Works", 120, font(80), T["text"], PW - 120, 98)
+    pcentered(d, "a made-up bike shop, hand-coded HTML", 410, font(50, False), T["muted"])
+    sh = pshot(repo, "rawhandler", "original", 960, 1020, src_lo=900)
+    im.paste(sh, (60, 520))
     return im
 
 
 def pslide_tool(repo, name, tool, score, mx, ne):
+    """Both screenshots end above y=1530: the blog player's control bar covers the bottom fifth of a phone frame.
+    The header grows with the name (a long name wraps to two lines) and the screenshots take the room that is left."""
     im, d = pcanvas()
-    pwrap_center(d, name, 70, font(88), T["accent"], PW - 120, 104)
-    big = f"{score} of {mx}"
-    pcentered(d, big, 250 if len(name) < 20 else 280, font(120), T["text"])
+    y = pwrap_center(d, name, 40, font(88), T["accent"], PW - 120, 100) + 10
+    pcentered(d, f"{score} of {mx}", y, font(120), T["text"])
+    y += 135
     sub = f"{ne} checks had no evidence, left out of the maximum" if ne else "all ten checks had evidence"
-    pwrap_center(d, sub, 420, font(44, False), T["muted"], PW - 120, 56)
-    d.text((60, 560), "Original, home page", font=font(48), fill=T["text"])
-    im.paste(pshot(repo, tool, "original", 960, 560), (60, 630))
-    d.text((60, 1230), "Converted, home page", font=font(48), fill=T["text"])
-    im.paste(pshot(repo, tool, "converted", 960, 560), (60, 1300))
+    y = pwrap_center(d, sub, y, font(46, False), T["muted"], PW - 120, 58) + 14
+    room = 1530 - y - 2 * 70 - 40          # two labels and a gap, then two screenshots
+    h1 = h2 = room // 2
+    d.text((60, y), "Original, home page", font=font(50), fill=T["text"])
+    a = pshot(repo, tool, "original", 960, h1)
+    im.paste(a, (60, y + 70))
+    y2 = y + 70 + a.size[1] + 40
+    d.text((60, y2), "Converted, home page", font=font(50), fill=T["text"])
+    b = pshot(repo, tool, "converted", 960, 1530 - (y2 + 70))
+    im.paste(b, (60, y2 + 70))
+    assert y2 + 70 + b.size[1] <= 1530, (y2, b.size)
     return im
 
 
@@ -229,7 +253,7 @@ def pslide_table(rows):
         d.text((PW - 80 - d.textlength(f"no evidence: {ne}", font=font(42, False)), y + 100), f"no evidence: {ne}", font=font(42, False), fill=T["muted"])
     y = pwrap_center(d, "A lower score means fewer of the ten checks passed on this one sample site.", 1340, font(58), T["text"], PW - 140, 76)
     pwrap_center(d, "Plain sums of 0, 1 and 2 per check. No weights.", y + 20, font(42, False), T["muted"], PW - 140, 54)
-    pwrap_center(d, "\u2020 Ran by its publisher's Playground route, under a newer PHP.", 1810, font(40, False), T["muted"], PW - 120, 50)
+    pwrap_center(d, "\u2020 Ran by its publisher's Playground route, under a newer PHP.", 1740, font(46, False), T["muted"], PW - 120, 58)
     return im
 
 
