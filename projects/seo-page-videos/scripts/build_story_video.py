@@ -234,6 +234,8 @@ def chip(frame_img, kind, k):
     if sc <= 0.05:
         return frame_img
     s = int(size * sc)
+    if cy + s / 2 + 12 > ART_H - 45:
+        return frame_img
     box = (cx - s / 2, cy - s / 2, cx + s / 2, cy + s / 2)
     d.rounded_rectangle((box[0] + 12, box[1] + 12, box[2] + 12, box[3] + 12), s // 6, fill=(60, 30, 14))
     d.rounded_rectangle(box, s // 6, fill=ORANGE)
@@ -330,15 +332,14 @@ def main(story_path, stills, vo_dir, out, music, sfx_files):
         if i + 1 < n and tt >= sh["end"] - sh["T"]:
             a = np.asarray(frame_of(i, min(tt, sh["end"] - 1e-3)), dtype=np.float32)
             b = np.asarray(frame_of(i + 1, tt), dtype=np.float32)
-            frame = blend(a, b, sh["tr"], (tt - (sh["end"] - sh["T"])) / sh["T"])
+            k = (tt - (sh["end"] - sh["T"])) / sh["T"]
+            frame = blend(a, b, sh["tr"], k)
+            frame[ART_H - 45:] = (a if k < 0.5 else b)[ART_H - 45:]   # wipes and the chip never cross the caption band
         else:
             frame = np.asarray(frame_of(i, tt), dtype=np.float32)
         img = Image.fromarray(np.clip(frame, 0, 255).astype(np.uint8))
         if i + 1 < n and tt >= sh["end"] - sh["T"]:
-            band = (0, ART_H - 45, W, H)   # the chip never rides through the caption band
-            keep = img.crop(band)
             img = chip(img, sh["tr"], (tt - (sh["end"] - sh["T"])) / sh["T"])
-            img.paste(keep, band[:2])
         if not sh["notype"] or (i + 1 < n and tt >= sh["end"] - sh["T"] and not shots[i + 1]["notype"]):
             bt = beats[sh["beat"]]
             ov = type_overlay(bt["phrases"], tt, font, bt["start"] + bt["d"])
