@@ -335,7 +335,10 @@ def main(story_path, stills, vo_dir, out, music, sfx_files):
             frame = np.asarray(frame_of(i, tt), dtype=np.float32)
         img = Image.fromarray(np.clip(frame, 0, 255).astype(np.uint8))
         if i + 1 < n and tt >= sh["end"] - sh["T"]:
+            band = (0, ART_H - 45, W, H)   # the chip never rides through the caption band
+            keep = img.crop(band)
             img = chip(img, sh["tr"], (tt - (sh["end"] - sh["T"])) / sh["T"])
+            img.paste(keep, band[:2])
         if not sh["notype"] or (i + 1 < n and tt >= sh["end"] - sh["T"] and not shots[i + 1]["notype"]):
             bt = beats[sh["beat"]]
             ov = type_overlay(bt["phrases"], tt, font, bt["start"] + bt["d"])
