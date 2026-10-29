@@ -241,19 +241,21 @@ def pslide_tool(repo, name, tool, score, mx, ne):
 
 
 def pslide_table(rows):
+    """Everything ends by y=1530: the blog player's control bar draws over the bottom fifth of a phone frame."""
     im, d = pcanvas()
-    pcentered(d, "Totals, ten checks", 70, font(74), T["text"])
-    pcentered(d, "across four pages", 160, font(74), T["text"])
+    pcentered(d, "Totals, ten checks", 50, font(74), T["text"])
+    pcentered(d, "across four pages", 138, font(74), T["text"])
     for i, (name, tool, _) in enumerate(TOOLS):
-        y = 320 + i * 190
+        y = 250 + i * 150
         sc, mx, ne = rows[name]
-        d.rectangle((50, y - 14, PW - 50, y + 160), fill=T["panel"])
-        d.text((80, y + 6), name, font=font(54), fill=T["text"])
-        d.text((80, y + 82), f"{sc} of {mx}", font=font(60), fill=T["accent"])
-        d.text((PW - 80 - d.textlength(f"no evidence: {ne}", font=font(42, False)), y + 100), f"no evidence: {ne}", font=font(42, False), fill=T["muted"])
-    y = pwrap_center(d, "A lower score means fewer of the ten checks passed on this one sample site.", 1340, font(58), T["text"], PW - 140, 76)
-    pwrap_center(d, "Plain sums of 0, 1 and 2 per check. No weights.", y + 20, font(42, False), T["muted"], PW - 140, 54)
-    pwrap_center(d, "\u2020 Ran by its publisher's Playground route, under a newer PHP.", 1740, font(46, False), T["muted"], PW - 120, 58)
+        d.rectangle((50, y - 10, PW - 50, y + 130), fill=T["panel"])
+        d.text((80, y), name, font=font(52), fill=T["text"])
+        d.text((80, y + 66), f"{sc} of {mx}", font=font(56), fill=T["accent"])
+        d.text((PW - 80 - d.textlength(f"no evidence: {ne}", font=font(46, False)), y + 78), f"no evidence: {ne}", font=font(46, False), fill=T["muted"])
+    y = pwrap_center(d, "A lower score means fewer of the ten checks passed on this one sample site.", 1030, font(58), T["text"], PW - 140, 70) + 10
+    y = pwrap_center(d, "Plain sums of 0, 1 and 2 per check. No weights.", y, font(46, False), T["muted"], PW - 140, 56) + 8
+    y = pwrap_center(d, "\u2020 Ran by its publisher's Playground route, under a newer PHP.", y, font(46, False), T["muted"], PW - 120, 56)
+    assert y <= 1530, y
     return im
 
 
@@ -264,14 +266,14 @@ def pslide_disclosures():
              "Run 2026-10-28, every tool pinned to a version."]
     for size in range(78, 50, -2):
         im, d = pcanvas()
-        d.text((70, 130), "Read these first", font=font(92), fill=T["accent"])
-        y, f = 300, font(size, False)
+        d.text((70, 90), "Read these first", font=font(92), fill=T["accent"])
+        y, f = 250, font(size, False)
         for it in items:
             for j, ln in enumerate(wrap(d, it, f, PW - 190)):
                 d.text((70 + (0 if j == 0 else size * 0.7), y), ("\u2022  " if j == 0 else "") + ln, font=f, fill=T["text"])
                 y += int(size * 1.25)
-            y += int(size * 0.5)
-        if y < PH - 120:
+            y += int(size * 0.35)
+        if y <= 1500:     # the last line ends above the player's control bar
             return im
     raise SystemExit("disclosures do not fit")
 
