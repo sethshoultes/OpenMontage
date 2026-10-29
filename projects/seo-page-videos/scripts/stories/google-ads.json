@@ -1,0 +1,392 @@
+{
+ "page": "https://sethshoultes.com/google-ads/",
+ "title": "Google Ads Expert for Small Businesses",
+ "arc": "Hook (customers or just clicks?) > stakes (same customers, plan as one) > guide (that's my job; Google Ads expert, nearly 20 years of SEO) > both together > where it comes from (25+ years, agency, grew a garage door company's search traffic) > invitation (a call, what I'd look at first). Cool until 'That's my job', warm after. Claims only from _data/services/google-ads.yml.",
+ "style": "Flat editorial vector, hard edges, flat solid ground, art centered ~70% width, nothing touching an edge; no glow, haze, gradients, soft shadows; no people, no logos.",
+ "beats": [
+  {
+   "id": "b01",
+   "vo": "Quick question. Is your Google Ads money bringing in customers... or just clicks?",
+   "to_next": "push-left",
+   "kinetic": [
+    [
+     "QUICK QUESTION.",
+     "quick"
+    ],
+    [
+     "CUSTOMERS OR JUST CLICKS?",
+     "customers"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "g01.png",
+     "cam": [
+      [
+       0,
+       1.05,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.18,
+       0.5,
+       0.5
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "b02",
+   "vo": "Ads and search work on the same customers. So they should be planned as one.",
+   "to_next": "zoom-through",
+   "kinetic": [
+    [
+     "THE SAME CUSTOMERS",
+     "same"
+    ],
+    [
+     "PLANNED AS ONE",
+     "planned"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "g02.png",
+     "cam": [
+      [
+       0,
+       1.05,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.18,
+       0.5,
+       0.5
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "b03",
+   "vo": "That's my job. I'm an expert with Google Ads, and I have nearly twenty years of SEO behind me.",
+   "to_next": "wipe-up",
+   "kinetic": [
+    [
+     "THAT'S MY JOB.",
+     "that's"
+    ],
+    [
+     "A GOOGLE ADS EXPERT",
+     "expert"
+    ],
+    [
+     "NEARLY 20 YEARS OF SEO",
+     "twenty"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "g03.png",
+     "cam": [
+      [
+       0,
+       1.05,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.2,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "g04.png",
+     "at": "expert",
+     "cam": [
+      [
+       0,
+       1.05,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.2,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "d17.png",
+     "at": "twenty",
+     "cam": [
+      [
+       0,
+       1.2,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.4,
+       0.5,
+       0.5
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "b04",
+   "vo": "Google Ads. SEO. And both together... planned as one.",
+   "to_next": "push-left",
+   "kinetic": [
+    [
+     "GOOGLE ADS",
+     "google"
+    ],
+    [
+     "SEO",
+     "seo"
+    ],
+    [
+     "BOTH TOGETHER",
+     "both"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "g04.png",
+     "cam": [
+      [
+       0,
+       1.1,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.25,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "d17.png",
+     "at": "seo",
+     "cam": [
+      [
+       0,
+       1.2,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.4,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "g06.png",
+     "at": "both",
+     "cam": [
+      [
+       0,
+       1.05,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.2,
+       0.5,
+       0.5
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "b05",
+   "vo": "This comes from building on the web for over twenty-five years.",
+   "to_next": "slide-left",
+   "kinetic": [
+    [
+     "BUILDING ON THE WEB",
+     "building"
+    ],
+    [
+     "OVER 25 YEARS",
+     "twenty"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "n08b.png",
+     "cam": [
+      [
+       0,
+       1.05,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.15,
+       0.5,
+       0.5
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "b06",
+   "vo": "I owned a website development agency. And I grew the search traffic of a garage door company.",
+   "to_next": "wipe-right",
+   "kinetic": [
+    [
+     "A WEB AGENCY",
+     "owned"
+    ],
+    [
+     "GREW SEARCH TRAFFIC",
+     "grew"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "d15.png",
+     "cam": [
+      [
+       0,
+       1.2,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.35,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "g09.png",
+     "at": "grew",
+     "cam": [
+      [
+       0,
+       1.05,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.2,
+       0.5,
+       0.5
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "b07",
+   "vo": "We start with a call about your business, and what you want your ads to do.",
+   "to_next": "wipe-up",
+   "kinetic": [
+    [
+     "A CALL ABOUT YOUR BUSINESS",
+     "call"
+    ],
+    [
+     "WHAT YOU WANT ADS TO DO",
+     "want"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "g10.png",
+     "cam": [
+      [
+       0,
+       1.05,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.2,
+       0.5,
+       0.5
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "b08",
+   "vo": "I'll tell you what I'd look at first. Seth Shoultes dot com.",
+   "to_next": "push-left",
+   "kinetic": [
+    [
+     "WHAT I'D LOOK AT FIRST",
+     "look"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "c05.png",
+     "tr": "circle-open",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       0.45,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       0.52,
+       1.15,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.15,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "proc:endcard",
+     "at": "seth",
+     "notype": true
+    }
+   ]
+  }
+ ]
+}

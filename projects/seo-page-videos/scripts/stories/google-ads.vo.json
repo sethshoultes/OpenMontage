@@ -1,0 +1,44 @@
+{
+ "shots": [
+  {
+   "id": "s01",
+   "vo": "Quick question. Is your Google Ads money bringing in customers... or just clicks?",
+   "pace": 1.0
+  },
+  {
+   "id": "s02",
+   "vo": "Ads and search work on the same customers. So they should be planned as one.",
+   "pace": 0.97
+  },
+  {
+   "id": "s03",
+   "vo": "That's my job. I'm an expert with Google Ads, and I have nearly twenty years of SEO behind me.",
+   "pace": 0.95
+  },
+  {
+   "id": "s04",
+   "vo": "Google Ads. SEO. And both together... planned as one.",
+   "pace": 0.97
+  },
+  {
+   "id": "s05",
+   "vo": "This comes from building on the web for over twenty-five years.",
+   "pace": 1.0
+  },
+  {
+   "id": "s06",
+   "vo": "I owned a website development agency. And I grew the search traffic of a garage door company.",
+   "pace": 0.97
+  },
+  {
+   "id": "s07",
+   "vo": "We start with a call about your business, and what you want your ads to do.",
+   "pace": 1.0
+  },
+  {
+   "id": "s08",
+   "vo": "I'll tell you what I'd look at first. Seth Shoultes dot com.",
+   "pace": 0.95
+  }
+ ]
+}
