@@ -1,0 +1,408 @@
+{
+ "page": "https://sethshoultes.com/animation-artwork-video/",
+ "title": "Custom Animation, Artwork and Video Production",
+ "arc": "Hook (does your site move?) > guide (that's my job) > what I make (animations, artwork, video) > where it comes from (Flash and ActionScript, PHP and MySQL, since the 2000s) > samples (city-page flyover video, case-study illustrations) > anywhere > invitation (a call). Cool until 'That's my job', warm after. Claims only from _data/services/animation-artwork-video.yml (plus its FAQ beat).",
+ "style": "Flat editorial vector, hard edges, flat solid ground, art centered ~70% width, nothing touching an edge; no glow, haze, gradients, soft shadows; no people, no logos.",
+ "beats": [
+  {
+   "id": "b01",
+   "vo": "Quick question. Does your website just sit there... or does it move?",
+   "to_next": "push-left",
+   "kinetic": [
+    [
+     "QUICK QUESTION.",
+     "quick"
+    ],
+    [
+     "DOES IT MOVE?",
+     "move"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "v01.png",
+     "cam": [
+      [
+       0,
+       1.05,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.18,
+       0.5,
+       0.5
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "b02",
+   "vo": "Words and photos only go so far. Motion and imagery can show what words can't.",
+   "to_next": "zoom-through",
+   "kinetic": [
+    [
+     "MOTION AND IMAGERY",
+     "motion"
+    ],
+    [
+     "WHAT WORDS CAN'T",
+     "words"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "v02.png",
+     "cam": [
+      [
+       0,
+       1.05,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.18,
+       0.5,
+       0.5
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "b03",
+   "vo": "That's my job. I build custom animations, artwork and video.",
+   "to_next": "wipe-up",
+   "kinetic": [
+    [
+     "THAT'S MY JOB.",
+     "that's"
+    ],
+    [
+     "ANIMATION, ARTWORK, VIDEO",
+     "animations"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "v03.png",
+     "cam": [
+      [
+       0,
+       1.05,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.2,
+       0.5,
+       0.5
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "b04",
+   "vo": "Animations, made for your site and your brand. Artwork to go with them: illustration and imagery. And video production, from short clips to scenes for a page.",
+   "to_next": "push-left",
+   "kinetic": [
+    [
+     "ANIMATIONS",
+     "animations"
+    ],
+    [
+     "ARTWORK",
+     "artwork"
+    ],
+    [
+     "VIDEO PRODUCTION",
+     "video"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "v04a.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.12,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "v04b.png",
+     "at": "artwork",
+     "cam": [
+      [
+       0,
+       1.05,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.2,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "v04c.png",
+     "at": "video",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.12,
+       0.5,
+       0.5
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "b05",
+   "vo": "I've done this since the 2000s, when I started with Macromedia Flash and ActionScript, alongside PHP and MySQL development.",
+   "to_next": "slide-left",
+   "kinetic": [
+    [
+     "SINCE THE 2000S",
+     "since"
+    ],
+    [
+     "FLASH AND ACTIONSCRIPT",
+     "flash"
+    ],
+    [
+     "PHP AND MYSQL",
+     "php"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "v05a.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.12,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "v05b.png",
+     "at": "php",
+     "cam": [
+      [
+       0,
+       1.05,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.2,
+       0.5,
+       0.5
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "b06",
+   "vo": "And I still build things that move.",
+   "to_next": "wipe-right",
+   "kinetic": [
+    [
+     "I STILL BUILD THINGS THAT MOVE",
+     "still"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "v04a.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.12,
+       0.5,
+       0.5
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "b07",
+   "vo": "You can see the flyover video on each city page, and the illustrations on my case studies page.",
+   "to_next": "push-left",
+   "kinetic": [
+    [
+     "FLYOVER VIDEO ON CITY PAGES",
+     "flyover"
+    ],
+    [
+     "ILLUSTRATIONS IN CASE STUDIES",
+     "illustrations"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "v07a.png",
+     "cam": [
+      [
+       0,
+       1.05,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.2,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "v07b.png",
+     "at": "illustrations",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.15,
+       0.5,
+       0.5
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "b08",
+   "vo": "Southern Utah is home, and I work with businesses anywhere.",
+   "to_next": "zoom-through",
+   "kinetic": [
+    [
+     "SOUTHERN UTAH IS HOME",
+     "utah"
+    ],
+    [
+     "BUSINESSES ANYWHERE",
+     "anywhere"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "g11.png",
+     "cam": [
+      [
+       0,
+       1.05,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.2,
+       0.5,
+       0.5
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "b09",
+   "vo": "We start with a call about what you want to show, and where it will live. I'll tell you what I'd make. Seth Shoultes dot com.",
+   "to_next": "push-left",
+   "kinetic": [
+    [
+     "WHAT YOU WANT TO SHOW",
+     "want"
+    ],
+    [
+     "WHERE IT WILL LIVE",
+     "live"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "c05.png",
+     "tr": "circle-open",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       0.45,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       0.52,
+       1.15,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.15,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "proc:endcard",
+     "at": "seth",
+     "notype": true
+    }
+   ]
+  }
+ ]
+}

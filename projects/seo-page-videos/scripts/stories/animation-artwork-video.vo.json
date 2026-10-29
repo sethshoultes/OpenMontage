@@ -1,0 +1,49 @@
+{
+ "shots": [
+  {
+   "id": "s01",
+   "vo": "Quick question. Does your website just sit there... or does it move?",
+   "pace": 1.0
+  },
+  {
+   "id": "s02",
+   "vo": "Words and photos only go so far. Motion and imagery can show what words can't.",
+   "pace": 0.97
+  },
+  {
+   "id": "s03",
+   "vo": "That's my job. I build custom animations, artwork and video.",
+   "pace": 0.95
+  },
+  {
+   "id": "s04",
+   "vo": "Animations, made for your site and your brand. Artwork to go with them: illustration and imagery. And video production, from short clips to scenes for a page.",
+   "pace": 1.03
+  },
+  {
+   "id": "s05",
+   "vo": "I've done this since the 2000s, when I started with Macromedia Flash and ActionScript, alongside PHP and MySQL development.",
+   "pace": 1.02
+  },
+  {
+   "id": "s06",
+   "vo": "And I still build things that move.",
+   "pace": 1.0
+  },
+  {
+   "id": "s07",
+   "vo": "You can see the flyover video on each city page, and the illustrations on my case studies page.",
+   "pace": 1.0
+  },
+  {
+   "id": "s08",
+   "vo": "Southern Utah is home, and I work with businesses anywhere.",
+   "pace": 1.0
+  },
+  {
+   "id": "s09",
+   "vo": "We start with a call about what you want to show, and where it will live. I'll tell you what I'd make. Seth Shoultes dot com.",
+   "pace": 0.96
+  }
+ ]
+}
