@@ -1,7 +1,8 @@
 """Results video for the HTML-to-WordPress converter test (memberintel-marketing#720, piece 2 of #8803).
 
-Usage: build_converter_video.py <wp-html-converter-test checkout> [--plan-only] [--silent]
+Usage: build_converter_video.py <wp-html-converter-test checkout> [--plan-only] [--silent] [--portrait]
   --silent: the same slides, numbers, order and timings with no voice and no audio track; slides cross-dissolve.
+  --portrait: 1080x1920 layouts (the blog player is portrait only): the same words and numbers, the pair of screenshots stacked.
 Env:   CARTESIA_SECRET_KEY (source ~/.config/dev-secrets/secrets.env)
 Out:   projects/wpab-converter-test/renders/converter-test.mp4 (+ .srt sidecar, never burned in)
 
@@ -160,6 +161,117 @@ def slide_end():
     return im
 
 
+PW, PH = 1080, 1920
+
+
+def pcanvas():
+    im = Image.new("RGB", (PW, PH), T["bg"])
+    return im, ImageDraw.Draw(im)
+
+
+def pcentered(d, text, y, f, fill):
+    w = d.textlength(text, font=f)
+    d.text(((PW - w) / 2, y), text, font=f, fill=fill)
+
+
+def pshot(repo, tool, kind, w, h):
+    im = Image.open(Path(repo) / f"results/{tool}/{kind}-index-1280.png").convert("RGB")
+    im = im.crop((0, 0, 1280, int(1280 * h / w)))
+    return im.resize((w, h), Image.LANCZOS)
+
+
+def pwrap_center(d, text, y, f, fill, width, lead):
+    for ln in wrap(d, text, f, width):
+        pcentered(d, ln, y, f, fill)
+        y += lead
+    return y
+
+
+def pslide_title():
+    im, d = pcanvas()
+    y = pwrap_center(d, "Five HTML-to-WordPress converters", 640, font(104), T["accent"], PW - 160, 126)
+    pwrap_center(d, "One sample site, ten fixed checks", y + 50, font(66), T["text"], PW - 160, 84)
+    return im
+
+
+def pslide_sample(repo):
+    im, d = pcanvas()
+    pwrap_center(d, "The sample: Quillfern Cycle Works", 150, font(80), T["text"], PW - 120, 98)
+    pcentered(d, "a made-up bike shop, hand-coded HTML", 330, font(50, False), T["muted"])
+    im.paste(pshot(repo, "rawhandler", "original", 960, 1160), (60, 450))
+    return im
+
+
+def pslide_tool(repo, name, tool, score, mx, ne):
+    im, d = pcanvas()
+    pwrap_center(d, name, 70, font(88), T["accent"], PW - 120, 104)
+    big = f"{score} of {mx}"
+    pcentered(d, big, 250 if len(name) < 20 else 280, font(120), T["text"])
+    sub = f"{ne} checks had no evidence, left out of the maximum" if ne else "all ten checks had evidence"
+    pwrap_center(d, sub, 420, font(44, False), T["muted"], PW - 120, 56)
+    d.text((60, 560), "Original, home page", font=font(48), fill=T["text"])
+    im.paste(pshot(repo, tool, "original", 960, 560), (60, 630))
+    d.text((60, 1230), "Converted, home page", font=font(48), fill=T["text"])
+    im.paste(pshot(repo, tool, "converted", 960, 560), (60, 1300))
+    return im
+
+
+def pslide_table(rows):
+    im, d = pcanvas()
+    pcentered(d, "Totals, ten checks", 70, font(74), T["text"])
+    pcentered(d, "across four pages", 160, font(74), T["text"])
+    for i, (name, tool, _) in enumerate(TOOLS):
+        y = 320 + i * 190
+        sc, mx, ne = rows[name]
+        d.rectangle((50, y - 14, PW - 50, y + 160), fill=T["panel"])
+        d.text((80, y + 6), name, font=font(54), fill=T["text"])
+        d.text((80, y + 82), f"{sc} of {mx}", font=font(60), fill=T["accent"])
+        d.text((PW - 80 - d.textlength(f"no evidence: {ne}", font=font(42, False)), y + 100), f"no evidence: {ne}", font=font(42, False), fill=T["muted"])
+    y = pwrap_center(d, "A lower score means fewer of the ten checks passed on this one sample site.", 1340, font(58), T["text"], PW - 140, 76)
+    pwrap_center(d, "Plain sums of 0, 1 and 2 per check. No weights.", y + 20, font(42, False), T["muted"], PW - 140, 54)
+    pwrap_center(d, "\u2020 Ran by its publisher's Playground route, under a newer PHP.", 1810, font(40, False), T["muted"], PW - 120, 50)
+    return im
+
+
+def pslide_disclosures():
+    items = ["One sample site, four pages.",
+             "Four tools got each page's body markup; Static Site Importer got the whole site.",
+             "Static Site Importer ran by its publisher's Playground route, under a newer PHP.",
+             "Run 2026-10-28, every tool pinned to a version."]
+    for size in range(78, 50, -2):
+        im, d = pcanvas()
+        d.text((70, 130), "Read these first", font=font(92), fill=T["accent"])
+        y, f = 300, font(size, False)
+        for it in items:
+            for j, ln in enumerate(wrap(d, it, f, PW - 190)):
+                d.text((70 + (0 if j == 0 else size * 0.7), y), ("\u2022  " if j == 0 else "") + ln, font=f, fill=T["text"])
+                y += int(size * 1.25)
+            y += int(size * 0.5)
+        if y < PH - 120:
+            return im
+    raise SystemExit("disclosures do not fit")
+
+
+def pslide_end():
+    im, d = pcanvas()
+    pcentered(d, "Scores and every", 520, font(78), T["text"])
+    pcentered(d, "screenshot are public", 610, font(78), T["text"])
+    def split_url(u):   # a URL breaks at its slashes, never mid-word
+        u = u.replace("https://", "")
+        head, _, tail = u.rpartition("/")
+        return [head + "/", tail]
+    y = 770
+    for ln in split_url(CFG["repo"]):
+        pcentered(d, ln, y, font(54), T["accent"])
+        y += 70
+    pwrap_center(d, "The question comes from WordPress Agent Benchmarks", 1080, font(54, False), T["text"], PW - 140, 70)
+    y = 1300
+    for ln in split_url(CFG["benchmark"]):
+        pcentered(d, ln, y, font(54), T["accent"])
+        y += 70
+    return im
+
+
 def script(rows):
     def n(name):
         s, m, ne = rows[name]
@@ -197,7 +309,7 @@ def srt_time(s):
     return f"{ms // 3600000:02d}:{ms // 60000 % 60:02d}:{ms // 1000 % 60:02d},{ms % 1000:03d}"
 
 
-def main(repo, plan_only, silent=False):
+def main(repo, plan_only, silent=False, portrait=False):
     import hashlib
     rows = scores(repo)
     lines = script(rows)
@@ -208,14 +320,21 @@ def main(repo, plan_only, silent=False):
         return
     for d in ("assets", "slides", "renders"):
         (P / d).mkdir(exist_ok=True)
-    builders = {"title": slide_title, "sample": lambda: slide_sample(repo), "table": lambda: slide_table(rows),
-                "disclosures": slide_disclosures, "end": slide_end}
-    for name, tool, _ in TOOLS:
-        builders[tool] = (lambda n=name, t=tool: slide_tool(repo, n, t, *rows[n]))
+    if portrait:
+        builders = {"title": pslide_title, "sample": lambda: pslide_sample(repo), "table": lambda: pslide_table(rows),
+                    "disclosures": pslide_disclosures, "end": pslide_end}
+        for name, tool, _ in TOOLS:
+            builders[tool] = (lambda n=name, t=tool: pslide_tool(repo, n, t, *rows[n]))
+    else:
+        builders = {"title": slide_title, "sample": lambda: slide_sample(repo), "table": lambda: slide_table(rows),
+                    "disclosures": slide_disclosures, "end": slide_end}
+        for name, tool, _ in TOOLS:
+            builders[tool] = (lambda n=name, t=tool: slide_tool(repo, n, t, *rows[n]))
+    tag = "-portrait" if portrait else ""
     GAP, TAIL, F = 0.4, 2.5, CFG["fade_seconds"]
     clips, t, cues, durs = [], 0.0, [], []
     for key, _, text in lines:
-        slide = P / f"slides/{key}.png"
+        slide = P / f"slides/{key}{tag}.png"
         builders[key]().save(slide)
         a = P / f"assets/{key}-{hashlib.sha1((CFG['voice_id'] + str(CFG['speed']) + text).encode()).hexdigest()[:8]}.mp3"
         if not (a.exists() and a.stat().st_size > 0):
@@ -223,7 +342,7 @@ def main(repo, plan_only, silent=False):
         d = max(dur(a) + GAP, CFG["min_hold_seconds"], HOLDS.get(key, 0))
         if key == "end":
             d += TAIL
-        clip = P / f"assets/clip-{key}.mp4"
+        clip = P / f"assets/clip-{key}{tag}.mp4"
         vf = "format=yuv420p" if silent else f"fade=t=in:st=0:d={F},fade=t=out:st={d - F:.2f}:d={F},format=yuv420p"
         subprocess.run(["ffmpeg", "-y", "-v", "error", "-loop", "1", "-framerate", "30", "-t", f"{d + (F if silent else 0):.2f}", "-i", str(slide),
                         "-vf", vf, "-c:v", "libx264", "-crf", "18", str(clip)], check=True)
@@ -240,7 +359,7 @@ def main(repo, plan_only, silent=False):
         t += d
     if silent:
         # cross-dissolve: slide i covers [t_i, t_i + d_i + F] and fades over the next one for its last F seconds
-        out = P / "renders/converter-test-silent.mp4"
+        out = P / f"renders/converter-test-silent{tag}.mp4"
         ins, fc, last, off = [], [], "0:v", 0.0
         for i, (clip, _) in enumerate(clips):
             ins += ["-i", str(clip)]
@@ -266,4 +385,4 @@ if __name__ == "__main__":
     a = [x for x in sys.argv[1:] if not x.startswith("--")]
     if len(a) != 1:
         sys.exit(__doc__)
-    main(a[0], "--plan-only" in sys.argv, "--silent" in sys.argv)
+    main(a[0], "--plan-only" in sys.argv, "--silent" in sys.argv, "--portrait" in sys.argv)
