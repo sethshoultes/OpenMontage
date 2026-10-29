@@ -1,7 +1,7 @@
 """Designed motion explainer from a story file: one concept still per narration beat, camera moves, real transitions,
-kinetic type timed to the voice, a ducked music bed (v3 of the page video, sethshoultes.github.io#145).
+kinetic type timed to the voice, a music bed ducked under the voice (v3 of the page video, sethshoultes.github.io#145).
 
-Usage: build_story_video.py <story.json> <stills-dir> <vo-dir> <out.mp4> [--music bed.mp3] [--sfx a.mp3,b.mp3]
+Usage: build_story_video.py <story.json> <stills-dir> <vo-dir> <out.mp4> --music bed.mp3 --sfx a.mp3,b.mp3
   story.json   beats[]: id, vo, to_next (transition), kinetic [[text, anchor word]], shots[] {still, at (anchor word), cam, notype} (see stories/)
   stills-dir   <id>.png per shot, 16:9, 2k or larger (made on Higgsfield / Nano Banana Pro; see the story's image prompts)
   vo-dir       picked.json + <id>-tN.mp3/.json from gen_vo.py (the takes' character timings drive the type)
@@ -18,6 +18,8 @@ from pathlib import Path
 
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont
+
+import story_mix
 
 HERE = Path(__file__).parent
 CFG = json.load(open(HERE / "config.json"))
@@ -262,7 +264,7 @@ def endcard(t, site, label):
     return im
 
 
-def main(story_path, stills, vo_dir, out, music=None, sfx_files=None):
+def main(story_path, stills, vo_dir, out, music, sfx_files):
     story = json.load(open(story_path))
     picked = json.load(open(Path(vo_dir) / "picked.json"))
     beats = story["beats"]
@@ -342,37 +344,6 @@ def main(story_path, stills, vo_dir, out, music=None, sfx_files=None):
         ff.stdin.write(img.tobytes())
     ff.stdin.close()
     ff.wait()
-    # audio: the voice at each start, the music ducked under it, a whoosh on each beat change
-    ins, fl = [], []
-    for k, bt in enumerate(beats):
-        ins += ["-i", str(bt["mp3"])]
-        ms = int(bt["start"] * 1000)
-        fl.append(f"[{k}:a]adelay={ms}|{ms}[v{k}]")
-    nb = len(beats)
-    fl.append("".join(f"[v{k}]" for k in range(nb)) + f"amix=inputs={nb}:normalize=0,apad=whole_dur={total}[vo]")
-    nin = nb
-    if music:
-        ins += ["-i", str(music)]
-        mi, nin = nin, nin + 1
-    changes = [sh["end"] - sh["T"] for i, sh in enumerate(shots) if i + 1 < n and shots[i + 1]["beat"] != sh["beat"]]
-    if sfx_files:
-        for q, tw in enumerate(changes):
-            ins += ["-i", str(sfx_files[q % len(sfx_files)])]
-            ms = int(tw * 1000)
-            fl.append(f"[{nin + q}:a]adelay={ms}|{ms},volume=0.5[x{q}]")
-        fl.append("".join(f"[x{q}]" for q in range(len(changes))) + f"amix=inputs={len(changes)}:normalize=0,apad=whole_dur={total}[sfxbus]")
-        fl.append("[vo][sfxbus]amix=inputs=2:normalize=0[vo]")
-    if music:
-        fl.append(f"[{mi}:a]atrim=0:{total},volume=0.55,afade=t=out:st={total - 2.5}:d=2.5[m];[vo]asplit[vo1][vo2];"
-                  f"[m][vo1]sidechaincompress=threshold=0.02:ratio=9:attack=15:release=350[md];[vo2][md]amix=inputs=2:normalize=0[mix]")
-        last = "mix"
-    else:
-        last = "vo"
-    fl.append(f"[{last}]loudnorm=I=-16:TP=-1.5:LRA=9[aout]")
-    aud = Path(out).with_suffix(".audio.m4a")
-    subprocess.run(["ffmpeg", "-v", "error", "-y", *ins, "-filter_complex", ";".join(fl), "-map", "[aout]", "-c:a", "aac", "-b:a", "192k", str(aud)], check=True)
-    subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", str(tmp), "-i", str(aud), "-c:v", "copy", "-c:a", "copy", "-shortest",
-                    "-movflags", "+faststart", str(out)], check=True)
     # sidecar captions from the script text on the spoken timings (never burned in)
     def tc(s):
         ms = int(s * 1000)
@@ -387,6 +358,8 @@ def main(story_path, stills, vo_dir, out, music=None, sfx_files=None):
     json.dump({"total": total, "shots": [{"still": sh["still"], "at": round(sh["at"], 2), "end": round(sh["end"], 2)} for sh in shots],
                "beats": [{"id": bt["id"], "start": round(bt["start"], 2), "dur": round(bt["d"], 2)} for bt in beats]},
               open(Path(out).with_suffix(".timeline.json"), "w"), indent=1)
+    # audio: one mix recipe for every video (story_mix.py, levels in config.json "mix")
+    story_mix.main(Path(out).with_suffix(".timeline.json"), vo_dir, tmp, out, music, sfx_files)
     print("OK", total, "s,", n, "shots,", out)
 
 
@@ -397,6 +370,6 @@ if __name__ == "__main__":
             i = argv.index(key)
             opts[key] = argv[i + 1].split(",") if key == "--sfx" else argv[i + 1]
             del argv[i:i + 2]
-    if len(argv) != 4:
+    if len(argv) != 4 or len(opts) != 2:
         sys.exit(__doc__)
-    main(*argv, music=opts.get("--music"), sfx_files=opts.get("--sfx"))
+    main(*argv, music=opts["--music"], sfx_files=opts["--sfx"])

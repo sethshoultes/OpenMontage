@@ -17,5 +17,27 @@
   "title_hold_seconds": 3.0,
   "title_hold_per_extra_word": 0.3,
   "title_hold_free_words": 6,
-  "fade_seconds": 0.6
+  "fade_seconds": 0.6,
+  "mix": {
+    "turn_beat": "b05",
+    "turn_lead_s": 1.2,
+    "turn_ramp_s": 3.0,
+    "music_cool_db": -24,
+    "music_warm_db": -22,
+    "music_gap_cool_db": -22,
+    "music_gap_warm_db": -19,
+    "music_outro_db": -12,
+    "speech_floor_db": -46,
+    "speech_pad_s": 0.15,
+    "duck_attack_s": 0.12,
+    "duck_release_s": 0.6,
+    "fade_out_s": 2.5,
+    "sfx_db": -22,
+    "sfx_max_s": 0.5,
+    "sfx_min_s": 0.15,
+    "sfx_after_word_s": 0.03,
+    "sfx_fade_s": 0.04,
+    "target_lufs": -16,
+    "true_peak_db": -1.5
+  }
 }
