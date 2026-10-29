@@ -17,10 +17,10 @@ from build_who_edits import ACCENT, BG, FPS, H, MARGIN, TEXT, W, block, paint, s
 def stack(items, y, gap=60):
     """items: [(start, element-builder(y))]; returns [(start, element)] laid out top to bottom from y."""
     out = []
-    for t0, make in items:
+    for t0, make, *after in items:  # an optional third value is the gap below this element
         el = make(y)
         out.append((t0, el))
-        y = el[2] + gap
+        y = el[2] + (after[0] if after else gap)
     return out
 
 
@@ -37,7 +37,7 @@ def build(data_path, out):
     sub3 = block(asof, 56, h3[2] + 20)
     items, y, t = [(0.3, h3), (0.6, sub3)], sub3[2] + 60, 1.4
     for num, label in [(d["scripts"], ["episode scripts on file;", f"the AI writer added at most {d['scripts_by_ai_max']}"]),
-                       (d["blog_drafts"], ["blog drafts by an AI drafter"]),
+                       (d["blog_drafts"], ["changes to the blog", "by an AI drafter"]),
                        (d["x_posts"], ["posts on Opal's X account,", f"by {d['x_posts_by']}"])]:
         n = block(str(num), 110, y, fill=ACCENT)
         l = block(label, 54, n[2] - 6, lead=1.15)
@@ -51,8 +51,9 @@ def build(data_path, out):
 
     s5 = scene_text(stack([(0.3, lambda y: block("What it didn't do", 92, y)),
                            (1.3, lambda y: block(["Tell us whether it worked.", "We haven't looked yet."], 62, y, marker=("dash", ACCENT), lead=1.15)),
-                           (3.6, lambda y: block("Switch itself off.", 62, y, marker=("dash", ACCENT), lead=1.15)),
-                           (5.4, lambda y: block("Choose why we do this.", 62, y, marker=("dash", ACCENT), lead=1.15))], 300, 70), 9.0)
+                           (3.4, lambda y: block("Switch itself off.", 62, y, marker=("dash", ACCENT), lead=1.15), 14),
+                           (4.0, lambda y: block([f"Switched off {d['off_date']}.", f"Still off as of {d['as_of']}."], 54, y, lead=1.2, x=MARGIN + 62)),
+                           (6.2, lambda y: block("Choose why we do this.", 62, y, marker=("dash", ACCENT), lead=1.15))], 300, 70), 9.0)
 
     s6 = scene_text(stack([(0.3, lambda y: block("Why we do this is one sentence. It's Seth's.", 70, y, lead=1.15)),
                            (1.6, lambda y: block("“" + d["sentence"] + "”", 74, y, fill=ACCENT, lead=1.2))], 420, 90), 8.0)
