@@ -151,11 +151,56 @@ def _spell_year(m: re.Match) -> str:
     return f"{_spell_two_digit(hi)} hundred" if lo == 0 else f"{_spell_two_digit(hi)} {_spell_two_digit(lo)}"
 
 
+_UNIT_VALUE = {w: int(n) for n, w in _NUMBER_WORDS.items() if 1 <= int(n) <= 9}
+_WORD_VALUE = {w: int(n) for n, w in _NUMBER_WORDS.items()}
+_TENS_VALUE = {w: t * 10 for t, w in _TENS_WORDS.items()}
+
+
+def _spelled_below_100(words: list[str], i: int) -> tuple[int | None, int]:
+    """The 0-99 spelled at words[i] ("forty", "forty one", "thirteen"): (value, next index), or
+    (None, i) when words[i] is not a number word."""
+    w = words[i] if i < len(words) else ""
+    if w in _TENS_VALUE:
+        nxt = words[i + 1] if i + 1 < len(words) else ""
+        return (_TENS_VALUE[w] + _UNIT_VALUE[nxt], i + 2) if nxt in _UNIT_VALUE else (_TENS_VALUE[w], i + 1)
+    if w in _WORD_VALUE:
+        return _WORD_VALUE[w], i + 1
+    return None, i
+
+
+def _spelled_number(words: list[str], i: int) -> tuple[int | None, int]:
+    """The spelled number at words[i] that Whisper would have written as a numeral, from "twenty" to
+    "nine hundred and ninety nine": (value, next index), or (None, i). A teen or a unit alone is left
+    as a word, because `normalise` turns a heard "13" into "thirteen"."""
+    w = words[i]
+    if i + 1 < len(words) and words[i + 1] == "hundred" and (w == "a" or w in _UNIT_VALUE):
+        hundreds, j = 100 * (1 if w == "a" else _UNIT_VALUE[w]), i + 2
+        # the "and" in "a hundred and fifty" belongs to the number only when a number follows it
+        for k in ((j + 1, j) if j < len(words) and words[j] == "and" else (j,)):
+            rest, nxt = _spelled_below_100(words, k)
+            if rest:
+                return hundreds + rest, nxt
+        return hundreds, j
+    if w in _TENS_VALUE:
+        return _spelled_below_100(words, i)
+    return None, i
+
+
+def _numerals(words: list[str]) -> list[str]:
+    out: list[str] = []
+    i = 0
+    while i < len(words):
+        value, nxt = _spelled_number(words, i)
+        out.append(words[i] if value is None else str(value))
+        i = i + 1 if value is None else nxt
+    return out
+
+
 def normalise(text: str) -> list[str]:
     """Spoken words only: the leading delivery `[tag]` is stripped before synthesis, so it is not
     in the audio and must not be in the reference either.
 
-    Three ASR-driven mismatches recur, none of them a script or audio defect, so they're fixed here
+    Four ASR-driven mismatches recur, none of them a script or audio defect, so they're fixed here
     rather than by touching Seth-approved narration text:
 
     - the boilerplate "...at ohmsville dot com" closer, marginal even on precedent films (Spooky
@@ -168,6 +213,10 @@ def normalise(text: str) -> list[str]:
       long enough to absorb one mismatched token; Ohm s4's sentence is short enough that the same gap
       alone dropped it from ~0.97 to 0.893, under the 0.90 threshold. `_spell_year` turns "1841" back
       into "eighteen forty one" so it lines up with the script the same way the 1-2 digit case does.
+    - a spelled number from 21 to 999: the script says "thirty-one years" and "a hundred and fifty
+      projects", Whisper writes "31 years" and "150 projects" (The Founders of Ohmsville s1 scored
+      0.886 and s3 0.875, audio correct on listening, circuit-city#114). Both sides are put into
+      numerals, so whichever form Whisper picks lines up, and a different number still does not.
 
     The "ohmsville" vs "omsville" mishearing, and Ohm s4's own "Copley" heard as "Coply" (ASR
     confidence 0.276 on that one word), are left alone deliberately — hardcoding a specific
@@ -178,7 +227,7 @@ def normalise(text: str) -> list[str]:
     text = re.sub(r"\.(com|org|net|io)\b", r" dot \1", text)
     text = re.sub(r"\b(1[0-9]|20)\d{2}\b", _spell_year, text)
     text = re.sub(r"\b\d{1,2}\b", lambda m: _NUMBER_WORDS.get(m.group(0), m.group(0)), text)
-    return re.sub(r"[^a-z0-9 ]+", " ", text.lower()).split()
+    return _numerals(re.sub(r"[^a-z0-9 ]+", " ", text.lower()).split())
 
 
 def align(script: str, heard: str) -> float:
