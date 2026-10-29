@@ -1,0 +1,54 @@
+{
+ "shots": [
+  {
+   "id": "s01",
+   "vo": "Quick question. When someone in your town searches for what you sell... do they find you?",
+   "pace": 1.0
+  },
+  {
+   "id": "s02",
+   "vo": "Searchers pick from the first few results.",
+   "pace": 0.97
+  },
+  {
+   "id": "s03",
+   "vo": "SEO is making sure the people searching for what you sell can find you. And that what they find makes them call.",
+   "pace": 1.0
+  },
+  {
+   "id": "s04",
+   "vo": "That's my job. I've worked on search for almost twenty years.",
+   "pace": 0.95
+  },
+  {
+   "id": "s05",
+   "vo": "I owned a web development agency. I worked inside a marketing department. And I ran SEO for Espresso.",
+   "pace": 1.0
+  },
+  {
+   "id": "s06",
+   "vo": "Local search. Neighborhood pages about real places. A steady way to earn reviews. And content in your voice.",
+   "pace": 1.04
+  },
+  {
+   "id": "s07",
+   "vo": "Proof? I bought Garage Door Pro Services in Southern Utah, and took it to number one within three months.",
+   "pace": 0.93
+  },
+  {
+   "id": "s08",
+   "vo": "I grew its reviews. I built neighborhood pages and a checklist. Once it was outranking everyone, I sold it to a competitor.",
+   "pace": 1.0
+  },
+  {
+   "id": "s09",
+   "vo": "How long will it take for you? It depends on your market. I'll tell you plainly what I think is realistic.",
+   "pace": 0.95
+  },
+  {
+   "id": "s10",
+   "vo": "So let's start with a call about your business. Seth Shoultes dot com.",
+   "pace": 0.95
+  }
+ ]
+}

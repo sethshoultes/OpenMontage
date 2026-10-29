@@ -1,0 +1,400 @@
+{
+ "page": "https://sethshoultes.com/seo-services/",
+ "title": "SEO Services in Southern Utah",
+ "arc": "Hook (do they find you?) > stakes (first few results) > guide (that's my job) > credentials > what I do > proof (Garage Door Pro Services, number one within three months, Seth confirmed 2026-10-28) > honesty (it depends on your market) > invitation (a call). Same cool-to-warm colour arc as the AI search video: cool until 'That's my job', warm after.",
+ "style": "Bold flat editorial vector illustration, razor-sharp hard edges, precise geometry, crisp thin outlines, high contrast. Cool beats: charcoal #0b0d10, grey, orange #ff6b2c. Warm beats: ground #17110c, cream #f1e6d6, orange #ff6b2c. No glow, bloom, haze, blur, gradients, soft shadows or depth of field. No people, no logos.",
+ "beats": [
+  {
+   "id": "b01",
+   "vo": "Quick question. When someone in your town searches for what you sell... do they find you?",
+   "to_next": "push-left",
+   "kinetic": [
+    [
+     "QUICK QUESTION.",
+     "quick"
+    ],
+    [
+     "DO THEY",
+     "do"
+    ],
+    [
+     "FIND YOU?",
+     "find"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "c01.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.16,
+       0.56,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "c04.png",
+     "at": "searches"
+    }
+   ]
+  },
+  {
+   "id": "b02",
+   "vo": "Searchers pick from the first few results.",
+   "to_next": "zoom-through",
+   "kinetic": [
+    [
+     "THE FIRST FEW",
+     "first"
+    ],
+    [
+     "RESULTS",
+     "results"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "c02.png"
+    }
+   ]
+  },
+  {
+   "id": "b03",
+   "vo": "SEO is making sure the people searching for what you sell can find you. And that what they find makes them call.",
+   "to_next": "wipe-up",
+   "kinetic": [
+    [
+     "FIND YOU.",
+     "find"
+    ],
+    [
+     "MAKES THEM CALL.",
+     "makes"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "c03.png"
+    }
+   ]
+  },
+  {
+   "id": "b04",
+   "vo": "That's my job. I've worked on search for almost twenty years.",
+   "to_next": "push-left",
+   "kinetic": [
+    [
+     "THAT'S MY JOB.",
+     "that's"
+    ],
+    [
+     "ALMOST 20 YEARS",
+     "almost"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "c06.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "b05",
+   "vo": "I owned a web development agency. I worked inside a marketing department. And I ran SEO for Espresso.",
+   "to_next": "slide-left",
+   "kinetic": [
+    [
+     "A WEB AGENCY",
+     "owned"
+    ],
+    [
+     "A MARKETING DEPARTMENT",
+     "inside"
+    ],
+    [
+     "SEO FOR ESPRESSO",
+     "ran"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "d15.png"
+    },
+    {
+     "still": "d16.png",
+     "at": "inside"
+    },
+    {
+     "still": "d17.png",
+     "at": "ran"
+    }
+   ]
+  },
+  {
+   "id": "b06",
+   "vo": "Local search. Neighborhood pages about real places. A steady way to earn reviews. And content in your voice.",
+   "to_next": "wipe-right",
+   "kinetic": [
+    [
+     "LOCAL SEARCH",
+     "local"
+    ],
+    [
+     "NEIGHBORHOOD PAGES",
+     "neighborhood"
+    ],
+    [
+     "REVIEWS",
+     "reviews"
+    ],
+    [
+     "YOUR VOICE",
+     "voice"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "d08.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "c09.png",
+     "at": "reviews"
+    }
+   ]
+  },
+  {
+   "id": "b07",
+   "vo": "Proof? I bought Garage Door Pro Services in Southern Utah, and took it to number one within three months.",
+   "to_next": "push-left",
+   "kinetic": [
+    [
+     "THE PROOF",
+     "proof"
+    ],
+    [
+     "NUMBER ONE",
+     "number"
+    ],
+    [
+     "IN THREE MONTHS",
+     "within"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "d10.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.18,
+       0.5,
+       0.55
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "b08",
+   "vo": "I grew its reviews. I built neighborhood pages and a checklist. Once it was outranking everyone, I sold it to a competitor.",
+   "to_next": "zoom-through",
+   "kinetic": [
+    [
+     "MORE REVIEWS",
+     "reviews"
+    ],
+    [
+     "A CHECKLIST",
+     "checklist"
+    ],
+    [
+     "THEN SOLD",
+     "sold"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "d13.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "d14.png",
+     "at": "checklist",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "c12.png",
+     "at": "sold",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "b09",
+   "vo": "How long will it take for you? It depends on your market. I'll tell you plainly what I think is realistic.",
+   "to_next": "wipe-up",
+   "kinetic": [
+    [
+     "HOW LONG?",
+     "how"
+    ],
+    [
+     "IT DEPENDS",
+     "depends"
+    ],
+    [
+     "PLAINLY",
+     "plainly"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "c11.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "b10",
+   "vo": "So let's start with a call about your business. Seth Shoultes dot com.",
+   "to_next": "end",
+   "kinetic": [
+    [
+     "LET'S START WITH A CALL",
+     "start"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "c05.png",
+     "tr": "circle-open",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       0.45,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       0.52,
+       1.4,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.4,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "proc:endcard",
+     "at": "about",
+     "notype": true
+    }
+   ]
+  }
+ ]
+}

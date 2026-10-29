@@ -43,7 +43,7 @@ def main(story, outdir):
     picked = {}
     for s in json.load(open(story))["shots"]:
         text = re.sub(r"\s+", " ", re.sub(r"\[[^\]]*\]", "", s["vo"])).strip()
-        base = KEY.get(s["id"], LIST.get(s["id"], 1.0))
+        base = s.get("pace", KEY.get(s["id"], LIST.get(s["id"], 1.0)))  # a story can set its own pace per line
         rows = []
         for n, (stab, style, off) in enumerate(TAKES, 1):
             p = out / f"{s['id']}-t{n}"
