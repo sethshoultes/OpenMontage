@@ -40,7 +40,8 @@ def build(data_path, out):
                             T(0.8, f"on Opal's X account, by {d['x_posts_by']}.", 84, lead=1.2, center=True, width=900)], gap=70), 6.2)
 
     s4 = scene_text(stack([T(0.3, "On the blog", 118, center=True, width=900),
-                           T(0.8, f"{asof}: {d['posts_live']} posts live, and {d['videos']} short videos on them.", 88, lead=1.2, center=True, width=900)], gap=80), 6.2)
+                           T(0.5, asof, 60, bold=False, center=True, width=900),
+                           T(1.0, f"{d['posts_live']} posts live, and {d['videos']} short videos on them.", 88, lead=1.2, center=True, width=900)], gap=70), 6.2)
 
     s5 = scene_text(stack([T(0.3, "What it didn't do", 100, center=True, width=900),
                            T(0.6, asof, 60, bold=False, center=True, width=900),
