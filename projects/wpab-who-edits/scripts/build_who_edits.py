@@ -54,6 +54,9 @@ def block(lines, size, y, fill=TEXT, bold=True, lead=1.18, x=MARGIN, width=W - 2
     f = font(size, bold)
     rows = [r for t in ([lines] if isinstance(lines, str) else lines) for r in wrap(t, f, width - (size if marker else 0))]
     h = int(len(rows) * size * lead) + 8
+    if center:  # a centred line keeps at least 90 px from each side of the 1080 frame
+        widest = max(ImageDraw.Draw(Image.new("RGB", (1, 1))).textlength(r, font=f) for r in rows)
+        assert widest <= W - 180, f"line wider than the 90 px side margins: {rows[0]!r} ({widest:.0f} px)"
     assert TOP <= y and y + h <= BOTTOM, f"outside the safe zone: {rows[0]!r} y={y}..{y + h}"
     im = Image.new("RGBA", (W, h), (0, 0, 0, 0))
     d = ImageDraw.Draw(im)
