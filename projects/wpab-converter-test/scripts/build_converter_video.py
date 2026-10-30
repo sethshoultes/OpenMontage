@@ -246,12 +246,12 @@ def pslide_sample(repo):
 # crops: (label, results sub-path under the tool dir or "orig:<file>", source-px box). "orig:" crops come from the same tool's original screenshots.
 FINDINGS = {
     "rawhandler": ("Every page came over as Custom HTML blocks, not as separate paragraphs, headings and images.",
-                   [("Editor block list, home page", "converted-index-listview.png", (0, 55, 430, 520))]),
+                   [("Editor block list, home page", "converted-index-listview.png", (0, 55, 318, 520))]),
     "static-site-importer": ("The look carried over, but the hero banner showed an error box.",
                              [("Converted home page, in the editor", "converted-index-editor.png", (0, 330, 1280, 720)),
                               ("The error box, enlarged", "converted-index-editor.png", (0, 425, 330, 545))]),
     "blocks-engine": ("On the contact page the form lost its fields: the labels became plain text and a list.",
-                      [("Converted (inset: the original)", "converted-contact-1280.png", (300, 400, 960, 1100))]),
+                      [("Converted (inset: the original)", "converted-contact-1280.png", (300, 400, 960, 1090))]),
     "block-runner": ("On the contact page the form kept all six controls.",
                      [("Converted contact page", "converted-contact-1280.png", (300, 470, 960, 1010))]),
     "html-to-blocks-converter": ("The editor reported invalid blocks, shown as an error box: two headings and four gallery images.",
@@ -290,8 +290,9 @@ def pslide_tool(repo, name, tool, score, mx, ne):
         sh = proof(repo, tool, fname, box, 960, cap or room)
         if tool == "blocks-engine":          # the original form as a small inset, so "lost its fields" is visible on this slide
             th = proof(repo, tool, "original-contact-1280.png", (100, 130, 760, 900), 250, 400)
-            sh.paste(th, (sh.size[0] - th.size[0] - 12, 12))
-            ImageDraw.Draw(sh).rectangle((sh.size[0] - th.size[0] - 12, 12, sh.size[0] - 12, 12 + th.size[1]), outline=T["accent"], width=4)
+            ix, iy = sh.size[0] - th.size[0] - 12, int(sh.size[1] * 0.36)   # beside the bullet list, where the page is empty
+            sh.paste(th, (ix, iy))
+            ImageDraw.Draw(sh).rectangle((ix, iy, ix + th.size[0], iy + th.size[1]), outline=T["accent"], width=4)
         paste(im, sh, (PW - sh.size[0]) // 2, y + 58)
         y += 58 + sh.size[1] + 20
     return im
