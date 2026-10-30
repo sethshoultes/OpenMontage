@@ -79,23 +79,42 @@ def scene_text(items, hold):
     return draw
 
 
+def stack(specs, gap=56):
+    """Lay out [(start_s, text, size, fill, bold, lead, extra)] top to bottom, then centre the whole stack in y 192-1530.
+    Returns [(start_s, element)] for scene_text. Every block is built at y=TOP first (the safe-zone check), then shifted."""
+    built = []
+    for start, text, size, fill, bold, lead, extra in specs:
+        built.append((start, block(text, size, TOP, fill=fill, bold=bold, lead=lead, **extra)))
+    total = sum(e[2] - e[1] for _, e in built) + gap * (len(built) - 1)
+    assert total <= BOTTOM - TOP, f"stack too tall: {total}"
+    y = TOP + (BOTTOM - TOP - total) // 2
+    out = []
+    for start, (im, y0, y1) in built:
+        out.append((start, (im, y, y + (y1 - y0))))
+        y += (y1 - y0) + gap
+    return out
+
+
+def T(start, text, size, fill=TEXT, bold=True, lead=1.18, **extra):
+    return (start, text, size, fill, bold, lead, extra)
+
+
 def scene_dots():
-    cols, pitch, r = 14, 54, 18
+    """193 dots, one per site, filling the band; 80% light up."""
+    cols, pitch, r = 14, 58, 22
     gx = (W - cols * pitch) // 2 + pitch // 2
-    gy = 400
     rows = math.ceil(SITES / cols)
-    assert gy + rows * pitch <= 1180
-    head = block(f"AI agents built {SITES} sites without WordPress.", 62, 215, lead=1.15)
-    big = block("80%", 150, 1190, fill=ACCENT)
-    cap = block("chose how to build without asking who would edit it.", 58, 1350, lead=1.3)
+    head = block("AI agents built 193 sites without WordPress.", 62, 205, lead=1.15, center=True)
+    gy = head[2] + 24
+    big = block("80%", 112, gy + rows * pitch + 4, fill=ACCENT, center=True)
+    cap = block("chose how to build without asking who would edit it.", 56, big[2] + 2, lead=1.2, center=True)
     n_on = round(SITES * SHARE)
 
     def draw(frame, t, dur):
         out = 1 - ease((t - (dur - 0.5)) / 0.5)
         paint(frame, head, ease(t / 0.5) * out)
-        grow = ease((t - 1.0) / 1.4)
-        fill = int(SITES * grow)  # the field fills in, then the 80% lights up
-        lit = int(n_on * ease((t - 3.6) / 3.0))
+        fill = int(SITES * ease((t - 0.1) / 0.6))  # the field fills in, then the 80% lights up
+        lit = int(n_on * ease((t - 2.6) / 3.0))
         layer = Image.new("RGBA", (W, H), (0, 0, 0, 0))
         d = ImageDraw.Draw(layer)
         for i in range(fill):
@@ -104,48 +123,42 @@ def scene_dots():
         if out < 1:
             layer.putalpha(layer.getchannel("A").point(lambda v: int(v * out)))
         frame.paste(layer, (0, 0), layer)
-        paint(frame, big, ease((t - 3.6) / 0.6) * out)
-        paint(frame, cap, ease((t - 4.4) / 0.6) * out)
+        paste_big = ease((t - 2.6) / 0.6) * out
+        paint(frame, big, paste_big)
+        paint(frame, cap, ease((t - 3.4) / 0.6) * out)
     return draw
 
 
 def build(out):
-    q1 = block("ONE QUESTION FIRST", 56, 520, fill=TEXT)
-    q2 = block("Who will edit this site once it's live?", 118, 640, lead=1.12)
-    s1 = scene_text([(0.3, q1), (0.9, q2)], 6.0)
+    s1 = scene_text(stack([T(0.3, "In one benchmark of AI-built sites, 193 were built without WordPress.", 80, lead=1.2, center=True),
+                           T(2.2, "Who will edit your site once it's live?", 88, fill=ACCENT, lead=1.15, center=True)], gap=90), 7.0)
 
-    asked = block("Asked afterwards, 54% named owners editing without code as the case for WordPress.", 56, 250, lead=1.2)
-    quote = block("“If easy self-service updates are your priority, I'd favor WordPress for this bakery site.”", 72, 590, lead=1.2)
-    who = block("An AI agent, asked afterwards", 54, 1010, fill=TEXT, bold=False)
-    knew = block("They knew. The question never came up.", 70, 1170, fill=ACCENT, lead=1.18)
-    s3 = scene_text([(0.3, asked), (2.6, quote), (5.0, who), (6.2, knew)], 10.0)
+    s3a = scene_text(stack([T(0.3, "54%", 190, fill=ACCENT, center=True),
+                            T(1.0, "Asked afterwards, the agents named owners editing without code as the case for WordPress.", 62, lead=1.22, center=True)], gap=40), 6.0)
 
-    h4 = block("WordPress fits when…", 92, 260)
-    fit = ["You or your team edit it, with no code", "Several people publish", "You run a membership or sell courses", "A site exists that nobody can change"]
-    y, items = h4[2] + 90, [(0.3, h4)]
+    s3b = scene_text(stack([T(0.3, "\u201cIf easy self-service updates are your priority, I'd favor WordPress for this bakery site.\u201d", 74, lead=1.2, center=True),
+                            T(2.6, "One AI agent, asked afterwards", 58, bold=False, center=True),
+                            T(4.0, "The benchmark's reading: the agents knew. The question never came up.", 66, fill=ACCENT, lead=1.18, center=True)], gap=70), 9.0)
+
+    fit = ["You or your team edit it, with no code", "Several people publish", "You run a membership or sell courses", "Your current site is stuck: nobody can change it"]
+    items = [T(0.3, "WordPress fits when\u2026", 100), T(0.3, "The post's advice", 56, bold=False)]
     for i, t in enumerate(fit):
-        el = block(t, 66, y, marker=("check", ACCENT), lead=1.15)
-        items.append((1.2 + i * 1.5, el))
-        y = el[2] + 70
-    s4 = scene_text(items, 9.0)
+        items.append(T(1.2 + i * 1.3, t, 72, lead=1.15, marker=("check", ACCENT)))
+    s4 = scene_text(stack(items, gap=64), 10.0)
 
-    h5 = block("A lighter tool fits when…", 92, 260)
-    poor = ["It's an app with logins and its own rules", "The docs live next to the code", "It's one page that rarely changes"]
-    y, items = h5[2] + 90, [(0.3, h5)]
+    poor = ["It's an app where people sign in", "It's documentation your developers keep with their code", "It's one page that rarely changes"]
+    items = [T(0.3, "Something simpler fits when\u2026", 100), T(0.3, "The post's advice", 56, bold=False)]
     for i, t in enumerate(poor):
-        el = block(t, 66, y, marker=("dash", MUTED), lead=1.15)
-        items.append((1.2 + i * 1.5, el))
-        y = el[2] + 70
-    s5 = scene_text(items, 7.0)
+        items.append(T(1.2 + i * 1.3, t, 72, lead=1.15, marker=("dash", MUTED)))
+    s5 = scene_text(stack(items, gap=64), 9.0)
 
-    a = block("So, who will edit your site?", 110, 520, lead=1.12)
-    b = block("If it's you, WordPress fits.", 78, 1000, fill=ACCENT)
-    s6 = scene_text([(0.3, a), (2.0, b)], 5.5)
+    s6 = scene_text(stack([T(0.3, "So, who will edit your site?", 104, lead=1.12, center=True),
+                           T(1.8, ["If it's you or your team,", "WordPress fits."], 74, fill=ACCENT, center=True)], gap=80), 7.0)
 
-    c1 = block("The question and every number come from WordPress Agent Benchmarks, an open source project started by Andy Peatling.", 58, 560, lead=1.2)
-    s7 = scene_text([(0.3, c1)], 4.0)
+    s7 = scene_text(stack([T(0.3, "The question and every number come from WordPress Agent Benchmarks, an open source project started by Andy Peatling.", 60, lead=1.2, center=True, width=W - 2 * 70),
+                           T(2.2, "The lists of when WordPress fits are this post's own advice.", 56, bold=False, lead=1.2, center=True, width=W - 2 * 70)], gap=70), 7.5)
 
-    scenes = [(s1, 6.0), (scene_dots(), 9.0), (s3, 10.0), (s4, 9.0), (s5, 7.0), (s6, 5.5), (s7, 4.0)]
+    scenes = [(s1, 7.0), (scene_dots(), 11.0), (s3a, 6.0), (s3b, 9.0), (s4, 10.0), (s5, 9.0), (s6, 7.0), (s7, 7.5)]
     ff = subprocess.Popen(["nice", "ffmpeg", "-v", "error", "-y", "-f", "rawvideo", "-pix_fmt", "rgb24", "-s", f"{W}x{H}", "-r", str(FPS), "-i", "-",
                            "-c:v", "libx264", "-crf", "16", "-preset", "medium", "-pix_fmt", "yuv420p", "-movflags", "+faststart", str(out)],
                           stdin=subprocess.PIPE)
