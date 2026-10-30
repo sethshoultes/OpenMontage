@@ -170,7 +170,7 @@ def slide_closing():
     for ln in wrap(d, "Every tool brought some of the site over, none brought all of it.", font(80), W - 300):
         centered(d, ln, y, font(80), T["text"])
         y += 100
-    centered(d, "Plan to check every page by hand, and to rebuild the design, forms and video yourself.", y + 50, font(60, False), T["text"])
+    centered(d, "Plan to check every page by hand, and to rebuild the design and forms yourself.", y + 50, font(60, False), T["text"])
     return im
 
 
@@ -245,19 +245,17 @@ def pslide_sample(repo):
 # One real finding per tool, from results/SCORES.csv, and the part of the evidence screenshots that shows it.
 # crops: (label, results sub-path under the tool dir or "orig:<file>", source-px box). "orig:" crops come from the same tool's original screenshots.
 FINDINGS = {
-    "rawhandler": ("Every page came over as Custom HTML blocks, which can't be edited as blocks.",
-                   [("Editor block list, home page", "converted-index-listview.png", (0, 55, 640, 440))]),
+    "rawhandler": ("Every page came over as Custom HTML blocks, not as separate paragraphs, headings and images.",
+                   [("Editor block list, home page", "converted-index-listview.png", (0, 55, 520, 520))]),
     "static-site-importer": ("The look carried over, but the hero banner showed an error box.",
                              [("Converted home page, in the editor", "converted-index-editor.png", (0, 330, 1280, 720)),
                               ("The error box, enlarged", "converted-index-editor.png", (0, 425, 330, 545))]),
     "blocks-engine": ("On the contact page the form lost its fields: the labels became plain text and a list.",
-                      [("Original", "original-contact-1280.png", (100, 130, 560, 900)),
-                       ("Converted", "converted-contact-1280.png", (300, 400, 760, 1170))]),
-    "block-runner": ("The contact form kept all six controls, but every page lost its fonts and colours.",
-                     [("Original", "original-contact-1280.png", (100, 130, 560, 900)),
-                      ("Converted", "converted-contact-1280.png", (300, 470, 760, 1240))]),
-    "html-to-blocks-converter": ("Two headings and the four gallery images were reported invalid in the editor.",
-                                 [("Converted services page, in the editor", "converted-services-editor.png", (160, 500, 860, 775))]),
+                      [("Converted contact page", "converted-contact-1280.png", (300, 400, 960, 1000))]),
+    "block-runner": ("On the contact page the form kept all six controls.",
+                     [("Converted contact page", "converted-contact-1280.png", (300, 470, 960, 1010))]),
+    "html-to-blocks-converter": ("A heading came out as an invalid block, shown as an error box in the editor.",
+                                 [("Converted services page, in the editor", "converted-services-editor.png", (170, 330, 840, 775))]),
 }
 
 
@@ -339,7 +337,7 @@ def pslide_capped(rows):
     """The four page tools with the headings and links checks taken out (criteria 1 and 5, 16 points of the maximum),
     recomputed from results/SCORES.csv: score and maximum each less that tool's cells for those two checks."""
     im, d = pcanvas()
-    y = pwrap(d, "Take out the headings and links checks", 200, font(66), PW - 120, 80) + 24
+    y = pwrap(d, "The same test without two checks: headings and links", 200, font(66), PW - 120, 80) + 24
     for name, tool, _ in TOOLS:
         if tool == "static-site-importer":
             continue
@@ -351,8 +349,8 @@ def pslide_capped(rows):
         ptext(d, sw, PW - 70 - d.textlength(sw, font=font(52)), y + 6, font(52), T["accent"])
         y += 98
     y += 20
-    y = pwrap(d, "Static Site Importer is not changed: it was given the whole site, so those two checks did not hold it back.", y, font(50, False), PW - 120, 62) + 14
-    pwrap(d, "Same sums, from the published scores file.", y, font(50, False), PW - 120, 62)
+    y = pwrap(d, "Static Site Importer is shown apart: it was given the whole site.", y, font(50, False), PW - 120, 62) + 14
+    pwrap(d, "Every tool drops, and the tools stay in the same order. Each number is the score and the maximum less those two checks.", y, font(50, False), PW - 120, 62)
     return vcenter(im)
 
 
@@ -395,7 +393,7 @@ def centered_block(parts):
 
 def pslide_closing():
     return centered_block([("Every tool brought some of the site over, none brought all of it.", 72, True, T["text"], 60),
-                           ("Plan to check every page by hand, and to rebuild the design, forms and video yourself.", 60, False, T["text"], 0)])
+                           ("Plan to check every page by hand, and to rebuild the design and forms yourself.", 60, False, T["text"], 0)])
 
 
 def pslide_end():
@@ -416,8 +414,8 @@ def script(rows):
     for name, tool, who in TOOLS:
         lines.append((tool, None, f"{leads[name]}: {n(name)}."))
     lines.append(("table", None, "A lower score means fewer checks passed on this one sample site."))
-    lines.append(("capped", None, "Take out the headings and links checks and the four page tools score: rawHandler 17 of 56, Blocks Engine 27 of 50, Block Runner 19 of 50, HTML to Blocks Converter 24 of 56. Static Site Importer is not changed."))
-    lines.append(("closing", None, "Every tool brought some of the site over, none brought all of it. Plan to check every page by hand, and to rebuild the design, forms and video yourself."))
+    lines.append(("capped", None, "Without the headings and links checks, the four page tools score: rawHandler 17 of 56, Blocks Engine 27 of 50, Block Runner 19 of 50, HTML to Blocks Converter 24 of 56. Every tool drops and they stay in the same order. Static Site Importer is shown apart."))
+    lines.append(("closing", None, "Every tool brought some of the site over, none brought all of it. Plan to check every page by hand, and to rebuild the design and forms yourself."))
     lines.append(("end", None, "The scores and every screenshot are public. The question comes from WordPress Agent Benchmarks."))
     return lines
 
