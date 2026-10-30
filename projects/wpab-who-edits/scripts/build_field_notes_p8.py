@@ -16,46 +16,49 @@ from build_who_edits import ACCENT, BG, FPS, H, W, T, paint, scene_text, stack
 
 
 def about(n, step):
-    """A rounded count for the screen: 'about 90'. The exact figure stays in the data file and the post's sources."""
-    return f"about {int(round(n / step)) * step}"
+    """A rounded count for the screen ('about 90'); a figure that is already round is shown as it is. The exact figure stays in the data file."""
+    r = int(round(n / step)) * step
+    return str(n) if n % step == 0 else f"about {r}"
 
 
 def build(data_path, out):
     d = json.load(open(data_path))
     asof = f"As of {d['as_of']}"
 
-    s1 = scene_text(stack([T(0.3, "You run a membership.", 112, lead=1.12, center=True, width=960),
-                           T(1.0, "Marketing lands in the same evenings as everything else.", 78, lead=1.2, center=True, width=960)], gap=90), 5.0)
-    s2 = scene_text(stack([T(0.3, "So we tried AI on ourselves.", 116, lead=1.12, center=True, width=960),
-                           T(1.0, f"Since {d['since']}, on memberpress.ai", 72, lead=1.2, center=True, width=960)], gap=90), 5.0)
+    s1 = scene_text(stack([T(0.3, "You run a membership.", 124, lead=1.12, center=True, width=960),
+                           T(1.0, "Marketing lands in the same evenings as everything else.", 88, lead=1.2, center=True, width=960)], gap=90), 5.0)
+    s2 = scene_text(stack([T(0.3, "So we tried AI on ourselves.", 128, lead=1.12, center=True, width=960),
+                           T(1.0, f"Since {d['since']}, on memberpress.ai", 82, lead=1.2, center=True, width=960)], gap=90), 5.0)
 
-    s3 = scene_text(stack([T(0.3, "What AI did for us", 104, center=True, width=960),
+    s3 = scene_text(stack([T(0.3, "What AI did for us", 112, center=True, width=960),
                            T(0.6, asof, 60, bold=False, center=True, width=960),
-                           T(1.4, ["It wrote our", "video scripts,"], 82, lead=1.15, center=True, width=960),
-                           T(2.4, "drafted blog posts,", 82, lead=1.15, center=True, width=960),
-                           T(3.4, "and posted for Opal.", 82, lead=1.15, center=True, width=960),
-                           T(4.6, f"{about(d['scripts'], 10).capitalize()} scripts.", 66, fill=ACCENT, lead=1.2, center=True, width=960),
-                           T(5.0, f"{about(d['x_posts'], 5).capitalize()} posts on Opal's X account.", 62, fill=ACCENT, lead=1.2, center=True, width=960)],
-                          gap=52), 11.0)
+                           T(1.4, "It wrote our video scripts,", 90, lead=1.15, center=True, width=960),
+                           T(2.4, "drafted blog posts,", 90, lead=1.15, center=True, width=960),
+                           T(3.4, "and posted for Opal, our assistant.", 90, lead=1.15, center=True, width=960),
+                           T(4.6, f"{about(d['scripts'], 10).capitalize()} video scripts.", 78, fill=ACCENT, lead=1.2, center=True, width=960),
+                           T(5.0, f"{about(d['x_posts'], 5).capitalize()} posts on Opal's X account.", 78, fill=ACCENT, lead=1.2, center=True, width=960)],
+                          gap=44), 11.0)
 
-    s4 = scene_text(stack([T(0.3, "On the blog", 108, center=True, width=960),
-                           T(0.8, f"{asof}: {'every' if d['videos'] >= d['posts_live'] else 'nearly every'} live post has its own short video.", 76, lead=1.2, center=True, width=960)], gap=80), 6.0)
+    blog = (f"{asof}: {d['videos']} of our {d['posts_live']} live posts have their own short video." if d['videos'] < d['posts_live']
+            else f"{asof}: every live post has its own short video.")
+    s4 = scene_text(stack([T(0.3, "On the blog", 118, center=True, width=960),
+                           T(0.8, blog, 88, lead=1.2, center=True, width=960)], gap=80), 6.0)
 
-    s5 = scene_text(stack([T(0.3, "What it didn't do", 108, center=True, width=960),
-                           T(1.0, "It couldn't tell us whether it worked, and we haven't checked yet.", 72, lead=1.2, center=True, width=960),
-                           T(2.2, f"It didn't turn itself off. We turned off the video writer on {d['writer_off_date']} and the blog drafter by {d['as_of']}.", 64, bold=False, lead=1.2, center=True, width=960),
-                           T(3.4, "It didn't choose why we do this.", 72, lead=1.2, center=True, width=960)], gap=70), 11.0)
+    s5 = scene_text(stack([T(0.3, "What it didn't do", 116, center=True, width=960),
+                           T(1.0, "It couldn't tell us whether it worked, and we haven't checked yet.", 80, lead=1.2, center=True, width=960),
+                           T(2.2, f"It didn't turn itself off. We turned off the video writer on {d['writer_off_date']} and the blog drafter by {d['as_of']}.", 72, lead=1.2, center=True, width=960),
+                           T(3.4, "It didn't choose why we do this.", 80, lead=1.2, center=True, width=960)], gap=64), 11.0)
 
-    s6 = scene_text(stack([T(0.3, "Why we do this is one sentence. It's Seth's.", 76, lead=1.15, center=True, width=960),
-                           T(1.0, "\u201c" + d["sentence"] + "\u201d", 84, fill=ACCENT, lead=1.2, center=True, width=960)], gap=90), 8.0)
+    s6 = scene_text(stack([T(0.3, "The part AI didn't choose is why we do this. It's one sentence, and it's Seth's.", 76, lead=1.2, center=True, width=960),
+                           T(1.0, "\u201c" + d["sentence"] + "\u201d", 88, fill=ACCENT, lead=1.2, center=True, width=960)], gap=80), 8.0)
 
-    s7 = scene_text(stack([T(0.3, "Who does what", 108, center=True, width=960),
-                           T(0.8, ["AI carried the steady work:", "scripts, drafts, regular posts."], 70, lead=1.15, center=True, width=960),
-                           T(1.8, ["People kept what's true,", "when to stop,", "and whether it works."], 70, lead=1.15, center=True, width=960),
-                           T(2.8, "You know your members.", 80, fill=ACCENT, lead=1.15, center=True, width=960)], gap=66), 8.5)
+    s7 = scene_text(stack([T(0.3, "Who does what", 116, center=True, width=960),
+                           T(0.8, ["AI carried the steady work:", "scripts, drafts, regular posts."], 76, lead=1.15, center=True, width=960),
+                           T(1.8, ["People kept what's true,", "when to stop,", "and whether it works."], 76, lead=1.15, center=True, width=960),
+                           T(2.8, "You know your members.", 96, fill=ACCENT, lead=1.15, center=True, width=960)], gap=60), 8.5)
 
-    s8 = scene_text(stack([T(0.3, "MemberPress.ai", 112, fill=ACCENT, center=True, width=960),
-                           T(0.9, ["helps you spend your week", "with your members,", "not in settings."], 72, lead=1.15, center=True, width=960)], gap=80), 5.0)
+    s8 = scene_text(stack([T(0.3, "MemberPress.ai", 124, fill=ACCENT, center=True, width=960),
+                           T(0.9, ["helps you spend your week", "with your members,", "not in settings."], 84, lead=1.15, center=True, width=960)], gap=80), 5.0)
 
     scenes = [(s1, 5.0), (s2, 5.0), (s3, 11.0), (s4, 6.0), (s5, 11.0), (s6, 8.0), (s7, 8.5), (s8, 5.0)]
     ff = subprocess.Popen(["nice", "ffmpeg", "-v", "error", "-y", "-f", "rawvideo", "-pix_fmt", "rgb24", "-s", f"{W}x{H}", "-r", str(FPS), "-i", "-",
