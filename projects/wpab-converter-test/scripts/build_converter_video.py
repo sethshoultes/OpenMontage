@@ -25,6 +25,7 @@ P = HERE.parent
 CFG = json.load(open(HERE / "config.json"))
 T = CFG["theme"]
 W, H = 1920, 1080
+SILENT_HOLDS = {"table": 9.0, "disclosures": 10.0, "closing": 6.0, "end": 5.0}   # silent cut: no voice sets the pace, so each slide holds 4.5 s at least, longer where there is more to read
 HOLDS = {"table": 10.0}  # the totals slide carries the sentence on screen; hold it long enough to read
 FONT = "/System/Library/Fonts/Helvetica.ttc"
 TOOLS = [  # SCORES.md name -> (results dir, who publishes it)
@@ -162,7 +163,19 @@ def slide_end():
     return im
 
 
+def slide_closing():
+    im, d = canvas()
+    y = 360
+    for ln in wrap(d, "Every tool brought some of the site over, none brought all of it.", font(80), W - 300):
+        centered(d, ln, y, font(80), T["text"])
+        y += 100
+    centered(d, "Plan to check every page and redo the look, forms and video.", y + 50, font(60, False), T["text"])
+    return im
+
+
 PW, PH = 1080, 1920
+TOP, BOT = 192, 1530      # the blog player crops the top 10% and everything below y=1530
+SHOWN = {"rawhandler": "rawHandler"}   # how a tool's name is written on screen (SCORES.md keeps the lower case)
 
 
 def pcanvas():
@@ -170,9 +183,21 @@ def pcanvas():
     return im, ImageDraw.Draw(im)
 
 
-def pcentered(d, text, y, f, fill):
+def ptext(d, text, x, y, f, fill=None, center=False):
+    """Draw one line of text, failing the build if it leaves y 192-1530 or the frame's sides, or is under 50 px (the big score figures are exempt upward)."""
+    assert f.size >= 50, f"type under 50 px: {text!r}"
     w = d.textlength(text, font=f)
-    d.text(((PW - w) / 2, y), text, font=f, fill=fill)
+    x = (PW - w) / 2 if center else x
+    assert TOP <= y and y + f.size * 1.15 <= BOT, f"outside y {TOP}-{BOT}: {text!r} y={y}"
+    assert 40 <= x and x + w <= PW - 40, f"outside the sides: {text!r}"
+    d.text((x, y), text, font=f, fill=fill or T["text"])
+
+
+def pwrap(d, text, y, f, width, lead, fill=None, center=True, x=60):
+    for ln in wrap(d, text, f, width):
+        ptext(d, ln, x, y, f, fill, center)
+        y += lead
+    return y
 
 
 def clean_cut(im, lo, hi):
@@ -186,7 +211,7 @@ def clean_cut(im, lo, hi):
     return hi
 
 
-def pshot(repo, tool, kind, w, max_h, src_lo=380):
+def pshot(repo, tool, kind, w, max_h, src_lo=300):
     """The top of a 1280-wide screenshot, scaled to w, at most max_h tall, cut at a clean boundary."""
     im = Image.open(Path(repo) / f"results/{tool}/{kind}-index-1280.png").convert("RGB")
     hi = int(1280 * max_h / w)
@@ -195,106 +220,113 @@ def pshot(repo, tool, kind, w, max_h, src_lo=380):
     return im.resize((w, round(cut * w / 1280)), Image.LANCZOS)
 
 
-def pwrap_center(d, text, y, f, fill, width, lead):
-    for ln in wrap(d, text, f, width):
-        pcentered(d, ln, y, f, fill)
-        y += lead
-    return y
+def paste(im, sh, x, y):
+    assert y >= TOP and y + sh.size[1] <= BOT, (y, sh.size)
+    im.paste(sh, (x, y))
 
 
 def pslide_title():
     im, d = pcanvas()
-    y = pwrap_center(d, "Five HTML-to-WordPress converters", 640, font(104), T["accent"], PW - 160, 126)
-    pwrap_center(d, "One sample site, ten fixed checks", y + 50, font(66), T["text"], PW - 160, 84)
+    y = pwrap(d, "Five tools that turn HTML into WordPress", 560, font(96), PW - 140, 118)
+    pwrap(d, "One sample site, ten fixed checks", y + 50, font(64), PW - 140, 80)
     return im
 
 
 def pslide_sample(repo):
     im, d = pcanvas()
-    pwrap_center(d, "The sample: Quillfern Cycle Works", 120, font(80), T["text"], PW - 120, 98)
-    pcentered(d, "a made-up bike shop, hand-coded HTML", 410, font(50, False), T["muted"])
-    sh = pshot(repo, "rawhandler", "original", 960, 1020, src_lo=900)
-    im.paste(sh, (60, 520))
+    y = pwrap(d, "The sample: Quillfern Cycle Works", 200, font(66), PW - 120, 82)
+    y = pwrap(d, "a made-up bike shop, hand-coded HTML", y + 10, font(52, False), PW - 120, 66)
+    sh = pshot(repo, "rawhandler", "original", 960, BOT - 40 - (y + 30), src_lo=700)
+    paste(im, sh, 60, y + 30)
     return im
 
 
 def pslide_tool(repo, name, tool, score, mx, ne):
-    """Both screenshots end above y=1530: the blog player's control bar covers the bottom fifth of a phone frame.
-    The header grows with the name (a long name wraps to two lines) and the screenshots take the room that is left."""
+    """Both screenshots sit inside y 192-1530; the header grows with the name and the notes, the screenshots take the room left."""
     im, d = pcanvas()
-    y = pwrap_center(d, name, 40, font(88), T["accent"], PW - 120, 100) + 10
-    pcentered(d, f"{score} of {mx}", y, font(120), T["text"])
-    y += 135
-    sub = f"{ne} checks had no evidence, left out of the maximum" if ne else "all ten checks had evidence"
-    y = pwrap_center(d, sub, y, font(46, False), T["muted"], PW - 120, 58) + 14
-    room = 1530 - y - 2 * 70 - 40          # two labels and a gap, then two screenshots
-    h1 = h2 = room // 2
-    d.text((60, y), "Original, home page", font=font(50), fill=T["text"])
-    a = pshot(repo, tool, "original", 960, h1)
-    im.paste(a, (60, y + 70))
-    y2 = y + 70 + a.size[1] + 40
-    d.text((60, y2), "Converted, home page", font=font(50), fill=T["text"])
-    b = pshot(repo, tool, "converted", 960, 1530 - (y2 + 70))
-    im.paste(b, (60, y2 + 70))
-    assert y2 + 70 + b.size[1] <= 1530, (y2, b.size)
+    y = pwrap(d, SHOWN.get(tool, name), 200, font(72), PW - 120, 86)
+    ptext(d, f"{score} of {mx}", 0, y, font(112), T["accent"], center=True)
+    y += 128
+    if ne:
+        y = pwrap(d, f"{ne} checks could not be judged, so the top score is {mx}, not 72", y, font(50, False), PW - 120, 62)
+    if tool == "static-site-importer":
+        y = pwrap(d, "\u2020 Given the whole site, not just the page content, so not comparable.", y, font(50, False), PW - 120, 62)
+    y += 10
+    room = BOT - y - 2 * 64 - 30                 # two labels and a gap, then two screenshots
+    h = room // 2
+    ptext(d, "Original, home page", 60, y, font(50), T["text"])
+    a = pshot(repo, tool, "original", 960, h)
+    paste(im, a, 60, y + 60)
+    y2 = y + 60 + a.size[1] + 24
+    ptext(d, "Converted, home page", 60, y2, font(50), T["text"])
+    b = pshot(repo, tool, "converted", 960, BOT - (y2 + 60))
+    paste(im, b, 60, y2 + 60)
     return im
 
 
 def pslide_table(rows):
-    """Everything ends by y=1530: the blog player's control bar draws over the bottom fifth of a phone frame."""
+    """The four like-for-like tools in one list, Static Site Importer apart and marked not comparable."""
     im, d = pcanvas()
-    pcentered(d, "Totals, ten checks", 50, font(74), T["text"])
-    pcentered(d, "across four pages", 138, font(74), T["text"])
-    for i, (name, tool, _) in enumerate(TOOLS):
-        y = 250 + i * 150
+    y = pwrap(d, "Totals: ten checks across four pages", 200, font(62), PW - 120, 76)
+    y += 20
+    for name, tool, _ in TOOLS:
+        if tool == "static-site-importer":
+            continue
         sc, mx, ne = rows[name]
-        d.rectangle((50, y - 10, PW - 50, y + 130), fill=T["panel"])
-        d.text((80, y), name, font=font(52), fill=T["text"])
-        d.text((80, y + 66), f"{sc} of {mx}", font=font(56), fill=T["accent"])
-        d.text((PW - 80 - d.textlength(f"no evidence: {ne}", font=font(46, False)), y + 78), f"no evidence: {ne}", font=font(46, False), fill=T["muted"])
-    y = pwrap_center(d, "A lower score means fewer of the ten checks passed on this one sample site.", 1030, font(58), T["text"], PW - 140, 70) + 10
-    y = pwrap_center(d, "Plain sums of 0, 1 and 2 per check. No weights.", y, font(46, False), T["muted"], PW - 140, 56) + 8
-    y = pwrap_center(d, "\u2020 Ran by its publisher's Playground route, under a newer PHP.", y, font(46, False), T["muted"], PW - 120, 56)
-    assert y <= 1530, y
+        d.rectangle((50, y - 6, PW - 50, y + 76), fill=T["panel"])
+        ptext(d, SHOWN.get(tool, name), 70, y + 6, font(52), T["text"])
+        sw = f"{sc} of {mx}"
+        ptext(d, sw, PW - 70 - d.textlength(sw, font=font(52)), y + 6, font(52), T["accent"])
+        y += 98
+    y += 14
+    ptext(d, "Shown apart, not comparable:", 60, y, font(50), T["text"])
+    y += 66
+    name, tool, _ = [t for t in TOOLS if t[1] == "static-site-importer"][0]
+    sc, mx, ne = rows[name]
+    d.rectangle((50, y - 6, PW - 50, y + 76), fill=T["panel"])
+    ptext(d, "Static Site Importer", 70, y + 6, font(52), T["text"])
+    sw = f"{sc} of {mx}"
+    ptext(d, sw, PW - 70 - d.textlength(sw, font=font(52)), y + 6, font(52), T["accent"])
+    y += 100
+    y = pwrap(d, "It was given the whole site and ran on a newer version of PHP, and 6 checks could not be judged.", y, font(50, False), PW - 120, 62) + 14
+    y = pwrap(d, "Highest of the four on this one site: Blocks Engine, 35 of 66. One site, not a ranking.", y, font(50, False), PW - 120, 62) + 14
+    pwrap(d, "A lower score means fewer checks passed.", y, font(50, False), PW - 120, 62)
     return im
 
 
 def pslide_disclosures():
     items = ["One sample site, four pages.",
-             "Four tools got each page's body markup; Static Site Importer got the whole site.",
-             "Static Site Importer ran by its publisher's Playground route, under a newer PHP.",
-             "Run 2026-10-28, every tool pinned to a version."]
-    for size in range(78, 50, -2):
+             "Ten checks on each page, each scored 0, 1 or 2. The top score is 72.",
+             "Four tools were given each page's main content. Static Site Importer was given the whole site, so it is shown apart.",
+             "Checks that could not be judged are left out, so that tool's top score is lower.",
+             "Run on October 28, 2026, each tool kept at one fixed version."]
+    for size in range(60, 50, -2):
         im, d = pcanvas()
-        d.text((70, 90), "Read these first", font=font(92), fill=T["accent"])
-        y, f = 250, font(size, False)
-        for it in items:
-            for j, ln in enumerate(wrap(d, it, f, PW - 190)):
-                d.text((70 + (0 if j == 0 else size * 0.7), y), ("\u2022  " if j == 0 else "") + ln, font=f, fill=T["text"])
-                y += int(size * 1.25)
-            y += int(size * 0.35)
-        if y <= 1500:     # the last line ends above the player's control bar
+        ptext(d, "How to read the scores", 70, 200, font(72), T["text"])
+        y, f = 320, font(size, False)
+        try:
+            for it in items:
+                for j, ln in enumerate(wrap(d, it, f, PW - 190)):
+                    ptext(d, ("\u2022  " if j == 0 else "    ") + ln, 70, y, f, T["text"])
+                    y += int(size * 1.25)
+                y += int(size * 0.4)
             return im
+        except AssertionError:
+            continue
     raise SystemExit("disclosures do not fit")
+
+
+def pslide_closing():
+    im, d = pcanvas()
+    y = pwrap(d, "Every tool brought some of the site over, none brought all of it.", 460, font(72), PW - 120, 90)
+    pwrap(d, "Plan to check every page and redo the look, forms and video.", y + 60, font(60, False), PW - 120, 76)
+    return im
 
 
 def pslide_end():
     im, d = pcanvas()
-    pcentered(d, "Scores and every", 520, font(78), T["text"])
-    pcentered(d, "screenshot are public", 610, font(78), T["text"])
-    def split_url(u):   # a URL breaks at its slashes, never mid-word
-        u = u.replace("https://", "")
-        head, _, tail = u.rpartition("/")
-        return [head + "/", tail]
-    y = 770
-    for ln in split_url(CFG["repo"]):
-        pcentered(d, ln, y, font(54), T["accent"])
-        y += 70
-    pwrap_center(d, "The question comes from WordPress Agent Benchmarks", 1080, font(54, False), T["text"], PW - 140, 70)
-    y = 1300
-    for ln in split_url(CFG["benchmark"]):
-        pcentered(d, ln, y, font(54), T["accent"])
-        y += 70
+    y = pwrap(d, "Every score and screenshot is public.", 560, font(72), PW - 120, 90)
+    pwrap(d, "The question comes from WordPress Agent Benchmarks, an open source project started by Andy Peatling.", y + 70, font(54, False), PW - 120, 70)
     return im
 
 
@@ -303,14 +335,15 @@ def script(rows):
         s, m, ne = rows[name]
         return f"{s} out of {m}"
     lines = [("title", slide_title, "We ran five tools that turn an HTML page into WordPress blocks, on the same sample site, and scored each against ten fixed checks.")]
+    lines.append(("disclosures", None, "How to read the scores: one sample site, four pages, ten checks on each page, each scored zero, one or two, so the top score is 72. Four tools were given each page's main content. Only Static Site Importer got the whole site, so it is shown apart. Checks that could not be judged are left out. Run on October 28th, 2026, each tool kept at one fixed version."))
     lines.append(("sample", None, "The sample is Quillfern Cycle Works, a made-up bike shop."))
     leads = {"rawhandler": "First, rawHandler, built into WordPress", "Static Site Importer †": "Static Site Importer, from Automattic",
              "Blocks Engine": "Blocks Engine, also from Automattic", "Block Runner": "Block Runner, from Human Made",
              "HTML to Blocks Converter": "HTML to Blocks Converter, from an independent developer"}
     for name, tool, who in TOOLS:
         lines.append((tool, None, f"{leads[name]}: {n(name)}."))
-    lines.append(("table", None, "Checks with no evidence are left out of each maximum. A lower score means fewer of the ten checks passed on this one sample site."))
-    lines.append(("disclosures", None, "Please note: one sample site. Four tools got each page's body markup. Only Static Site Importer got the whole site, and it ran by its publisher's own route, on a newer PHP. Run on October 28th, 2026, every tool pinned to a version."))
+    lines.append(("table", None, "Highest of the four comparable tools on this one site: Blocks Engine. One site, not a ranking. A lower score means fewer checks passed."))
+    lines.append(("closing", None, "Every tool brought some of the site over, none brought all of it. Plan to check every page and redo the look, forms and video."))
     lines.append(("end", None, "The scores and every screenshot are public. The question comes from WordPress Agent Benchmarks."))
     return lines
 
@@ -348,12 +381,12 @@ def main(repo, plan_only, silent=False, portrait=False):
         (P / d).mkdir(exist_ok=True)
     if portrait:
         builders = {"title": pslide_title, "sample": lambda: pslide_sample(repo), "table": lambda: pslide_table(rows),
-                    "disclosures": pslide_disclosures, "end": pslide_end}
+                    "disclosures": pslide_disclosures, "closing": pslide_closing, "end": pslide_end}
         for name, tool, _ in TOOLS:
             builders[tool] = (lambda n=name, t=tool: pslide_tool(repo, n, t, *rows[n]))
     else:
         builders = {"title": slide_title, "sample": lambda: slide_sample(repo), "table": lambda: slide_table(rows),
-                    "disclosures": slide_disclosures, "end": slide_end}
+                    "disclosures": slide_disclosures, "closing": slide_closing, "end": slide_end}
         for name, tool, _ in TOOLS:
             builders[tool] = (lambda n=name, t=tool: slide_tool(repo, n, t, *rows[n]))
     tag = "-portrait" if portrait else ""
@@ -362,17 +395,24 @@ def main(repo, plan_only, silent=False, portrait=False):
     for key, _, text in lines:
         slide = P / f"slides/{key}{tag}.png"
         builders[key]().save(slide)
-        a = P / f"assets/{key}-{hashlib.sha1((CFG['voice_id'] + str(CFG['speed']) + text).encode()).hexdigest()[:8]}.mp3"
-        if not (a.exists() and a.stat().st_size > 0):
-            tts(text, a)
-        d = max(dur(a) + GAP, CFG["min_hold_seconds"], HOLDS.get(key, 0))
-        if key == "end":
+        if silent:
+            d = SILENT_HOLDS.get(key, 4.5)
+        else:
+            a = P / f"assets/{key}-{hashlib.sha1((CFG['voice_id'] + str(CFG['speed']) + text).encode()).hexdigest()[:8]}.mp3"
+            if not (a.exists() and a.stat().st_size > 0):
+                tts(text, a)
+            d = max(dur(a) + GAP, CFG["min_hold_seconds"], HOLDS.get(key, 0))
+        if key == "end" and not silent:
             d += TAIL
         clip = P / f"assets/clip-{key}{tag}.mp4"
         vf = "format=yuv420p" if silent else f"fade=t=in:st=0:d={F},fade=t=out:st={d - F:.2f}:d={F},format=yuv420p"
         subprocess.run(["ffmpeg", "-y", "-v", "error", "-loop", "1", "-framerate", "30", "-t", f"{d + (F if silent else 0):.2f}", "-i", str(slide),
                         "-vf", vf, "-c:v", "libx264", "-crf", "18", str(clip)], check=True)
         durs.append(d)
+        if silent:
+            clips.append((clip, None))
+            t += d
+            continue
         pad = P / f"assets/pad-{key}.mp3"
         subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", str(a), "-af", f"apad=whole_dur={d:.2f}", "-t", f"{d:.2f}",
                         "-c:a", "libmp3lame", "-q:a", "2", str(pad)], check=True)
