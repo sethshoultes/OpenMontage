@@ -170,7 +170,7 @@ def slide_closing():
     for ln in wrap(d, "Every tool brought some of the site over, none brought all of it.", font(80), W - 300):
         centered(d, ln, y, font(80), T["text"])
         y += 100
-    centered(d, "Plan to check every page, and to redo the look, forms, video and scripts.", y + 50, font(60, False), T["text"])
+    centered(d, "Plan to check every page, and to redo the look, forms, video embeds and scripts.", y + 50, font(60, False), T["text"])
     return im
 
 
@@ -297,6 +297,8 @@ def pslide_tool(repo, name, tool, score, mx, ne):
         ptext(d, label, x, y, font(50, False), T["text"])          # regular weight, flush with the crop's left edge
         paste(im, sh, x, y + LABEL + GAP)
         y += LABEL + GAP + sh.size[1] + 20
+    if tool in ("rawhandler", "html-to-blocks-converter"):
+        return vcenter(im)
     return im
 
 
@@ -336,7 +338,7 @@ def pslide_table(rows):
     ptext(d, sw, PW - 70 - d.textlength(sw, font=font(52)), y + 6, font(52), T["accent"])
     y += 100
     y = pwrap(d, "It was handed the whole site and ran on a newer server setup, and 6 checks could not be judged.", y, font(50, False), PW - 120, 62) + 14
-    pwrap(d, "A lower score means fewer checks passed on this one site.", y, font(50, False), PW - 120, 62)
+    pwrap(d, "A lower score means fewer points earned on this one site.", y, font(50, False), PW - 120, 62)
     return vcenter(im)
 
 
@@ -357,7 +359,7 @@ def pslide_capped(rows):
         y += 98
     y += 20
     y = pwrap(d, "Static Site Importer is shown apart: it was handed the whole site.", y, font(50, False), PW - 120, 62) + 14
-    y = pwrap(d, "Those two checks cost the four page tools points however well they converted: WordPress added a second main heading, and the links still point at the original pages.", y, font(50, False), PW - 120, 62) + 14
+    y = pwrap(d, "Those two checks cost the four page tools points for reasons outside the conversion: WordPress added a second page title, and the links still point at the original pages.", y, font(50, False), PW - 120, 62) + 14
     pwrap(d, "Points earned on those two checks are taken out of each score, and 16 off each maximum.", y, font(50, False), PW - 120, 62)
     return vcenter(im)
 
@@ -404,7 +406,7 @@ def centered_block(parts):
 
 def pslide_closing():
     return centered_block([("Every tool brought some of the site over, none brought all of it.", 72, True, T["text"], 60),
-                           ("Plan to check every page, and to redo the look, forms, video and scripts.", 60, False, T["text"], 0)])
+                           ("Plan to check every page, and to redo the look, forms, video embeds and scripts.", 60, False, T["text"], 0)])
 
 
 def pslide_end():
@@ -424,9 +426,9 @@ def script(rows):
              "HTML to Blocks Converter": "HTML to Blocks Converter, from an independent developer"}
     for name, tool, who in TOOLS:
         lines.append((tool, None, f"{leads[name]}: {n(name)}."))
-    lines.append(("table", None, "A lower score means fewer checks passed on this one sample site."))
-    lines.append(("capped", None, "Without the headings and links checks, the four page tools score: rawHandler 17 of 56, Blocks Engine 27 of 50, Block Runner 19 of 50, HTML to Blocks Converter 24 of 56. Those two checks cost the four page tools points however well they converted: WordPress added a second main heading, and the links still point at the original pages. Points earned on those two checks are taken out of each score, and 16 off each maximum. Static Site Importer is shown apart."))
-    lines.append(("closing", None, "Every tool brought some of the site over, none brought all of it. Plan to check every page, and to redo the look, forms, video and scripts."))
+    lines.append(("table", None, "A lower score means fewer points earned on this one sample site."))
+    lines.append(("capped", None, "Without the headings and links checks, the four page tools score: rawHandler 17 of 56, Blocks Engine 27 of 50, Block Runner 19 of 50, HTML to Blocks Converter 24 of 56. Those two checks cost the four page tools points for reasons outside the conversion: WordPress added a second page title, and the links still point at the original pages. Points earned on those two checks are taken out of each score, and 16 off each maximum. Static Site Importer is shown apart."))
+    lines.append(("closing", None, "Every tool brought some of the site over, none brought all of it. Plan to check every page, and to redo the look, forms, video embeds and scripts."))
     lines.append(("end", None, "The scores and every screenshot are public. The question comes from WordPress Agent Benchmarks."))
     return lines
 
