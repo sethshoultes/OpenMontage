@@ -3,8 +3,12 @@
 
 An opening card, then the real terminal run (one-command-wide60.tape, 60 px type, prompt "$ ") cut into rows on word
 boundaries and stacked at 1:1 scale (no text is rescaled), two plain captions, and a closing card. The wait while the run
-boots is cut: the take is used from 0 to TYPED_S (the command being typed) and from OUT_A to OUT_B (the finished output),
-and the output rows appear when the cut lands there. Text margins are 74 px.
+boots is cut: the take is used from 0 to TYPED_S (the command being typed) and from OUT_A to OUT_B (the finished output).
+
+The layout is centred in the band in both states. While the command types, the panel is just big enough for the command
+and the status line, and the stack is centred (layout A). As the status line finishes, the stack eases to layout B
+(taller panel, caption above moved up), where the output and the lower caption fit and the whole stack is centred
+again. Nothing overlaps while it moves. Text margins are 74 px.
 
   assemble_clip_portrait_v3.py <terminal-take-wide60.mp4> <out.mp4>
 """
@@ -29,18 +33,27 @@ OPEN_S, CLOSE_S, FADE = 4.0, 4.5, 0.4
 TYPED_S = 6.0                           # the command is typed by 3.9 s in the take; the rest to here is the real boot wait, shown with a status line
 STATUS_FROM = 4.2                       # "Starting your practice copy..." from here to TYPED_S
 OUT_A, OUT_B = 16.6, 21.2               # the take's finished output (Ready! ...), held 4.6 s
+SHIFT_D = 0.8                           # the stack eases from layout A to layout B over the last SHIFT_D seconds of the status line
 TAKE_S = TYPED_S + (OUT_B - OUT_A)
 
-# (take x, take y, w, h, frame y, shown from take-timeline second or None, extra filter). Text starts at x=74 in the frame.
-ROWS = [
-    (35, 46, 210, 64, 497, None, None),        # "$ npx"
-    (255, 46, 950, 64, 597, None, None),       # "@wp-playground/cli@latest"
-    (1237, 46, 200, 64, 697, None, None),      # "start"
-    (35, 1246, 230, 76, 857, TYPED_S, None),   # "Ready!"
-    (292, 1246, 880, 76, 957, TYPED_S, None),  # "WordPress is running on"
-    (1197, 1246, 800, 76, 1057, TYPED_S, None),  # "http://127.0.0.1:9400"
+# Layout A (typing) and layout B (output), each centred in the band. y values are frame y.
+PANEL_A = (734, 440)                    # y, h
+PANEL_B = (427, 780)
+PX, PW = 40, 1000                       # panel x and width
+CAP1_Y = (626, 319)                     # centre of the caption above the panel: A, B
+CAP2_Y = 1364                           # the lower caption sits in its reserved slot from the first frame; it fades in with the output
+STATUS_Y = (1100, 900)                  # centre of the status line: A, B (it is gone before B matters)
+# rows cut from the 2560x1500 take: (take x, take y, w, h, frame y in A, frame y in B)
+TYPED = [
+    (35, 46, 210, 64, 784, 497),       # "$ npx"
+    (255, 46, 950, 64, 864, 597),      # "@wp-playground/cli@latest"
+    (1237, 46, 200, 64, 944, 697),     # "start"
 ]
-PANEL = (40, 427, 1000, 780)             # x, y, w, h: a thin terminal panel behind the block, so the left-aligned text looks deliberate
+OUTPUT = [                              # (take x, take y, w, h, frame y); shown from TYPED_S, in layout B
+    (35, 1246, 230, 76, 857),          # "Ready!"
+    (292, 1246, 880, 76, 957),         # "WordPress is running on"
+    (1197, 1246, 800, 76, 1057),       # "http://127.0.0.1:9400"
+]
 OX = 64                                  # crops start 10 px before the text, so the text starts at 74
 
 
@@ -48,6 +61,7 @@ def card(text, path, size=68, y_center=None, band=(TOP, BOT)):
     f = ImageFont.truetype(FONT, size, index=1)
     im = Image.new("RGBA", (W, H), (0, 0, 0, 0) if y_center else BG + (255,))
     d = ImageDraw.Draw(im)
+
     def wrap_at(width):
         out, line = [], ""
         for w in text.split():
@@ -74,37 +88,55 @@ def card(text, path, size=68, y_center=None, band=(TOP, BOT)):
     im.save(path)
 
 
+def ease(a, b, t0, d):
+    """An ffmpeg expression: a at t0, b at t0+d, smoothstep between."""
+    p = f"clip((t-{t0})/{d},0,1)"
+    return f"({a}+({b}-{a})*(3*pow({p},2)-2*pow({p},3)))"
+
+
 def main(take, out):
+    t0 = TYPED_S - SHIFT_D
     with tempfile.TemporaryDirectory() as td:
         td = Path(td)
         card(OPEN, td / "open.png", size=80)
         card(CLOSE, td / "close.png")
-        card(CAP1, td / "cap1.png", size=60, y_center=319)      # y 340-480
-        card(CAP2, td / "cap2.png", size=60, y_center=1364)
-        card(STATUS, td / "status.png", size=60, y_center=900)     # y 1135-1345
-        n = len(ROWS)
+        card(CAP1, td / "cap1.png", size=60, y_center=CAP1_Y[0])
+        card(CAP2, td / "cap2.png", size=60, y_center=CAP2_Y)
+        card(STATUS, td / "status.png", size=60, y_center=STATUS_Y[0])
+        # every state of every element stays inside the band
+        assert TOP <= min(PANEL_A[0], PANEL_B[0]) and max(sum(PANEL_A), sum(PANEL_B)) <= BOT
+        n = len(TYPED) + len(OUTPUT)
         chain = (f"[0:v]fps={FPS},split=2[ta][tb];[ta]trim=0:{TYPED_S},setpts=PTS-STARTPTS[a];"
                  f"[tb]trim={OUT_A}:{OUT_B},setpts=PTS-STARTPTS[b];[a][b]concat=n=2:v=1[t];"
                  f"[t]split={n}" + "".join(f"[s{i}]" for i in range(n)) + ";"
                  f"color=c=#0d0d0d:s={W}x{H}:r={FPS}:d={TAKE_S}[bg];")
-        for i, (x, y, w, h, fy, _, extra) in enumerate(ROWS):
-            assert TOP <= fy and fy + h <= BOT and OX + w <= W - 60, ROWS[i]
-            chain += f"[s{i}]crop={w}:{h}:{x}:{y}" + (f",{extra}" if extra else "") + f"[r{i}];"
-        px, py, pw, ph = PANEL
-        assert TOP <= py and py + ph <= BOT
-        chain += f"[bg]drawbox=x={px}:y={py}:w={pw}:h={ph}:color=0x171717:t=fill,drawbox=x={px}:y={py}:w={pw}:h={ph}:color=0x2c2c2c:t=3[pn];"
+        crops = list(TYPED) + [(x, y, w, h, fy, fy) for (x, y, w, h, fy) in OUTPUT]
+        for i, (x, y, w, h, ya, yb) in enumerate(crops):
+            assert OX + w <= W - 60 and TOP <= min(ya, yb) and max(ya, yb) + h <= BOT, crops[i]
+            chain += f"[s{i}]crop={w}:{h}:{x}:{y}[r{i}];"
+        # the panel: an outline layer and a fill layer, both scaled per frame so the panel grows downward as the stack eases
+        ph = ease(PANEL_A[1], PANEL_B[1], t0, SHIFT_D)
+        py = ease(PANEL_A[0], PANEL_B[0], t0, SHIFT_D)
+        chain += (f"color=c=#2c2c2c:s={PW}x{PANEL_B[1]}:r={FPS}:d={TAKE_S},scale=w={PW}:h='2*trunc({ph}/2)':eval=frame[po];"
+                  f"color=c=#171717:s={PW - 6}x{PANEL_B[1]}:r={FPS}:d={TAKE_S},scale=w={PW - 6}:h='2*trunc(({ph}-6)/2)':eval=frame[pf];"
+                  f"[bg][po]overlay=x={PX}:y='{py}'[b1];[b1][pf]overlay=x={PX + 3}:y='{py}+3'[pn];")
         last = "pn"
-        for i, (x, y, w, h, fy, start, _) in enumerate(ROWS):
-            en = f":enable='gte(t,{start})'" if start is not None else ""
-            chain += f"[{last}][r{i}]overlay={OX}:{fy}{en}[o{i}];"
+        for i, (x, y, w, h, ya, yb) in enumerate(crops):
+            if i < len(TYPED):
+                chain += f"[{last}][r{i}]overlay={OX}:'{ease(ya, yb, t0, SHIFT_D)}'[o{i}];"
+            else:
+                chain += f"[{last}][r{i}]overlay={OX}:{ya}:enable='gte(t,{TYPED_S})'[o{i}];"
             last = f"o{i}"
-        chain += (f"[{last}][1:v]overlay=0:0[c1];[c1][2:v]overlay=0:0:enable='gte(t,{TYPED_S})'[c2];"
-                  f"[c2][3:v]overlay=0:0:enable='between(t,{STATUS_FROM},{TYPED_S})',format=yuv420p[v]")
-        chain = chain.replace("[c1][2:v]overlay=0:0:enable='gte(t,%s)'[c2]" % TYPED_S, "[2:v]format=rgba,fade=t=in:st=%s:d=0.5:alpha=1[cp2];[c1][cp2]overlay=0:0[c2]" % TYPED_S)
+        # captions: the one above moves with the panel; the one below fades in on its reserved slot; the status line moves with the panel
+        sy = ease(0, STATUS_Y[1] - STATUS_Y[0], t0, SHIFT_D)
+        cy = ease(0, CAP1_Y[1] - CAP1_Y[0], t0, SHIFT_D)
+        chain += (f"[{last}][1:v]overlay=0:'{cy}'[c1];"
+                  f"[2:v]format=rgba,fade=t=in:st={TYPED_S}:d=0.5:alpha=1[cp2];[c1][cp2]overlay=0:0[c2];"
+                  f"[c2][3:v]overlay=0:'{sy}':enable='gte(t,{STATUS_FROM})*lt(t,{TYPED_S})',format=yuv420p[v]")
         term = td / "term.mp4"
         subprocess.run(["nice", "ffmpeg", "-v", "error", "-y", "-threads", "2", "-i", str(take), "-loop", "1", "-i", str(td / "cap1.png"),
-                        "-loop", "1", "-i", str(td / "cap2.png"), "-loop", "1", "-i", str(td / "status.png"), "-filter_complex", chain, "-map", "[v]", "-t", f"{TAKE_S:.3f}",
-                        "-c:v", "libx264", "-crf", "16", "-preset", "medium", str(term)], check=True)
+                        "-loop", "1", "-i", str(td / "cap2.png"), "-loop", "1", "-i", str(td / "status.png"), "-filter_complex", chain,
+                        "-map", "[v]", "-t", f"{TAKE_S:.3f}", "-c:v", "libx264", "-crf", "16", "-preset", "medium", str(term)], check=True)
         parts = []
         for name, png, dur in (("open", td / "open.png", OPEN_S), ("close", td / "close.png", CLOSE_S)):
             p = td / f"{name}.mp4"
