@@ -170,7 +170,7 @@ def slide_closing():
     for ln in wrap(d, "Every tool brought some of the site over, none brought all of it.", font(80), W - 300):
         centered(d, ln, y, font(80), T["text"])
         y += 100
-    centered(d, "Plan to check every page by hand, and to rebuild the design and forms yourself.", y + 50, font(60, False), T["text"])
+    centered(d, "Plan to check every page, and to redo the look, forms, video and scripts.", y + 50, font(60, False), T["text"])
     return im
 
 
@@ -228,7 +228,7 @@ def paste(im, sh, x, y):
 
 def pslide_title():
     im, d = pcanvas()
-    y = pwrap(d, "Five tools that turn HTML into WordPress", 560, font(96), PW - 140, 118)
+    y = pwrap(d, "Moving a hand-coded site into WordPress: what comes over?", 560, font(88), PW - 140, 108)
     pwrap(d, "One sample site, ten fixed checks", y + 50, font(64), PW - 140, 80)
     return im
 
@@ -246,16 +246,16 @@ def pslide_sample(repo):
 # crops: (label, results sub-path under the tool dir or "orig:<file>", source-px box). "orig:" crops come from the same tool's original screenshots.
 FINDINGS = {
     "rawhandler": ("Every page came over as Custom HTML blocks, not as separate paragraphs, headings and images.",
-                   [("Editor block list, home page", "converted-index-listview.png", (0, 55, 318, 520))]),
+                   [("Editor block list, home page", "converted-index-listview.png", (0, 150, 318, 280))]),
     "static-site-importer": ("The look carried over, but the hero banner showed an error box.",
-                             [("Converted home page, in the editor", "converted-index-editor.png", (0, 330, 1280, 720)),
+                             [("Converted home page, in the editor", "converted-index-editor.png", (0, 330, 1000, 720)),
                               ("The error box, enlarged", "converted-index-editor.png", (0, 425, 330, 545))]),
     "blocks-engine": ("On the contact page the form lost its fields: the labels became plain text and a list.",
                       [("Converted (inset: the original)", "converted-contact-1280.png", (300, 400, 960, 1090))]),
-    "block-runner": ("On the contact page the form kept all six controls.",
+    "block-runner": ("On the contact page the form kept all six controls, inside one Custom HTML block.",
                      [("Converted contact page", "converted-contact-1280.png", (300, 470, 960, 1010))]),
-    "html-to-blocks-converter": ("The editor reported invalid blocks, shown as an error box: two headings and four gallery images.",
-                                 [("Converted services page, in the editor", "converted-services-editor.png", (170, 330, 840, 775))]),
+    "html-to-blocks-converter": ("Six blocks showed this error box: two headings and four gallery images.",
+                                 [("One of the six, services page, in the editor", "converted-services-editor.png", (170, 356, 840, 775))]),
 }
 
 
@@ -274,7 +274,7 @@ def pslide_tool(repo, name, tool, score, mx, ne):
     finding, crops = FINDINGS[tool]
     y = pwrap(d, finding, y + 6, font(52), PW - 100, 66) + 8
     if tool == "static-site-importer":
-        y = pwrap(d, "\u2020 Given the whole site, so not comparable.", y, font(50, False), PW - 100, 62) + 8
+        y = pwrap(d, "\u2020 Handed the whole site, so not comparable.", y, font(50, False), PW - 100, 62) + 8
     if len(crops) == 2 and tool in ("blocks-engine", "block-runner"):     # side by side: the same form before and after
         cw = 470
         for k, (label, fname, box) in enumerate(crops):
@@ -283,18 +283,20 @@ def pslide_tool(repo, name, tool, score, mx, ne):
             sh = proof(repo, tool, fname, box, cw, BOT - y - 58 - 10)
             paste(im, sh, x, y + 58)
         return im
-    caps = [300, None] if len(crops) == 2 else [None]               # stacked: a short strip first, the second gets the rest
+    caps = [380, None] if len(crops) == 2 else [None]               # stacked: a short strip first, the second gets the rest
+    LABEL, GAP = 58, 24                                              # caption height, then a 24 px gap to the crop
     for (label, fname, box), cap in zip(crops, caps):
-        ptext(d, label, 60, y, font(50), T["text"])
-        room = BOT - y - 58 - 10 - (58 + 10 if cap else 0)
+        room = BOT - y - LABEL - GAP - 10 - (LABEL + GAP + 10 if cap else 0)
         sh = proof(repo, tool, fname, box, 960, cap or room)
         if tool == "blocks-engine":          # the original form as a small inset, so "lost its fields" is visible on this slide
             th = proof(repo, tool, "original-contact-1280.png", (100, 130, 760, 900), 250, 400)
             ix, iy = sh.size[0] - th.size[0] - 12, int(sh.size[1] * 0.36)   # beside the bullet list, where the page is empty
             sh.paste(th, (ix, iy))
             ImageDraw.Draw(sh).rectangle((ix, iy, ix + th.size[0], iy + th.size[1]), outline=T["accent"], width=4)
-        paste(im, sh, (PW - sh.size[0]) // 2, y + 58)
-        y += 58 + sh.size[1] + 20
+        x = (PW - sh.size[0]) // 2
+        ptext(d, label, x, y, font(50, False), T["text"])          # regular weight, flush with the crop's left edge
+        paste(im, sh, x, y + LABEL + GAP)
+        y += LABEL + GAP + sh.size[1] + 20
     return im
 
 
@@ -333,7 +335,7 @@ def pslide_table(rows):
     sw = f"{sc} of {mx}"
     ptext(d, sw, PW - 70 - d.textlength(sw, font=font(52)), y + 6, font(52), T["accent"])
     y += 100
-    y = pwrap(d, "It was given the whole site and ran on a newer server setup, and 6 checks could not be judged.", y, font(50, False), PW - 120, 62) + 14
+    y = pwrap(d, "It was handed the whole site and ran on a newer server setup, and 6 checks could not be judged.", y, font(50, False), PW - 120, 62) + 14
     pwrap(d, "A lower score means fewer checks passed on this one site.", y, font(50, False), PW - 120, 62)
     return vcenter(im)
 
@@ -354,23 +356,27 @@ def pslide_capped(rows):
         ptext(d, sw, PW - 70 - d.textlength(sw, font=font(52)), y + 6, font(52), T["accent"])
         y += 98
     y += 20
-    y = pwrap(d, "Static Site Importer is shown apart: it was given the whole site.", y, font(50, False), PW - 120, 62) + 14
-    pwrap(d, "Taking those two checks out does not change the order. Each number is the score and the maximum less those two checks.", y, font(50, False), PW - 120, 62)
+    y = pwrap(d, "Static Site Importer is shown apart: it was handed the whole site.", y, font(50, False), PW - 120, 62) + 14
+    y = pwrap(d, "Those two checks cost the four page tools points however well they converted: WordPress added a second main heading, and the links still point at the original pages.", y, font(50, False), PW - 120, 62) + 14
+    pwrap(d, "Points earned on those two checks are taken out of each score, and 16 off each maximum.", y, font(50, False), PW - 120, 62)
     return vcenter(im)
 
 
 def pslide_disclosures():
     items = ["Ten checks on each of four pages, each scored 0, 1 or 2: headings, lists, layout, images, links, forms, embeds, scripts, fonts and colours, and editing as blocks.",
-             "Four tools got each page's text and images but no stylesheet, so a plain look is expected. Static Site Importer got the whole site, so it is shown apart.",
-             "Checks that could not be judged are not counted, so a top score can be under 72. Run October 28, 2026."]
+             "Four tools were handed each page's text and images and nothing else, so a plain look is expected. Static Site Importer was handed the whole site, so it is shown apart.",
+             "Run on October 28, 2026. Checks that could not be judged are not counted, so a top score can be under 72."]
     for size in range(56, 50, -1):
         im, d = pcanvas()
         ptext(d, "How to read the scores", 70, 200, font(72), T["text"])
         y, f = 330, font(size, False)
+        ind = int(d.textlength("\u2022  ", font=f))               # continuation lines hang under the first word, not the bullet
         try:
             for it in items:
-                for j, ln in enumerate(wrap(d, it, f, PW - 190)):
-                    ptext(d, ("\u2022  " if j == 0 else "    ") + ln, 70, y, f, T["text"])
+                for j, ln in enumerate(wrap(d, it, f, PW - 190 - ind)):
+                    if j == 0:
+                        ptext(d, "\u2022", 70, y, f, T["text"])
+                    ptext(d, ln, 70 + ind, y, f, T["text"])
                     y += int(size * 1.25)
                 y += int(size * 0.5)
             return vcenter(im)
@@ -398,7 +404,7 @@ def centered_block(parts):
 
 def pslide_closing():
     return centered_block([("Every tool brought some of the site over, none brought all of it.", 72, True, T["text"], 60),
-                           ("Plan to check every page by hand, and to rebuild the design and forms yourself.", 60, False, T["text"], 0)])
+                           ("Plan to check every page, and to redo the look, forms, video and scripts.", 60, False, T["text"], 0)])
 
 
 def pslide_end():
@@ -419,8 +425,8 @@ def script(rows):
     for name, tool, who in TOOLS:
         lines.append((tool, None, f"{leads[name]}: {n(name)}."))
     lines.append(("table", None, "A lower score means fewer checks passed on this one sample site."))
-    lines.append(("capped", None, "Without the headings and links checks, the four page tools score: rawHandler 17 of 56, Blocks Engine 27 of 50, Block Runner 19 of 50, HTML to Blocks Converter 24 of 56. Taking those two checks out does not change the order. Static Site Importer is shown apart."))
-    lines.append(("closing", None, "Every tool brought some of the site over, none brought all of it. Plan to check every page by hand, and to rebuild the design and forms yourself."))
+    lines.append(("capped", None, "Without the headings and links checks, the four page tools score: rawHandler 17 of 56, Blocks Engine 27 of 50, Block Runner 19 of 50, HTML to Blocks Converter 24 of 56. Those two checks cost the four page tools points however well they converted: WordPress added a second main heading, and the links still point at the original pages. Points earned on those two checks are taken out of each score, and 16 off each maximum. Static Site Importer is shown apart."))
+    lines.append(("closing", None, "Every tool brought some of the site over, none brought all of it. Plan to check every page, and to redo the look, forms, video and scripts."))
     lines.append(("end", None, "The scores and every screenshot are public. The question comes from WordPress Agent Benchmarks."))
     return lines
 
