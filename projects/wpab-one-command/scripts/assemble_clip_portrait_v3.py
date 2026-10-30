@@ -17,16 +17,18 @@ from PIL import Image, ImageDraw, ImageFont
 
 W, H, FPS = 1080, 1920, 25
 TOP, BOT = 192, 1530
-BG = (23, 23, 23)                       # the terminal's own background, so a blank crop is invisible
+BG = (13, 13, 13)                       # the card and canvas colour; the terminal panel is the take's own (23, 23, 23), so a blank crop is invisible on it
 TEXT = (244, 244, 245)
 FONT = "/System/Library/Fonts/Helvetica.ttc"
 OPEN = "Want to try WordPress without risking your site?"
 CAP1 = "One command makes a practice copy of WordPress."
 CAP2 = "Open that address in your browser to see your practice site."
+STATUS = "Starting your practice copy..."
 CLOSE = "A practice copy on your own computer. Nothing reaches your members."
 OPEN_S, CLOSE_S, FADE = 4.0, 4.5, 0.4
-TYPED_S = 8.0                           # the command is fully typed by here in the take
-OUT_A, OUT_B = 16.6, 21.2               # the take's finished output (Logging in 100%, Ready! ...), held 4.6 s
+TYPED_S = 6.0                           # the command is typed by 3.9 s in the take; the rest to here is the real boot wait, shown with a status line
+STATUS_FROM = 4.2                       # "Starting your practice copy..." from here to TYPED_S
+OUT_A, OUT_B = 16.6, 21.2               # the take's finished output (Ready! ...), held 4.6 s
 TAKE_S = TYPED_S + (OUT_B - OUT_A)
 
 # (take x, take y, w, h, frame y, shown from take-timeline second or None, extra filter). Text starts at x=74 in the frame.
@@ -34,11 +36,11 @@ ROWS = [
     (35, 46, 210, 64, 524, None, None),        # "$ npx"
     (255, 46, 950, 64, 604, None, None),       # "@wp-playground/cli@latest"
     (1237, 46, 200, 64, 684, None, None),      # "start"
-    (35, 1108, 600, 74, 800, TYPED_S, "lutrgb=r='if(between(val,90,200),235,val)':g='if(between(val,90,200),235,val)':b='if(between(val,90,200),235,val)'"),  # "Logging in 100%" (the dim grey brightened)
-    (35, 1246, 230, 76, 880, TYPED_S, None),   # "Ready!"
-    (292, 1246, 880, 76, 960, TYPED_S, None),  # "WordPress is running on"
-    (1197, 1246, 800, 76, 1040, TYPED_S, None),  # "http://127.0.0.1:9400"
+    (35, 1246, 230, 76, 800, TYPED_S, None),   # "Ready!"
+    (292, 1246, 880, 76, 880, TYPED_S, None),  # "WordPress is running on"
+    (1197, 1246, 800, 76, 960, TYPED_S, None),  # "http://127.0.0.1:9400"
 ]
+PANEL = (40, 470, 1000, 590)             # x, y, w, h: a thin terminal panel behind the block, so the left-aligned text looks deliberate
 OX = 64                                  # crops start 10 px before the text, so the text starts at 74
 
 
@@ -77,25 +79,30 @@ def main(take, out):
         td = Path(td)
         card(OPEN, td / "open.png", size=80)
         card(CLOSE, td / "close.png")
-        card(CAP1, td / "cap1.png", size=60, y_center=405)      # y 340-480
-        card(CAP2, td / "cap2.png", size=60, y_center=1285)     # y 1135-1345
+        card(CAP1, td / "cap1.png", size=60, y_center=380)      # y 340-480
+        card(CAP2, td / "cap2.png", size=60, y_center=1285)
+        card(STATUS, td / "status.png", size=56, y_center=830)     # y 1135-1345
         n = len(ROWS)
         chain = (f"[0:v]fps={FPS},split=2[ta][tb];[ta]trim=0:{TYPED_S},setpts=PTS-STARTPTS[a];"
                  f"[tb]trim={OUT_A}:{OUT_B},setpts=PTS-STARTPTS[b];[a][b]concat=n=2:v=1[t];"
                  f"[t]split={n}" + "".join(f"[s{i}]" for i in range(n)) + ";"
-                 f"color=c=#171717:s={W}x{H}:r={FPS}:d={TAKE_S}[bg];")
+                 f"color=c=#0d0d0d:s={W}x{H}:r={FPS}:d={TAKE_S}[bg];")
         for i, (x, y, w, h, fy, _, extra) in enumerate(ROWS):
             assert TOP <= fy and fy + h <= BOT and OX + w <= W - 60, ROWS[i]
             chain += f"[s{i}]crop={w}:{h}:{x}:{y}" + (f",{extra}" if extra else "") + f"[r{i}];"
-        last = "bg"
+        px, py, pw, ph = PANEL
+        assert TOP <= py and py + ph <= BOT
+        chain += f"[bg]drawbox=x={px}:y={py}:w={pw}:h={ph}:color=0x171717:t=fill,drawbox=x={px}:y={py}:w={pw}:h={ph}:color=0x2c2c2c:t=3[pn];"
+        last = "pn"
         for i, (x, y, w, h, fy, start, _) in enumerate(ROWS):
             en = f":enable='gte(t,{start})'" if start is not None else ""
             chain += f"[{last}][r{i}]overlay={OX}:{fy}{en}[o{i}];"
             last = f"o{i}"
-        chain += f"[{last}][1:v]overlay=0:0[c1];[c1][2:v]overlay=0:0:enable='gte(t,{TYPED_S})',format=yuv420p[v]"
+        chain += (f"[{last}][1:v]overlay=0:0[c1];[c1][2:v]overlay=0:0:enable='gte(t,{TYPED_S})'[c2];"
+                  f"[c2][3:v]overlay=0:0:enable='between(t,{STATUS_FROM},{TYPED_S})',format=yuv420p[v]")
         term = td / "term.mp4"
         subprocess.run(["nice", "ffmpeg", "-v", "error", "-y", "-threads", "2", "-i", str(take), "-loop", "1", "-i", str(td / "cap1.png"),
-                        "-loop", "1", "-i", str(td / "cap2.png"), "-filter_complex", chain, "-map", "[v]", "-t", f"{TAKE_S:.3f}",
+                        "-loop", "1", "-i", str(td / "cap2.png"), "-loop", "1", "-i", str(td / "status.png"), "-filter_complex", chain, "-map", "[v]", "-t", f"{TAKE_S:.3f}",
                         "-c:v", "libx264", "-crf", "16", "-preset", "medium", str(term)], check=True)
         parts = []
         for name, png, dur in (("open", td / "open.png", OPEN_S), ("close", td / "close.png", CLOSE_S)):
