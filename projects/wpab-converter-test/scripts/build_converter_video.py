@@ -25,9 +25,10 @@ P = HERE.parent
 CFG = json.load(open(HERE / "config.json"))
 T = CFG["theme"]
 W, H = 1920, 1080
-SILENT_HOLDS = {"table": 9.0, "disclosures": 10.0, "closing": 6.0, "end": 5.0}   # silent cut: no voice sets the pace, so each slide holds 4.5 s at least, longer where there is more to read
+SILENT_HOLDS = {"capped": 8.0, "table": 9.0, "disclosures": 10.0, "closing": 6.0, "end": 5.0}   # silent cut: no voice sets the pace, so each slide holds 4.5 s at least, longer where there is more to read
 HOLDS = {"table": 10.0}  # the totals slide carries the sentence on screen; hold it long enough to read
 FONT = "/System/Library/Fonts/Helvetica.ttc"
+CAPPED = {"rawhandler": 8, "blocks-engine": 8, "block-runner": 8, "html-to-blocks-converter": 7}  # cells for criteria 1 and 5, summed over four pages in SCORES.csv
 TOOLS = [  # SCORES.md name -> (results dir, who publishes it)
     ("rawhandler", "rawhandler", "built into WordPress"),
     ("Static Site Importer †", "static-site-importer", "from Automattic"),
@@ -169,7 +170,7 @@ def slide_closing():
     for ln in wrap(d, "Every tool brought some of the site over, none brought all of it.", font(80), W - 300):
         centered(d, ln, y, font(80), T["text"])
         y += 100
-    centered(d, "Plan to check every page and redo the look, forms and video.", y + 50, font(60, False), T["text"])
+    centered(d, "Plan to check every page by hand, and to rebuild the design, forms and video yourself.", y + 50, font(60, False), T["text"])
     return im
 
 
@@ -241,27 +242,68 @@ def pslide_sample(repo):
     return im
 
 
+# One real finding per tool, from results/SCORES.csv, and the part of the evidence screenshots that shows it.
+# crops: (label, results sub-path under the tool dir or "orig:<file>", source-px box). "orig:" crops come from the same tool's original screenshots.
+FINDINGS = {
+    "rawhandler": ("Every page came over as Custom HTML blocks, which can't be edited as blocks.",
+                   [("Editor block list, home page", "converted-index-listview.png", (0, 55, 640, 440))]),
+    "static-site-importer": ("The look carried over, but the hero banner showed an error box.",
+                             [("Converted home page, in the editor", "converted-index-editor.png", (0, 330, 1280, 720)),
+                              ("The error box, enlarged", "converted-index-editor.png", (0, 425, 330, 545))]),
+    "blocks-engine": ("On the contact page the form lost its fields: the labels became plain text and a list.",
+                      [("Original", "original-contact-1280.png", (100, 130, 560, 900)),
+                       ("Converted", "converted-contact-1280.png", (300, 400, 760, 1170))]),
+    "block-runner": ("The contact form kept all six controls, but every page lost its fonts and colours.",
+                     [("Original", "original-contact-1280.png", (100, 130, 560, 900)),
+                      ("Converted", "converted-contact-1280.png", (300, 470, 760, 1240))]),
+    "html-to-blocks-converter": ("Two headings and the four gallery images were reported invalid in the editor.",
+                                 [("Converted services page, in the editor", "converted-services-editor.png", (160, 500, 860, 775))]),
+}
+
+
+def proof(repo, tool, fname, box, max_w, max_h):
+    im = Image.open(Path(repo) / f"results/{tool}/{fname}").convert("RGB").crop(box)
+    k = min(max_w / im.width, max_h / im.height)
+    return im.resize((round(im.width * k), round(im.height * k)), Image.LANCZOS)
+
+
 def pslide_tool(repo, name, tool, score, mx, ne):
-    """Both screenshots sit inside y 192-1530; the header grows with the name and the notes, the screenshots take the room left."""
+    """Name, score, one finding in plain words, then the crop(s) that prove it, all inside y 192-1530."""
     im, d = pcanvas()
     y = pwrap(d, SHOWN.get(tool, name), 200, font(72), PW - 120, 86)
     ptext(d, f"{score} of {mx}", 0, y, font(112), T["accent"], center=True)
     y += 128
-    if ne:
-        y = pwrap(d, f"{ne} checks could not be judged, so the top score is {mx}, not 72", y, font(50, False), PW - 120, 62)
+    finding, crops = FINDINGS[tool]
+    y = pwrap(d, finding, y + 6, font(52), PW - 100, 66) + 8
     if tool == "static-site-importer":
-        y = pwrap(d, "\u2020 Given the whole site, not just the page content, so not comparable.", y, font(50, False), PW - 120, 62)
-    y += 10
-    room = BOT - y - 2 * 64 - 30                 # two labels and a gap, then two screenshots
-    h = room // 2
-    ptext(d, "Original, home page", 60, y, font(50), T["text"])
-    a = pshot(repo, tool, "original", 960, h)
-    paste(im, a, 60, y + 60)
-    y2 = y + 60 + a.size[1] + 24
-    ptext(d, "Converted, home page", 60, y2, font(50), T["text"])
-    b = pshot(repo, tool, "converted", 960, BOT - (y2 + 60))
-    paste(im, b, 60, y2 + 60)
+        y = pwrap(d, "\u2020 Given the whole site, so not comparable.", y, font(50, False), PW - 100, 62) + 8
+    if len(crops) == 2 and tool in ("blocks-engine", "block-runner"):     # side by side: the same form before and after
+        cw = 470
+        for k, (label, fname, box) in enumerate(crops):
+            x = 60 + k * (cw + 20)
+            ptext(d, label, x, y, font(50), T["text"])
+            sh = proof(repo, tool, fname, box, cw, BOT - y - 58 - 10)
+            paste(im, sh, x, y + 58)
+        return im
+    caps = [300, None] if len(crops) == 2 else [None]               # stacked: a short strip first, the second gets the rest
+    for (label, fname, box), cap in zip(crops, caps):
+        ptext(d, label, 60, y, font(50), T["text"])
+        room = BOT - y - 58 - 10 - (58 + 10 if cap else 0)
+        sh = proof(repo, tool, fname, box, 960, cap or room)
+        paste(im, sh, (PW - sh.size[0]) // 2, y + 58)
+        y += 58 + sh.size[1] + 20
     return im
+
+
+def vcenter(im):
+    """Shift the slide's content so its block sits centred in y 192-1530."""
+    g = np.asarray(im.convert("RGB")).astype(int)
+    ys = np.where((np.abs(g - np.array([11, 13, 16])).sum(2) > 40).any(1))[0]
+    shift = (TOP + BOT) // 2 - (ys.min() + ys.max()) // 2
+    assert TOP <= ys.min() + shift and ys.max() + shift <= BOT, (ys.min(), ys.max(), shift)
+    out = Image.new("RGB", im.size, T["bg"])
+    out.paste(im, (0, shift))
+    return out
 
 
 def pslide_table(rows):
@@ -288,46 +330,77 @@ def pslide_table(rows):
     sw = f"{sc} of {mx}"
     ptext(d, sw, PW - 70 - d.textlength(sw, font=font(52)), y + 6, font(52), T["accent"])
     y += 100
-    y = pwrap(d, "It was given the whole site and ran on a newer version of PHP, and 6 checks could not be judged.", y, font(50, False), PW - 120, 62) + 14
-    y = pwrap(d, "Highest of the four on this one site: Blocks Engine, 35 of 66. One site, not a ranking.", y, font(50, False), PW - 120, 62) + 14
-    pwrap(d, "A lower score means fewer checks passed.", y, font(50, False), PW - 120, 62)
-    return im
+    y = pwrap(d, "It was given the whole site and ran on a newer server setup, and 6 checks could not be judged.", y, font(50, False), PW - 120, 62) + 14
+    pwrap(d, "A lower score means fewer checks passed on this one site.", y, font(50, False), PW - 120, 62)
+    return vcenter(im)
+
+
+def pslide_capped(rows):
+    """The four page tools with the headings and links checks taken out (criteria 1 and 5, 16 points of the maximum),
+    recomputed from results/SCORES.csv: score and maximum each less that tool's cells for those two checks."""
+    im, d = pcanvas()
+    y = pwrap(d, "Take out the headings and links checks", 200, font(66), PW - 120, 80) + 24
+    for name, tool, _ in TOOLS:
+        if tool == "static-site-importer":
+            continue
+        sc, mx, ne = rows[name]
+        cut = CAPPED[tool]
+        d.rectangle((50, y - 6, PW - 50, y + 76), fill=T["panel"])
+        ptext(d, SHOWN.get(tool, name), 70, y + 6, font(52), T["text"])
+        sw = f"{sc - cut} of {mx - 16}"
+        ptext(d, sw, PW - 70 - d.textlength(sw, font=font(52)), y + 6, font(52), T["accent"])
+        y += 98
+    y += 20
+    y = pwrap(d, "Static Site Importer is not changed: it was given the whole site, so those two checks did not hold it back.", y, font(50, False), PW - 120, 62) + 14
+    pwrap(d, "Same sums, from the published scores file.", y, font(50, False), PW - 120, 62)
+    return vcenter(im)
 
 
 def pslide_disclosures():
-    items = ["One sample site, four pages.",
-             "Ten checks on each page, each scored 0, 1 or 2. The top score is 72.",
-             "Four tools were given each page's main content. Static Site Importer was given the whole site, so it is shown apart.",
-             "Checks that could not be judged are left out, so that tool's top score is lower.",
-             "Run on October 28, 2026, each tool kept at one fixed version."]
-    for size in range(60, 50, -2):
+    items = ["Ten checks on each of four pages, each scored 0, 1 or 2: headings, lists, layout, images, links, forms, embeds, scripts, fonts and colours, and editing as blocks.",
+             "Four tools got each page's text and images but no stylesheet, so a plain look is expected. Static Site Importer got the whole site, so it is shown apart.",
+             "Checks that could not be judged are not counted, so a top score can be under 72. Run October 28, 2026."]
+    for size in range(56, 50, -1):
         im, d = pcanvas()
         ptext(d, "How to read the scores", 70, 200, font(72), T["text"])
-        y, f = 320, font(size, False)
+        y, f = 330, font(size, False)
         try:
             for it in items:
                 for j, ln in enumerate(wrap(d, it, f, PW - 190)):
                     ptext(d, ("\u2022  " if j == 0 else "    ") + ln, 70, y, f, T["text"])
                     y += int(size * 1.25)
-                y += int(size * 0.4)
-            return im
+                y += int(size * 0.5)
+            return vcenter(im)
         except AssertionError:
             continue
     raise SystemExit("disclosures do not fit")
 
 
-def pslide_closing():
+def centered_block(parts):
+    """parts: [(text, size, bold, fill, gap_after)] drawn as one block centred in y 192-1530."""
     im, d = pcanvas()
-    y = pwrap(d, "Every tool brought some of the site over, none brought all of it.", 460, font(72), PW - 120, 90)
-    pwrap(d, "Plan to check every page and redo the look, forms and video.", y + 60, font(60, False), PW - 120, 76)
+    rows = []
+    for text, size, bold, fill, gap in parts:
+        f = font(size, bold)
+        for ln in wrap(d, text, f, PW - 120):
+            rows.append((ln, f, fill, int(size * 1.25)))
+        rows[-1] = rows[-1][:3] + (rows[-1][3] + gap,)
+    h = sum(r[3] for r in rows)
+    y = (TOP + BOT) // 2 - h // 2
+    for ln, f, fill, adv in rows:
+        ptext(d, ln, 0, y, f, fill, center=True)
+        y += adv
     return im
+
+
+def pslide_closing():
+    return centered_block([("Every tool brought some of the site over, none brought all of it.", 72, True, T["text"], 60),
+                           ("Plan to check every page by hand, and to rebuild the design, forms and video yourself.", 60, False, T["text"], 0)])
 
 
 def pslide_end():
-    im, d = pcanvas()
-    y = pwrap(d, "Every score and screenshot is public.", 560, font(72), PW - 120, 90)
-    pwrap(d, "The question comes from WordPress Agent Benchmarks, an open source project started by Andy Peatling.", y + 70, font(54, False), PW - 120, 70)
-    return im
+    return centered_block([("Every score and screenshot is public.", 72, True, T["text"], 60),
+                           ("The question comes from WordPress Agent Benchmarks, an open source project started by Andy Peatling.", 56, False, T["text"], 0)])
 
 
 def script(rows):
@@ -335,15 +408,16 @@ def script(rows):
         s, m, ne = rows[name]
         return f"{s} out of {m}"
     lines = [("title", slide_title, "We ran five tools that turn an HTML page into WordPress blocks, on the same sample site, and scored each against ten fixed checks.")]
-    lines.append(("disclosures", None, "How to read the scores: one sample site, four pages, ten checks on each page, each scored zero, one or two, so the top score is 72. Four tools were given each page's main content. Only Static Site Importer got the whole site, so it is shown apart. Checks that could not be judged are left out. Run on October 28th, 2026, each tool kept at one fixed version."))
+    lines.append(("disclosures", None, "How to read the scores: ten checks on each of four pages, each scored zero, one or two. Four tools got each page's text and images but no stylesheet, so a plain look is expected. Static Site Importer got the whole site, so it is shown apart. Checks that could not be judged are not counted, so a top score can be under 72. Run on October 28th, 2026."))
     lines.append(("sample", None, "The sample is Quillfern Cycle Works, a made-up bike shop."))
     leads = {"rawhandler": "First, rawHandler, built into WordPress", "Static Site Importer †": "Static Site Importer, from Automattic",
              "Blocks Engine": "Blocks Engine, also from Automattic", "Block Runner": "Block Runner, from Human Made",
              "HTML to Blocks Converter": "HTML to Blocks Converter, from an independent developer"}
     for name, tool, who in TOOLS:
         lines.append((tool, None, f"{leads[name]}: {n(name)}."))
-    lines.append(("table", None, "Highest of the four comparable tools on this one site: Blocks Engine. One site, not a ranking. A lower score means fewer checks passed."))
-    lines.append(("closing", None, "Every tool brought some of the site over, none brought all of it. Plan to check every page and redo the look, forms and video."))
+    lines.append(("table", None, "A lower score means fewer checks passed on this one sample site."))
+    lines.append(("capped", None, "Take out the headings and links checks and the four page tools score: rawHandler 17 of 56, Blocks Engine 27 of 50, Block Runner 19 of 50, HTML to Blocks Converter 24 of 56. Static Site Importer is not changed."))
+    lines.append(("closing", None, "Every tool brought some of the site over, none brought all of it. Plan to check every page by hand, and to rebuild the design, forms and video yourself."))
     lines.append(("end", None, "The scores and every screenshot are public. The question comes from WordPress Agent Benchmarks."))
     return lines
 
@@ -381,12 +455,12 @@ def main(repo, plan_only, silent=False, portrait=False):
         (P / d).mkdir(exist_ok=True)
     if portrait:
         builders = {"title": pslide_title, "sample": lambda: pslide_sample(repo), "table": lambda: pslide_table(rows),
-                    "disclosures": pslide_disclosures, "closing": pslide_closing, "end": pslide_end}
+                    "disclosures": pslide_disclosures, "capped": lambda: pslide_capped(rows), "closing": pslide_closing, "end": pslide_end}
         for name, tool, _ in TOOLS:
             builders[tool] = (lambda n=name, t=tool: pslide_tool(repo, n, t, *rows[n]))
     else:
         builders = {"title": slide_title, "sample": lambda: slide_sample(repo), "table": lambda: slide_table(rows),
-                    "disclosures": slide_disclosures, "closing": slide_closing, "end": slide_end}
+                    "disclosures": slide_disclosures, "capped": lambda: slide_table(rows), "closing": slide_closing, "end": slide_end}
         for name, tool, _ in TOOLS:
             builders[tool] = (lambda n=name, t=tool: slide_tool(repo, n, t, *rows[n]))
     tag = "-portrait" if portrait else ""
@@ -406,7 +480,7 @@ def main(repo, plan_only, silent=False, portrait=False):
             d += TAIL
         clip = P / f"assets/clip-{key}{tag}.mp4"
         vf = "format=yuv420p" if silent else f"fade=t=in:st=0:d={F},fade=t=out:st={d - F:.2f}:d={F},format=yuv420p"
-        subprocess.run(["ffmpeg", "-y", "-v", "error", "-loop", "1", "-framerate", "30", "-t", f"{d + (F if silent else 0):.2f}", "-i", str(slide),
+        subprocess.run(["ffmpeg", "-y", "-v", "error", "-loop", "1", "-framerate", "30", "-t", f"{d:.2f}", "-i", str(slide),
                         "-vf", vf, "-c:v", "libx264", "-crf", "18", str(clip)], check=True)
         durs.append(d)
         if silent:
@@ -424,16 +498,10 @@ def main(repo, plan_only, silent=False, portrait=False):
             cues.append((t + (end - t) * i / len(chunks), t + (end - t) * (i + 1) / len(chunks), " ".join(c)))
         t += d
     if silent:
-        # cross-dissolve: slide i covers [t_i, t_i + d_i + F] and fades over the next one for its last F seconds
+        # hard cuts: one slide replaces the next in a single frame, so no text is ever drawn over other text
         out = P / f"renders/converter-test-silent{tag}.mp4"
-        ins, fc, last, off = [], [], "0:v", 0.0
-        for i, (clip, _) in enumerate(clips):
-            ins += ["-i", str(clip)]
-        for i in range(1, len(clips)):
-            off += durs[i - 1]
-            fc.append(f"[{last}][{i}:v]xfade=transition=fade:duration={F}:offset={off:.2f}[x{i}]")
-            last = f"x{i}"
-        subprocess.run(["ffmpeg", "-y", "-v", "error", *ins, "-filter_complex", ";".join(fc), "-map", f"[{last}]", "-an",
+        (P / "assets/clips-silent.txt").write_text("".join(f"file '{c}'\n" for c, _ in clips))
+        subprocess.run(["ffmpeg", "-y", "-v", "error", "-f", "concat", "-safe", "0", "-i", str(P / "assets/clips-silent.txt"), "-an",
                         "-c:v", "libx264", "-crf", "18", "-pix_fmt", "yuv420p", "-movflags", "+faststart", str(out)], check=True)
         print("OK", f"{dur(out):.1f}s", out)
         return
