@@ -246,15 +246,15 @@ def pslide_sample(repo):
 # crops: (label, results sub-path under the tool dir or "orig:<file>", source-px box). "orig:" crops come from the same tool's original screenshots.
 FINDINGS = {
     "rawhandler": ("Every page came over as Custom HTML blocks, not as separate paragraphs, headings and images.",
-                   [("Editor block list, home page", "converted-index-listview.png", (0, 55, 520, 520))]),
+                   [("Editor block list, home page", "converted-index-listview.png", (0, 55, 430, 520))]),
     "static-site-importer": ("The look carried over, but the hero banner showed an error box.",
                              [("Converted home page, in the editor", "converted-index-editor.png", (0, 330, 1280, 720)),
                               ("The error box, enlarged", "converted-index-editor.png", (0, 425, 330, 545))]),
     "blocks-engine": ("On the contact page the form lost its fields: the labels became plain text and a list.",
-                      [("Converted contact page", "converted-contact-1280.png", (300, 400, 960, 1000))]),
+                      [("Converted (inset: the original)", "converted-contact-1280.png", (300, 400, 960, 1100))]),
     "block-runner": ("On the contact page the form kept all six controls.",
                      [("Converted contact page", "converted-contact-1280.png", (300, 470, 960, 1010))]),
-    "html-to-blocks-converter": ("A heading came out as an invalid block, shown as an error box in the editor.",
+    "html-to-blocks-converter": ("The editor reported invalid blocks, shown as an error box: two headings and four gallery images.",
                                  [("Converted services page, in the editor", "converted-services-editor.png", (170, 330, 840, 775))]),
 }
 
@@ -288,6 +288,10 @@ def pslide_tool(repo, name, tool, score, mx, ne):
         ptext(d, label, 60, y, font(50), T["text"])
         room = BOT - y - 58 - 10 - (58 + 10 if cap else 0)
         sh = proof(repo, tool, fname, box, 960, cap or room)
+        if tool == "blocks-engine":          # the original form as a small inset, so "lost its fields" is visible on this slide
+            th = proof(repo, tool, "original-contact-1280.png", (100, 130, 760, 900), 250, 400)
+            sh.paste(th, (sh.size[0] - th.size[0] - 12, 12))
+            ImageDraw.Draw(sh).rectangle((sh.size[0] - th.size[0] - 12, 12, sh.size[0] - 12, 12 + th.size[1]), outline=T["accent"], width=4)
         paste(im, sh, (PW - sh.size[0]) // 2, y + 58)
         y += 58 + sh.size[1] + 20
     return im
@@ -350,7 +354,7 @@ def pslide_capped(rows):
         y += 98
     y += 20
     y = pwrap(d, "Static Site Importer is shown apart: it was given the whole site.", y, font(50, False), PW - 120, 62) + 14
-    pwrap(d, "Every tool drops, and the tools stay in the same order. Each number is the score and the maximum less those two checks.", y, font(50, False), PW - 120, 62)
+    pwrap(d, "Taking those two checks out does not change the order. Each number is the score and the maximum less those two checks.", y, font(50, False), PW - 120, 62)
     return vcenter(im)
 
 
@@ -414,7 +418,7 @@ def script(rows):
     for name, tool, who in TOOLS:
         lines.append((tool, None, f"{leads[name]}: {n(name)}."))
     lines.append(("table", None, "A lower score means fewer checks passed on this one sample site."))
-    lines.append(("capped", None, "Without the headings and links checks, the four page tools score: rawHandler 17 of 56, Blocks Engine 27 of 50, Block Runner 19 of 50, HTML to Blocks Converter 24 of 56. Every tool drops and they stay in the same order. Static Site Importer is shown apart."))
+    lines.append(("capped", None, "Without the headings and links checks, the four page tools score: rawHandler 17 of 56, Blocks Engine 27 of 50, Block Runner 19 of 50, HTML to Blocks Converter 24 of 56. Taking those two checks out does not change the order. Static Site Importer is shown apart."))
     lines.append(("closing", None, "Every tool brought some of the site over, none brought all of it. Plan to check every page by hand, and to rebuild the design and forms yourself."))
     lines.append(("end", None, "The scores and every screenshot are public. The question comes from WordPress Agent Benchmarks."))
     return lines
