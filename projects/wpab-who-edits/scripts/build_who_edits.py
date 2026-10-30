@@ -91,7 +91,7 @@ def scene_text(items, hold):
     return draw
 
 
-def stack(specs, gap=56):
+def stack(specs, gap=56, lift=0):
     """Lay out [(start_s, text, size, fill, bold, lead, extra)] top to bottom, then centre the whole stack in y 192-1530.
     Returns [(start_s, element)] for scene_text. Every block is built at y=TOP first (the safe-zone check), then shifted."""
     built = []
@@ -99,7 +99,8 @@ def stack(specs, gap=56):
         built.append((start, block(text, size, TOP, fill=fill, bold=bold, lead=lead, **extra)))
     total = sum(e[2] - e[1] for _, e in built) + gap * (len(built) - 1)
     assert total <= BOTTOM - TOP, f"stack too tall: {total}"
-    y = TOP + (BOTTOM - TOP - total) // 2
+    y = TOP + (BOTTOM - TOP - total) // 2 - lift
+    assert y >= TOP, f"lifted above the safe zone: {y}"
     out = []
     for start, (im, y0, y1) in built:
         out.append((start, (im, y, y + (y1 - y0))))
