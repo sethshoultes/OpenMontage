@@ -33,14 +33,14 @@ TAKE_S = TYPED_S + (OUT_B - OUT_A)
 
 # (take x, take y, w, h, frame y, shown from take-timeline second or None, extra filter). Text starts at x=74 in the frame.
 ROWS = [
-    (35, 46, 210, 64, 524, None, None),        # "$ npx"
-    (255, 46, 950, 64, 604, None, None),       # "@wp-playground/cli@latest"
-    (1237, 46, 200, 64, 684, None, None),      # "start"
-    (35, 1246, 230, 76, 800, TYPED_S, None),   # "Ready!"
-    (292, 1246, 880, 76, 880, TYPED_S, None),  # "WordPress is running on"
-    (1197, 1246, 800, 76, 960, TYPED_S, None),  # "http://127.0.0.1:9400"
+    (35, 46, 210, 64, 497, None, None),        # "$ npx"
+    (255, 46, 950, 64, 597, None, None),       # "@wp-playground/cli@latest"
+    (1237, 46, 200, 64, 697, None, None),      # "start"
+    (35, 1246, 230, 76, 857, TYPED_S, None),   # "Ready!"
+    (292, 1246, 880, 76, 957, TYPED_S, None),  # "WordPress is running on"
+    (1197, 1246, 800, 76, 1057, TYPED_S, None),  # "http://127.0.0.1:9400"
 ]
-PANEL = (40, 470, 1000, 590)             # x, y, w, h: a thin terminal panel behind the block, so the left-aligned text looks deliberate
+PANEL = (40, 427, 1000, 780)             # x, y, w, h: a thin terminal panel behind the block, so the left-aligned text looks deliberate
 OX = 64                                  # crops start 10 px before the text, so the text starts at 74
 
 
@@ -79,9 +79,9 @@ def main(take, out):
         td = Path(td)
         card(OPEN, td / "open.png", size=80)
         card(CLOSE, td / "close.png")
-        card(CAP1, td / "cap1.png", size=60, y_center=380)      # y 340-480
-        card(CAP2, td / "cap2.png", size=60, y_center=1285)
-        card(STATUS, td / "status.png", size=56, y_center=830)     # y 1135-1345
+        card(CAP1, td / "cap1.png", size=60, y_center=319)      # y 340-480
+        card(CAP2, td / "cap2.png", size=60, y_center=1364)
+        card(STATUS, td / "status.png", size=60, y_center=900)     # y 1135-1345
         n = len(ROWS)
         chain = (f"[0:v]fps={FPS},split=2[ta][tb];[ta]trim=0:{TYPED_S},setpts=PTS-STARTPTS[a];"
                  f"[tb]trim={OUT_A}:{OUT_B},setpts=PTS-STARTPTS[b];[a][b]concat=n=2:v=1[t];"
@@ -100,6 +100,7 @@ def main(take, out):
             last = f"o{i}"
         chain += (f"[{last}][1:v]overlay=0:0[c1];[c1][2:v]overlay=0:0:enable='gte(t,{TYPED_S})'[c2];"
                   f"[c2][3:v]overlay=0:0:enable='between(t,{STATUS_FROM},{TYPED_S})',format=yuv420p[v]")
+        chain = chain.replace("[c1][2:v]overlay=0:0:enable='gte(t,%s)'[c2]" % TYPED_S, "[2:v]format=rgba,fade=t=in:st=%s:d=0.5:alpha=1[cp2];[c1][cp2]overlay=0:0[c2]" % TYPED_S)
         term = td / "term.mp4"
         subprocess.run(["nice", "ffmpeg", "-v", "error", "-y", "-threads", "2", "-i", str(take), "-loop", "1", "-i", str(td / "cap1.png"),
                         "-loop", "1", "-i", str(td / "cap2.png"), "-loop", "1", "-i", str(td / "status.png"), "-filter_complex", chain, "-map", "[v]", "-t", f"{TAKE_S:.3f}",
