@@ -101,13 +101,13 @@ def T(start, text, size, fill=TEXT, bold=True, lead=1.18, **extra):
 
 def scene_dots():
     """193 dots, one per site, filling the band; 80% light up."""
-    cols, pitch, r = 14, 58, 22
+    cols, pitch, r = 14, 56, 21
     gx = (W - cols * pitch) // 2 + pitch // 2
     rows = math.ceil(SITES / cols)
     head = block("AI agents built 193 sites without WordPress.", 62, 205, lead=1.15, center=True)
     gy = head[2] + 24
     big = block("80%", 112, gy + rows * pitch + 4, fill=ACCENT, center=True)
-    cap = block("chose how to build without asking who would edit it.", 56, big[2] + 2, lead=1.2, center=True)
+    cap = block("of those 193 sites chose how to build without asking who would update the site, or how.", 56, big[2] + 2, lead=1.2, center=True)
     n_on = round(SITES * SHARE)
 
     def draw(frame, t, dur):
@@ -131,32 +131,32 @@ def scene_dots():
 
 def build(out):
     s1 = scene_text(stack([T(0.3, "In one benchmark of AI-built sites, 193 were built without WordPress.", 80, lead=1.2, center=True),
-                           T(2.2, "Who will edit your site once it's live?", 88, fill=ACCENT, lead=1.15, center=True)], gap=90), 7.0)
+                           T(1.2, "Who will edit your site once it's live?", 88, fill=ACCENT, lead=1.15, center=True)], gap=90), 7.0)
 
     s3a = scene_text(stack([T(0.3, "54%", 190, fill=ACCENT, center=True),
-                            T(1.0, "Asked afterwards, the agents named owners editing without code as the case for WordPress.", 62, lead=1.22, center=True)], gap=40), 6.0)
+                            T(0.8, "of the sites, asked afterwards: the agents named owners or staff editing without code as the case for WordPress.", 60, lead=1.22, center=True)], gap=40), 6.0)
 
     s3b = scene_text(stack([T(0.3, "\u201cIf easy self-service updates are your priority, I'd favor WordPress for this bakery site.\u201d", 74, lead=1.2, center=True),
-                            T(2.6, "One AI agent, asked afterwards", 58, bold=False, center=True),
-                            T(4.0, "The benchmark's reading: the agents knew. The question never came up.", 66, fill=ACCENT, lead=1.18, center=True)], gap=70), 9.0)
+                            T(1.0, "One AI agent, asked afterwards", 58, bold=False, center=True),
+                            T(1.8, "As the benchmark puts it, they knew; the question just never came up.", 64, fill=ACCENT, lead=1.18, center=True)], gap=70), 9.0)
 
     fit = ["You or your team edit it, with no code", "Several people publish", "You run a membership or sell courses", "Your current site is stuck: nobody can change it"]
-    items = [T(0.3, "WordPress fits when\u2026", 100), T(0.3, "The post's advice", 56, bold=False)]
+    items = [T(0.3, "WordPress fits when\u2026", 100), T(0.3, "Advice from this post", 56, bold=False)]
     for i, t in enumerate(fit):
         items.append(T(1.2 + i * 1.3, t, 72, lead=1.15, marker=("check", ACCENT)))
     s4 = scene_text(stack(items, gap=64), 10.0)
 
-    poor = ["It's an app where people sign in", "It's documentation your developers keep with their code", "It's one page that rarely changes"]
-    items = [T(0.3, "Something simpler fits when\u2026", 100), T(0.3, "The post's advice", 56, bold=False)]
+    poor = ["It's software with logins and its own rules", "It's documentation your developers keep with their code", "It's one page that rarely changes"]
+    items = [T(0.3, "Something simpler fits when\u2026", 100), T(0.3, "Advice from this post", 56, bold=False)]
     for i, t in enumerate(poor):
         items.append(T(1.2 + i * 1.3, t, 72, lead=1.15, marker=("dash", MUTED)))
     s5 = scene_text(stack(items, gap=64), 9.0)
 
     s6 = scene_text(stack([T(0.3, "So, who will edit your site?", 104, lead=1.12, center=True),
-                           T(1.8, ["If it's you or your team,", "WordPress fits."], 74, fill=ACCENT, center=True)], gap=80), 7.0)
+                           T(1.0, ["If it's you or your team,", "WordPress fits."], 74, fill=ACCENT, center=True)], gap=80), 7.0)
 
     s7 = scene_text(stack([T(0.3, "The question and every number come from WordPress Agent Benchmarks, an open source project started by Andy Peatling.", 60, lead=1.2, center=True, width=W - 2 * 70),
-                           T(2.2, "The lists of when WordPress fits are this post's own advice.", 56, bold=False, lead=1.2, center=True, width=W - 2 * 70)], gap=70), 7.5)
+                           T(1.2, "The lists of when WordPress fits are this post's own advice.", 56, bold=False, lead=1.2, center=True, width=W - 2 * 70)], gap=70), 7.5)
 
     scenes = [(s1, 7.0), (scene_dots(), 11.0), (s3a, 6.0), (s3b, 9.0), (s4, 10.0), (s5, 9.0), (s6, 7.0), (s7, 7.5)]
     ff = subprocess.Popen(["nice", "ffmpeg", "-v", "error", "-y", "-f", "rawvideo", "-pix_fmt", "rgb24", "-s", f"{W}x{H}", "-r", str(FPS), "-i", "-",
