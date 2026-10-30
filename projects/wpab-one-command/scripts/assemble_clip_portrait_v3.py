@@ -1,0 +1,108 @@
+#!/usr/bin/env python3
+"""Piece 3 portrait v3 (memberintel-marketing#721, herdos#3387): 1080x1920, silent, everything inside y 192-1530.
+
+An opening card, then the real terminal run (one-command-wide60.tape, 60 px type, prompt "$ ") cut into rows on word
+boundaries and stacked at 1:1 scale (no text is rescaled), two plain captions, and a closing card. The wait while the run
+boots is cut: the take is used from 0 to TYPED_S (the command being typed) and from OUT_A to OUT_B (the finished output),
+and the output rows appear when the cut lands there. Text margins are 74 px.
+
+  assemble_clip_portrait_v3.py <terminal-take-wide60.mp4> <out.mp4>
+"""
+import subprocess
+import sys
+import tempfile
+from pathlib import Path
+
+from PIL import Image, ImageDraw, ImageFont
+
+W, H, FPS = 1080, 1920, 25
+TOP, BOT = 192, 1530
+BG = (23, 23, 23)                       # the terminal's own background, so a blank crop is invisible
+TEXT = (244, 244, 245)
+FONT = "/System/Library/Fonts/Helvetica.ttc"
+OPEN = "Want to try WordPress without risking your site?"
+CAP1 = "One command makes a practice copy of WordPress."
+CAP2 = "Open that address in your browser to see your practice site."
+CLOSE = "A practice copy on your own computer. Nothing reaches your members."
+OPEN_S, CLOSE_S, FADE = 4.0, 4.5, 0.4
+TYPED_S = 8.0                           # the command is fully typed by here in the take
+OUT_A, OUT_B = 16.6, 21.2               # the take's finished output (Logging in 100%, Ready! ...), held 4.6 s
+TAKE_S = TYPED_S + (OUT_B - OUT_A)
+
+# (take x, take y, w, h, frame y, shown from take-timeline second or None, extra filter). Text starts at x=74 in the frame.
+ROWS = [
+    (35, 46, 210, 68, 524, None, None),        # "$ npx"
+    (255, 46, 950, 68, 604, None, None),       # "@wp-playground/cli@latest"
+    (1237, 46, 200, 68, 684, None, None),      # "start"
+    (35, 1108, 600, 74, 800, TYPED_S, "lutrgb=r='if(between(val,90,200),235,val)':g='if(between(val,90,200),235,val)':b='if(between(val,90,200),235,val)'"),  # "Logging in 100%" (the dim grey brightened)
+    (35, 1246, 610, 76, 880, TYPED_S, None),   # "Ready! WordPress"
+    (674, 1246, 495, 76, 960, TYPED_S, None),  # "is running on"
+    (1197, 1246, 800, 76, 1040, TYPED_S, None),  # "http://127.0.0.1:9400"
+]
+OX = 64                                  # crops start 10 px before the text, so the text starts at 74
+
+
+def card(text, path, size=68, y_center=None, band=(TOP, BOT)):
+    f = ImageFont.truetype(FONT, size, index=1)
+    im = Image.new("RGBA", (W, H), (0, 0, 0, 0) if y_center else BG + (255,))
+    d = ImageDraw.Draw(im)
+    rows, line = [], ""
+    for w in text.split():
+        if d.textlength((line + " " + w).strip(), font=f) > W - 2 * 74:
+            rows.append(line)
+            line = w
+        else:
+            line = (line + " " + w).strip()
+    rows.append(line)
+    lead = int(size * 1.3)
+    y = (y_center - len(rows) * lead // 2) if y_center else (band[0] + band[1]) // 2 - len(rows) * lead // 2
+    assert band[0] <= y and y + len(rows) * lead <= band[1], text
+    for r in rows:
+        d.text(((W - d.textlength(r, font=f)) / 2, y), r, font=f, fill=TEXT)
+        y += lead
+    im.save(path)
+
+
+def main(take, out):
+    with tempfile.TemporaryDirectory() as td:
+        td = Path(td)
+        card(OPEN, td / "open.png")
+        card(CLOSE, td / "close.png")
+        card(CAP1, td / "cap1.png", size=56, y_center=410)      # y 340-480
+        card(CAP2, td / "cap2.png", size=56, y_center=1240)     # y 1135-1345
+        n = len(ROWS)
+        chain = (f"[0:v]fps={FPS},split=2[ta][tb];[ta]trim=0:{TYPED_S},setpts=PTS-STARTPTS[a];"
+                 f"[tb]trim={OUT_A}:{OUT_B},setpts=PTS-STARTPTS[b];[a][b]concat=n=2:v=1[t];"
+                 f"[t]split={n}" + "".join(f"[s{i}]" for i in range(n)) + ";"
+                 f"color=c=#171717:s={W}x{H}:r={FPS}:d={TAKE_S}[bg];")
+        for i, (x, y, w, h, fy, _, extra) in enumerate(ROWS):
+            assert TOP <= fy and fy + h <= BOT and OX + w <= W - 60, ROWS[i]
+            chain += f"[s{i}]crop={w}:{h}:{x}:{y}" + (f",{extra}" if extra else "") + f"[r{i}];"
+        last = "bg"
+        for i, (x, y, w, h, fy, start, _) in enumerate(ROWS):
+            en = f":enable='gte(t,{start})'" if start is not None else ""
+            chain += f"[{last}][r{i}]overlay={OX}:{fy}{en}[o{i}];"
+            last = f"o{i}"
+        chain += f"[{last}][1:v]overlay=0:0[c1];[c1][2:v]overlay=0:0:enable='gte(t,{TYPED_S})',format=yuv420p[v]"
+        term = td / "term.mp4"
+        subprocess.run(["nice", "ffmpeg", "-v", "error", "-y", "-threads", "2", "-i", str(take), "-loop", "1", "-i", str(td / "cap1.png"),
+                        "-loop", "1", "-i", str(td / "cap2.png"), "-filter_complex", chain, "-map", "[v]", "-t", f"{TAKE_S:.3f}",
+                        "-c:v", "libx264", "-crf", "16", "-preset", "medium", str(term)], check=True)
+        parts = []
+        for name, png, dur in (("open", td / "open.png", OPEN_S), ("close", td / "close.png", CLOSE_S)):
+            p = td / f"{name}.mp4"
+            subprocess.run(["ffmpeg", "-v", "error", "-y", "-loop", "1", "-framerate", str(FPS), "-t", str(dur), "-i", str(png),
+                            "-vf", f"fade=t=in:st=0:d={FADE},fade=t=out:st={dur - FADE}:d={FADE},format=yuv420p",
+                            "-c:v", "libx264", "-crf", "16", str(p)], check=True)
+            parts.append(p)
+        lst = td / "list.txt"
+        lst.write_text("".join(f"file '{p}'\n" for p in (parts[0], term, parts[1])))
+        subprocess.run(["ffmpeg", "-v", "error", "-y", "-f", "concat", "-safe", "0", "-i", str(lst), "-an", "-c:v", "libx264", "-crf", "16",
+                        "-pix_fmt", "yuv420p", "-movflags", "+faststart", str(out)], check=True)
+    print("OK", out)
+
+
+if __name__ == "__main__":
+    if len(sys.argv) != 3:
+        sys.exit(__doc__)
+    main(*sys.argv[1:])
