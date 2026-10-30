@@ -31,12 +31,12 @@ TAKE_S = TYPED_S + (OUT_B - OUT_A)
 
 # (take x, take y, w, h, frame y, shown from take-timeline second or None, extra filter). Text starts at x=74 in the frame.
 ROWS = [
-    (35, 46, 210, 68, 524, None, None),        # "$ npx"
-    (255, 46, 950, 68, 604, None, None),       # "@wp-playground/cli@latest"
-    (1237, 46, 200, 68, 684, None, None),      # "start"
+    (35, 46, 210, 64, 524, None, None),        # "$ npx"
+    (255, 46, 950, 64, 604, None, None),       # "@wp-playground/cli@latest"
+    (1237, 46, 200, 64, 684, None, None),      # "start"
     (35, 1108, 600, 74, 800, TYPED_S, "lutrgb=r='if(between(val,90,200),235,val)':g='if(between(val,90,200),235,val)':b='if(between(val,90,200),235,val)'"),  # "Logging in 100%" (the dim grey brightened)
-    (35, 1246, 610, 76, 880, TYPED_S, None),   # "Ready! WordPress"
-    (674, 1246, 495, 76, 960, TYPED_S, None),  # "is running on"
+    (35, 1246, 230, 76, 880, TYPED_S, None),   # "Ready!"
+    (292, 1246, 880, 76, 960, TYPED_S, None),  # "WordPress is running on"
     (1197, 1246, 800, 76, 1040, TYPED_S, None),  # "http://127.0.0.1:9400"
 ]
 OX = 64                                  # crops start 10 px before the text, so the text starts at 74
@@ -46,14 +46,23 @@ def card(text, path, size=68, y_center=None, band=(TOP, BOT)):
     f = ImageFont.truetype(FONT, size, index=1)
     im = Image.new("RGBA", (W, H), (0, 0, 0, 0) if y_center else BG + (255,))
     d = ImageDraw.Draw(im)
-    rows, line = [], ""
-    for w in text.split():
-        if d.textlength((line + " " + w).strip(), font=f) > W - 2 * 74:
-            rows.append(line)
-            line = w
-        else:
-            line = (line + " " + w).strip()
-    rows.append(line)
+    def wrap_at(width):
+        out, line = [], ""
+        for w in text.split():
+            if d.textlength((line + " " + w).strip(), font=f) > width:
+                out.append(line)
+                line = w
+            else:
+                line = (line + " " + w).strip()
+        return out + [line]
+    width = W - 2 * 74
+    rows = wrap_at(width)
+    while True:                       # balance the lines: narrow the measure while the row count stays the same (no one-word last line)
+        tighter = wrap_at(width - 20)
+        if len(tighter) != len(rows) or width < 300:
+            break
+        width -= 20
+        rows = tighter
     lead = int(size * 1.3)
     y = (y_center - len(rows) * lead // 2) if y_center else (band[0] + band[1]) // 2 - len(rows) * lead // 2
     assert band[0] <= y and y + len(rows) * lead <= band[1], text
@@ -66,10 +75,10 @@ def card(text, path, size=68, y_center=None, band=(TOP, BOT)):
 def main(take, out):
     with tempfile.TemporaryDirectory() as td:
         td = Path(td)
-        card(OPEN, td / "open.png")
+        card(OPEN, td / "open.png", size=80)
         card(CLOSE, td / "close.png")
-        card(CAP1, td / "cap1.png", size=56, y_center=410)      # y 340-480
-        card(CAP2, td / "cap2.png", size=56, y_center=1240)     # y 1135-1345
+        card(CAP1, td / "cap1.png", size=60, y_center=405)      # y 340-480
+        card(CAP2, td / "cap2.png", size=60, y_center=1285)     # y 1135-1345
         n = len(ROWS)
         chain = (f"[0:v]fps={FPS},split=2[ta][tb];[ta]trim=0:{TYPED_S},setpts=PTS-STARTPTS[a];"
                  f"[tb]trim={OUT_A}:{OUT_B},setpts=PTS-STARTPTS[b];[a][b]concat=n=2:v=1[t];"
