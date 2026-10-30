@@ -25,8 +25,7 @@ def font(size, bold=True):
     return ImageFont.truetype(FONT, size, index=1 if bold else 0)
 
 
-def wrap(text, f, width):
-    d = ImageDraw.Draw(Image.new("RGB", (1, 1)))
+def _greedy(d, text, f, width):
     out, line = [], ""
     for w in text.split():
         if d.textlength((line + " " + w).strip(), font=f) > width:
@@ -35,6 +34,19 @@ def wrap(text, f, width):
         else:
             line = (line + " " + w).strip()
     return out + [line]
+
+
+def wrap(text, f, width):
+    """Wrap to `width`, then narrow the measure while the row count stays the same, so no line is left with one orphan word."""
+    d = ImageDraw.Draw(Image.new("RGB", (1, 1)))
+    rows = _greedy(d, text, f, width)
+    while len(rows) > 1 and width > 300:
+        tighter = _greedy(d, text, f, width - 20)
+        if len(tighter) != len(rows):
+            break
+        width -= 20
+        rows = tighter
+    return rows
 
 
 def block(lines, size, y, fill=TEXT, bold=True, lead=1.18, x=MARGIN, width=W - 2 * MARGIN, center=False, marker=None):
