@@ -1,0 +1,384 @@
+{
+ "page": "https://sethshoultes.com/st-george-utah/",
+ "title": "AI and SEO Services in St. George, Utah",
+ "arc": "Hook (neighbor or visitor?) > the city (biggest in Southern Utah; 1861; 95,342 at the 2020 census) > visitors who search before they come (marathon, Ironman) > guide (that's my job; Washington City neighbor) > neighbors / visitors / in between > students (12,567 in 2023) > affiliation disclaimer > invitation. Figures and years only from the page; source Wikipedia, as the page cites. Cool until 'That's my job', warm after.",
+ "style": "Flat editorial vector, hard edges, flat solid ground, art centered ~70% width, nothing touching an edge; no glow, haze, gradients, soft shadows; no people, no logos.",
+ "beats": [
+  {
+   "id": "b01",
+   "vo": "Quick question. Who's searching for your business in St. George... a neighbor, or a visitor?",
+   "to_next": "push-left",
+   "kinetic": [
+    [
+     "QUICK QUESTION.",
+     "quick"
+    ],
+    [
+     "A NEIGHBOR OR A VISITOR?",
+     "neighbor"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "s01.png",
+     "cam": [
+      [
+       0,
+       1.05,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.15,
+       0.5,
+       0.5
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "b02",
+   "vo": "St. George is the biggest city in Southern Utah. Settled in 1861. About ninety-five thousand people at the 2020 census.",
+   "to_next": "zoom-through",
+   "kinetic": [
+    [
+     "SOUTHERN UTAH'S BIGGEST",
+     "biggest"
+    ],
+    [
+     "SETTLED IN 1861",
+     "settled"
+    ],
+    [
+     "95,342 PEOPLE, 2020 CENSUS",
+     "ninety-five"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "s02.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.1,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "s03.png",
+     "at": "ninety-five",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "b03",
+   "vo": "And many of your customers haven't arrived yet. The St. George Marathon and Ironman races bring people who search before they come.",
+   "to_next": "wipe-up",
+   "kinetic": [
+    [
+     "MANY HAVEN'T ARRIVED YET",
+     "haven't"
+    ],
+    [
+     "THEY SEARCH FIRST",
+     "search"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "s04.png",
+     "cam": [
+      [
+       0,
+       1.05,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.15,
+       0.5,
+       0.5
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "b04",
+   "vo": "That's my job. I live next door, in Washington City. I help St. George businesses get found by neighbors and visitors, and get more done with AI.",
+   "to_next": "push-left",
+   "kinetic": [
+    [
+     "THAT'S MY JOB.",
+     "that's"
+    ],
+    [
+     "IN WASHINGTON CITY",
+     "next"
+    ],
+    [
+     "FOUND BY BOTH",
+     "found"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "s05.png",
+     "cam": [
+      [
+       0,
+       1.05,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.15,
+       0.5,
+       0.5
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "b05",
+   "vo": "For businesses that serve neighbors: pages about your service and your area, that a new resident can find on day one.",
+   "to_next": "slide-left",
+   "kinetic": [
+    [
+     "SERVING NEIGHBORS",
+     "neighbors"
+    ],
+    [
+     "FOUND ON DAY ONE",
+     "day"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "s06.png",
+     "cam": [
+      [
+       0,
+       1.05,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.15,
+       0.5,
+       0.5
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "b06",
+   "vo": "For businesses that serve visitors: clear pages and answers that AI assistants can quote.",
+   "to_next": "wipe-right",
+   "kinetic": [
+    [
+     "SERVING VISITORS",
+     "visitors"
+    ],
+    [
+     "ANSWERS AI CAN QUOTE",
+     "quote"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "s07.png",
+     "cam": [
+      [
+       0,
+       1.05,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.15,
+       0.5,
+       0.5
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "b07",
+   "vo": "And for restaurants, shops and services in between, pages for each.",
+   "to_next": "push-left",
+   "kinetic": [
+    [
+     "IN BETWEEN: PAGES FOR EACH",
+     "between"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "s08.png",
+     "cam": [
+      [
+       0,
+       1.05,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.15,
+       0.5,
+       0.5
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "b08",
+   "vo": "Add a university, and about twelve and a half thousand students in 2023. Your customers search in different ways. One page rarely serves them all.",
+   "to_next": "zoom-through",
+   "kinetic": [
+    [
+     "12,567 STUDENTS, 2023",
+     "twelve"
+    ],
+    [
+     "ONE PAGE RARELY SERVES ALL",
+     "rarely"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "s09.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "b09",
+   "vo": "I'm not affiliated with the city, Utah Tech, or the events I've named. They're local facts.",
+   "to_next": "wipe-up",
+   "kinetic": [
+    [
+     "NOT AFFILIATED WITH THE CITY",
+     "affiliated"
+    ],
+    [
+     "THEY'RE LOCAL FACTS",
+     "local"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "g11.png",
+     "cam": [
+      [
+       0,
+       1.05,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.15,
+       0.5,
+       0.5
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "b10",
+   "vo": "So let's start with a call about your business and where your customers come from. Seth Shoultes dot com.",
+   "to_next": "push-left",
+   "kinetic": [
+    [
+     "A CALL ABOUT YOUR BUSINESS",
+     "call"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "c05.png",
+     "tr": "circle-open",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       0.45,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       0.52,
+       1.12,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.12,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "proc:endcard",
+     "at": "seth",
+     "notype": true
+    }
+   ]
+  }
+ ]
+}

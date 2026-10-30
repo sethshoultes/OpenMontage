@@ -1,0 +1,54 @@
+{
+ "shots": [
+  {
+   "id": "s01",
+   "vo": "Quick question. Who's searching for your business in St. George... a neighbor, or a visitor?",
+   "pace": 1.0
+  },
+  {
+   "id": "s02",
+   "vo": "St. George is the biggest city in Southern Utah. Settled in 1861. About ninety-five thousand people at the 2020 census.",
+   "pace": 0.97
+  },
+  {
+   "id": "s03",
+   "vo": "And many of your customers haven't arrived yet. The St. George Marathon and Ironman races bring people who search before they come.",
+   "pace": 0.97
+  },
+  {
+   "id": "s04",
+   "vo": "That's my job. I live next door, in Washington City. I help St. George businesses get found by neighbors and visitors, and get more done with AI.",
+   "pace": 0.95
+  },
+  {
+   "id": "s05",
+   "vo": "For businesses that serve neighbors: pages about your service and your area, that a new resident can find on day one.",
+   "pace": 1.0
+  },
+  {
+   "id": "s06",
+   "vo": "For businesses that serve visitors: clear pages and answers that AI assistants can quote.",
+   "pace": 1.0
+  },
+  {
+   "id": "s07",
+   "vo": "And for restaurants, shops and services in between, pages for each.",
+   "pace": 1.0
+  },
+  {
+   "id": "s08",
+   "vo": "Add a university, and about twelve and a half thousand students in 2023. Your customers search in different ways. One page rarely serves them all.",
+   "pace": 1.0
+  },
+  {
+   "id": "s09",
+   "vo": "I'm not affiliated with the city, Utah Tech, or the events I've named. They're local facts.",
+   "pace": 0.97
+  },
+  {
+   "id": "s10",
+   "vo": "So let's start with a call about your business and where your customers come from. Seth Shoultes dot com.",
+   "pace": 0.96
+  }
+ ]
+}
