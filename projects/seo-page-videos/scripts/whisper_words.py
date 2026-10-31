@@ -57,7 +57,13 @@ def refine(start, end, env):
             if run >= 8:
                 onset = (i0 + k) / 100
             run = 0
-    return onset if onset is not None else start
+    t0 = onset if onset is not None else start
+    k0 = int(t0 * 100)
+    if k0 < len(env) and env[k0] < 0.02:   # the whole span sits in silence: the word is really said at the next rise (within 1.5 s)
+        for k in range(k0, min(k0 + 150, len(env) - 3)):
+            if (env[k:k + 3] >= 0.02).all():
+                return k / 100
+    return t0
 
 
 def main(vo_dir):
@@ -100,6 +106,12 @@ def main(vo_dir):
                 t[i] = t[lo] + 0.3 * (i - lo)
             else:
                 t[i] = t[lo] + (t[hi] - t[lo]) * (i - lo) / (hi - lo)
+                k0 = int(t[i] * 100)
+                if k0 < len(env) and env[k0] < 0.02:   # an unmatched word interpolated into a silence is said at the next rise
+                    for k in range(k0, min(int(t[hi] * 100), len(env) - 3)):
+                        if (env[k:k + 3] >= 0.02).all():
+                            t[i] = k / 100
+                            break
         json.dump({"words": [[w, round(x, 3)] for w, x in zip(aw, t)]}, open(str(mp3)[:-4] + ".ww.json", "w"))
         print(sid, "matched", len(known), "of", len(aw), "first %.2f" % t[0])
 

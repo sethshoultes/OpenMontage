@@ -16,9 +16,12 @@ def main(mp3, a, b):
     if not orig.exists():
         shutil.copy(p, orig)
     gap = b - a
+    src = p.with_suffix(".cur.mp3")   # cut from the current file, so several cuts in one take accumulate (later ones first)
+    shutil.copy(p, src)
     flt = (f"[0:a]atrim=0:{a},asetpts=PTS-STARTPTS[x];[0:a]atrim={b},asetpts=PTS-STARTPTS[y];"
            f"[x][y]concat=n=2:v=0:a=1,apad=pad_dur={gap}[o]")
-    subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", str(orig), "-filter_complex", flt, "-map", "[o]", "-c:a", "libmp3lame", "-q:a", "2", str(p)], check=True)
+    subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", str(src), "-filter_complex", flt, "-map", "[o]", "-c:a", "libmp3lame", "-q:a", "2", str(p)], check=True)
+    src.unlink()
     print("ok", p.name, "cut", round(gap, 2), "s at", a)
 
 

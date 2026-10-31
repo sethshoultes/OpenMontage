@@ -1,0 +1,54 @@
+{
+ "shots": [
+  {
+   "id": "s01",
+   "vo": "Quick question... When a student or a festival visitor searches for what you do, do they find you?",
+   "pace": 0.9
+  },
+  {
+   "id": "s02",
+   "vo": "Cedar City was founded on November eleventh, eighteen fifty-one, to build an iron works.",
+   "pace": 0.9
+  },
+  {
+   "id": "s03",
+   "vo": "Its name comes from the junipers that settlers took for cedars.",
+   "pace": 0.9
+  },
+  {
+   "id": "s04",
+   "vo": "I live in Washington City, about an hour south. I'm Seth Shoultes, and I help Cedar City businesses get found online and get more done with AI.",
+   "pace": 0.88
+  },
+  {
+   "id": "s05",
+   "vo": "Cedar City is home to Southern Utah University and the Utah Shakespeare Festival. It has long been a gateway to Cedar Breaks, Bryce Canyon, Zion, and the Grand Canyon.",
+   "pace": 0.91
+  },
+  {
+   "id": "s06",
+   "vo": "Cedar City had about thirty-five thousand people at the 2020 census... up from about twenty-nine thousand in 2010.",
+   "pace": 0.88
+  },
+  {
+   "id": "s07",
+   "vo": "It's a university town. Southern Utah University is the city's largest employer. Students, staff and families search for places to eat, rent, shop, and get help.",
+   "pace": 0.91
+  },
+  {
+   "id": "s08",
+   "vo": "The Utah Shakespeare Festival and the nearby parks bring visitors who plan ahead. A restaurant, a shop, or a lodging business here wins or loses on whether it shows up when they search.",
+   "pace": 0.9
+  },
+  {
+   "id": "s09",
+   "vo": "Cedar City also has a small manufacturing base and steady home construction. I help trades and service companies be the clear answer for their own area.",
+   "pace": 0.9
+  },
+  {
+   "id": "s10",
+   "vo": "I'm not affiliated with the city, the university, or the festival. They're local facts... So let's start with a call about your business. I reply within two business days. Seth Shoultes dot com.",
+   "pace": 0.87
+  }
+ ]
+}

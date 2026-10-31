@@ -1,0 +1,839 @@
+{
+ "page": "https://sethshoultes.com/cedar-city-utah/",
+ "title": "AI and SEO Services in Cedar City, Utah",
+ "arc": "Hook (student or festival visitor searching) > founded 1851 iron works > juniper name > guide (I live in Washington City) > university, festival, parks > the numbers > university town > festival and park visitors > trades and manufacturing > disclaimer > invitation. Facts only from the page.",
+ "style": "Flat editorial vector, hard edges, flat solid ground, art centered ~70% width, nothing touching an edge; no glow, haze, gradients, soft shadows; no people, no logos.",
+ "phrase_lead": 0.35,
+ "srt_lead": 0.06,
+ "caption_max": 3.6,
+ "endcard": {
+  "kicker": "AI and SEO in Cedar City, Utah",
+  "site": "sethshoultes.com",
+  "path": "/cedar-city-utah",
+  "sub": "I reply within two business days."
+ },
+ "beats": [
+  {
+   "id": "b01",
+   "vo": "Quick question... When a student or a festival visitor searches for what you do, do they find you?",
+   "to_next": "push-right",
+   "kinetic": [
+    [
+     "QUICK QUESTION.",
+     "quick"
+    ],
+    [
+     "A STUDENT OR A VISITOR",
+     "student"
+    ],
+    [
+     "DO THEY FIND YOU?",
+     "they",
+     -0.07
+    ]
+   ],
+   "shots": [
+    {
+     "still": "c01.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "c10.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "searches"
+    }
+   ],
+   "pause": 1.8
+  },
+  {
+   "id": "b02",
+   "vo": "Cedar City was founded on November eleventh, eighteen fifty-one, to build an iron works.",
+   "to_next": "wipe-up",
+   "kinetic": [
+    [
+     "FOUNDED IN 1851",
+     "founded"
+    ],
+    [
+     "TO BUILD AN IRON WORKS",
+     "build"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "c02.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "t_1851.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "november"
+    }
+   ],
+   "pause": 0.7
+  },
+  {
+   "id": "b03",
+   "vo": "Its name comes from the junipers that settlers took for cedars.",
+   "to_next": "slide-left",
+   "kinetic": [
+    [
+     "NAMED FOR JUNIPERS",
+     "its"
+    ],
+    [
+     "TOOK THEM FOR CEDARS",
+     "took"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "c03.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ]
+    }
+   ],
+   "pause": 1.3
+  },
+  {
+   "id": "b04",
+   "vo": "I live in Washington City, about an hour south. I'm Seth Shoultes, and I help Cedar City businesses get found online and get more done with AI.",
+   "to_next": "wipe-right",
+   "kinetic": [
+    [
+     "I LIVE IN WASHINGTON CITY",
+     "live",
+     -0.15,
+     3.6
+    ],
+    [
+     "ABOUT AN HOUR SOUTH",
+     "about"
+    ],
+    [
+     "I'M SETH SHOULTES",
+     "i'm",
+     0,
+     1.7
+    ],
+    [
+     "I HELP CEDAR CITY BUSINESSES",
+     "help",
+     0,
+     2.0
+    ],
+    [
+     "FOUND ONLINE",
+     "found"
+    ],
+    [
+     "MORE DONE WITH AI",
+     "more",
+     0,
+     2.2
+    ]
+   ],
+   "shots": [
+    {
+     "still": "c11.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "t_seth.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "i'm"
+    },
+    {
+     "still": "t_ai.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "more"
+    }
+   ],
+   "pause": 1.2
+  },
+  {
+   "id": "b05",
+   "vo": "Cedar City is home to Southern Utah University and the Utah Shakespeare Festival. It has long been a gateway to Cedar Breaks, Bryce Canyon, Zion, and the Grand Canyon.",
+   "to_next": "circle-open",
+   "kinetic": [
+    [
+     "SOUTHERN UTAH UNIVERSITY",
+     "southern"
+    ],
+    [
+     "THE SHAKESPEARE FESTIVAL",
+     "shakespeare",
+     0,
+     2.0
+    ],
+    [
+     "A GATEWAY TO THE PARKS",
+     "gateway",
+     -0.15,
+     3.6
+    ],
+    [
+     "AND THE GRAND CANYON",
+     "grand"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "c04.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "c05.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "shakespeare"
+    },
+    {
+     "still": "c06.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "gateway"
+    },
+    {
+     "still": "c23.png",
+     "at": "zion",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ]
+    }
+   ],
+   "pause": 0.7
+  },
+  {
+   "id": "b06",
+   "vo": "Cedar City had about thirty-five thousand people at the 2020 census... up from about twenty-nine thousand in 2010.",
+   "to_next": "push-left",
+   "kinetic": [
+    [
+     "ABOUT 35,000 PEOPLE",
+     "thirty-five",
+     -0.37,
+     3.6
+    ],
+    [
+     "UP FROM ABOUT 29,000",
+     "up"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "t_pop.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "c12.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "up"
+    }
+   ],
+   "pause": 1.0
+  },
+  {
+   "id": "b07",
+   "vo": "It's a university town. Southern Utah University is the city's largest employer. Students, staff and families search for places to eat, rent, shop, and get help.",
+   "to_next": "push-right",
+   "kinetic": [
+    [
+     "A UNIVERSITY TOWN",
+     "it's",
+     0,
+     2.1
+    ],
+    [
+     "STUDENTS, STAFF, FAMILIES",
+     "students"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "c13.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "t_emp.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "southern"
+    },
+    {
+     "still": "c07.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "students"
+    },
+    {
+     "still": "c15.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "shop"
+    }
+   ],
+   "pause": 0.8
+  },
+  {
+   "id": "b08",
+   "vo": "The Utah Shakespeare Festival and the nearby parks bring visitors who plan ahead. A restaurant, a shop, or a lodging business here wins or loses on whether it shows up when they search.",
+   "to_next": "wipe-up",
+   "kinetic": [
+    [
+     "FESTIVAL AND PARK VISITORS",
+     "festival",
+     -0.25,
+     4.0
+    ],
+    [
+     "THEY PLAN AHEAD",
+     "plan",
+     0.0,
+     1.6
+    ],
+    [
+     "A RESTAURANT, A SHOP,",
+     "restaurant",
+     0,
+     2.2
+    ],
+    [
+     "OR A LODGING BUSINESS",
+     "or",
+     0.2,
+     1.5
+    ],
+    [
+     "WINS OR LOSES ON SEARCH",
+     "wins",
+     0.15,
+     4.2
+    ]
+   ],
+   "shots": [
+    {
+     "still": "c22.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "c16.png",
+     "at": "plan",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "c08.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "restaurant"
+    },
+    {
+     "still": "c10.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "wins"
+    },
+    {
+     "still": "c17.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "shows"
+    }
+   ],
+   "pause": 1.2
+  },
+  {
+   "id": "b09",
+   "vo": "Cedar City also has a small manufacturing base and steady home construction. I help trades and service companies be the clear answer for their own area.",
+   "to_next": "slide-left",
+   "kinetic": [
+    [
+     "SMALL MANUFACTURING BASE",
+     "small"
+    ],
+    [
+     "STEADY HOME CONSTRUCTION",
+     "steady",
+     0,
+     1.5
+    ],
+    [
+     "TRADES AND SERVICES",
+     "trades",
+     0,
+     1.9
+    ],
+    [
+     "BE THE CLEAR ANSWER",
+     "clear",
+     -0.15,
+     3.6
+    ]
+   ],
+   "shots": [
+    {
+     "still": "c09.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "c18.png",
+     "at": "steady",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "c14.png",
+     "at": "trades",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "c19.png",
+     "at": "clear",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ]
+    }
+   ],
+   "pause": 1.4
+  },
+  {
+   "id": "b10",
+   "vo": "I'm not affiliated with the city, the university, or the festival. They're local facts... So let's start with a call about your business. I reply within two business days. Seth Shoultes dot com.",
+   "to_next": "wipe-right",
+   "kinetic": [
+    [
+     "THEY'RE LOCAL FACTS",
+     "they're",
+     0.12
+    ],
+    [
+     "LET'S START WITH A CALL",
+     "let's",
+     0,
+     3.0
+    ]
+   ],
+   "shots": [
+    {
+     "still": "t_notaff.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "c20.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "they're"
+    },
+    {
+     "still": "t_call.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "let's"
+    },
+    {
+     "still": "t_reply.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "within"
+    },
+    {
+     "still": "proc:endcard",
+     "at": "seth"
+    }
+   ]
+  }
+ ],
+ "anchor_first": true,
+ "srt_at": [
+  [
+   "and the Utah Shakespeare",
+   32.8
+  ]
+ ]
+}
