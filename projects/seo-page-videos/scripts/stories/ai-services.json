@@ -41,7 +41,7 @@
   {
    "id": "b02",
    "vo": "And no, you don't need a technical team.",
-   "to_next": "zoom-through",
+   "to_next": "push-right",
    "kinetic": [
     [
      "NO TECHNICAL TEAM",
@@ -245,7 +245,7 @@
   {
    "id": "b08",
    "vo": "Start with advice. Have me lead the work with you. Or have my team of AI agents do the building.",
-   "to_next": "zoom-through",
+   "to_next": "push-right",
    "kinetic": [
     [
      "START WITH ADVICE",

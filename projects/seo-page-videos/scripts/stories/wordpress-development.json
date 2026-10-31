@@ -1,7 +1,7 @@
 {
  "page": "https://sethshoultes.com/wordpress-development/",
  "title": "WordPress Development in Southern Utah",
- "arc": "Hook (does your site do it all?) > stakes > guide (that's my job, 25+ years) > proof (Event Espresso 2009-2021, 2011 grand prize, senior PM for leading WP tools, meetups 15+ years) > what I build > invitation (a call, what I'd build and leave alone). Cool until 'That's my job', warm after. Claims only from _data/services/wordpress-development.yml.",
+ "arc": "Hook (does your site do it all?) > guide (Seth Shoultes, WordPress veteran in Southern Utah, 25+ years) > proof (Event Espresso 2009-2021, 2011 grand prize, senior PM for leading WP tools, meetups 15+ years) > what I build > invitation (a call). Warm throughout. Claims only from the page https://sethshoultes.com/wordpress-development/ (v3, herdos#3387 re-score).",
  "style": "Bold flat editorial vector illustration, razor-sharp hard edges, crisp thin outlines, high contrast. Cool: #0b0d10 + grey + orange; warm: #17110c + cream #f1e6d6 + orange #ff6b2c. Flat solid ground, art centered ~60% width, nothing touching an edge; no glow, haze, gradients, soft shadows; no people, no logos.",
  "beats": [
   {
@@ -36,50 +36,21 @@
       ]
      ]
     }
-   ]
-  },
-  {
-   "id": "b02",
-   "vo": "A feature that won't fit. A plugin that doesn't exist. A site nobody can change.",
-   "to_next": "zoom-through",
-   "kinetic": [
-    [
-     "A FEATURE THAT WON'T FIT",
-     "feature"
-    ],
-    [
-     "A SITE NOBODY CAN CHANGE",
-     "nobody"
-    ]
    ],
-   "shots": [
-    {
-     "still": "w02.png",
-     "cam": [
-      [
-       0,
-       1.0,
-       0.5,
-       0.5
-      ],
-      [
-       1,
-       1.08,
-       0.5,
-       0.5
-      ]
-     ]
-    }
-   ]
+   "pause": 1.6
   },
   {
    "id": "b03",
-   "vo": "That's my job. I've built WordPress products for over twenty-five years. I can build or improve yours.",
+   "vo": "I'm Seth Shoultes, a WordPress veteran in Southern Utah. I've built WordPress products \u2014 for over twenty-five years. I can build or improve yours.",
    "to_next": "wipe-up",
    "kinetic": [
     [
-     "THAT'S MY JOB.",
-     "that's"
+     "I'M SETH SHOULTES.",
+     "seth"
+    ],
+    [
+     "SOUTHERN UTAH",
+     "southern"
     ],
     [
      "OVER 25 YEARS",
@@ -96,19 +67,74 @@
      "cam": [
       [
        0,
+       1.15,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.25,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "w_utah.png",
+     "at": "southern",
+     "cam": [
+      [
+       0,
        1.0,
        0.5,
        0.5
       ],
       [
        1,
-       1.08,
+       1.1,
        0.5,
        0.5
       ]
      ]
+    },
+    {
+     "still": "w_years.png",
+     "at": "twenty",
+     "cam": [
+      [
+       0,
+       1.12,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.12,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "w03.png",
+     "at": "improve",
+     "cam": [
+      [
+       0,
+       1.5,
+       0.64,
+       0.55
+      ],
+      [
+       1,
+       1.6,
+       0.64,
+       0.55
+      ]
+     ]
     }
-   ]
+   ],
+   "pause": 0.8
   },
   {
    "id": "b04",
@@ -126,23 +152,42 @@
    ],
    "shots": [
     {
-     "still": "w04.png",
+     "still": "w_span.png",
      "cam": [
       [
        0,
-       1.0,
+       1.35,
        0.5,
        0.5
       ],
       [
        1,
-       1.08,
+       1.45,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "w04.png",
+     "at": "event",
+     "cam": [
+      [
+       0,
+       1.15,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.25,
        0.5,
        0.5
       ]
      ]
     }
-   ]
+   ],
+   "pause": 0.5
   },
   {
    "id": "b05",
@@ -174,13 +219,32 @@
       ],
       [
        1,
-       1.08,
+       1.04,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "w_challenge.png",
+     "at": "utah",
+     "cam": [
+      [
+       0,
+       1.1,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.2,
        0.5,
        0.5
       ]
      ]
     }
-   ]
+   ],
+   "pause": 0.7
   },
   {
    "id": "b06",
@@ -194,6 +258,22 @@
     [
      "LEADING WORDPRESS TOOLS",
      "leading"
+    ],
+    [
+     "ACCESSALLY",
+     "accessally"
+    ],
+    [
+     "MEMBERMOUSE",
+     "membermouse"
+    ],
+    [
+     "WISHLIST MEMBER",
+     "wishlist"
+    ],
+    [
+     "PRETTYLINKS",
+     "prettylinks"
     ]
    ],
    "shots": [
@@ -208,13 +288,32 @@
       ],
       [
        1,
-       1.08,
+       1.1,
        0.5,
        0.5
       ]
      ]
+    },
+    {
+     "still": "w06.png",
+     "at": "accessally",
+     "cam": [
+      [
+       0,
+       1.45,
+       0.3,
+       0.56
+      ],
+      [
+       1,
+       1.45,
+       0.78,
+       0.56
+      ]
+     ]
     }
-   ]
+   ],
+   "pause": 0.5
   },
   {
    "id": "b07",
@@ -236,24 +335,43 @@
      "cam": [
       [
        0,
-       1.0,
+       1.05,
        0.5,
        0.5
       ],
       [
        1,
-       1.08,
+       1.12,
        0.5,
        0.5
       ]
      ]
+    },
+    {
+     "still": "w07.png",
+     "at": "monthly",
+     "cam": [
+      [
+       0,
+       1.75,
+       0.5,
+       0.82
+      ],
+      [
+       1,
+       1.8,
+       0.5,
+       0.82
+      ]
+     ]
     }
-   ]
+   ],
+   "pause": 0.6
   },
   {
    "id": "b08",
    "vo": "What I build. Plugins and features. WordPress and AI together, tools that write inside the editor in your voice. And sites built to be found.",
-   "to_next": "zoom-through",
+   "to_next": "push-right",
    "kinetic": [
     [
      "PLUGINS AND FEATURES",
@@ -262,6 +380,10 @@
     [
      "WORDPRESS AND AI",
      "wordpress"
+    ],
+    [
+     "WRITES IN YOUR VOICE",
+     "write"
     ],
     [
      "BUILT TO BE FOUND",
@@ -274,13 +396,13 @@
      "cam": [
       [
        0,
-       1.0,
+       1.1,
        0.5,
        0.5
       ],
       [
        1,
-       1.08,
+       1.2,
        0.5,
        0.5
       ]
@@ -292,15 +414,33 @@
      "cam": [
       [
        0,
-       1.0,
+       1.05,
        0.5,
        0.5
       ],
       [
        1,
-       1.08,
+       1.12,
        0.5,
        0.5
+      ]
+     ]
+    },
+    {
+     "still": "w08b.png",
+     "at": "write",
+     "cam": [
+      [
+       0,
+       1.5,
+       0.5,
+       0.72
+      ],
+      [
+       1,
+       1.56,
+       0.5,
+       0.72
       ]
      ]
     },
@@ -310,19 +450,20 @@
      "cam": [
       [
        0,
-       1.0,
+       1.1,
        0.5,
        0.5
       ],
       [
        1,
-       1.08,
+       1.2,
        0.5,
        0.5
       ]
      ]
     }
-   ]
+   ],
+   "pause": 0.9
   },
   {
    "id": "b09",
@@ -348,6 +489,59 @@
      "cam": [
       [
        0,
+       1.05,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.12,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "d14.png",
+     "at": "leave",
+     "cam": [
+      [
+       0,
+       1.8,
+       0.46,
+       0.72
+      ],
+      [
+       1,
+       1.85,
+       0.46,
+       0.72
+      ]
+     ]
+    }
+   ],
+   "pause": 1.0
+  },
+  {
+   "id": "b10",
+   "vo": "Book a call, and tell me about your site. Seth Shoultes dot com.",
+   "to_next": "push-left",
+   "kinetic": [
+    [
+     "BOOK A CALL",
+     "book"
+    ],
+    [
+     "TELL ME ABOUT YOUR SITE",
+     "tell"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "w_call.png",
+     "cam": [
+      [
+       0,
        1.0,
        0.5,
        0.5
@@ -358,57 +552,21 @@
        0.5,
        0.5
       ]
-     ]
-    }
-   ]
-  },
-  {
-   "id": "b10",
-   "vo": "So let's start with that call. Seth Shoultes dot com.",
-   "to_next": "push-left",
-   "kinetic": [
-    [
-     "LET'S START WITH A CALL",
-     "start"
-    ]
-   ],
-   "shots": [
-    {
-     "still": "c05.png",
-     "tr": "circle-open",
-     "cam": [
-      [
-       0,
-       1.0,
-       0.5,
-       0.5
-      ],
-      [
-       0.45,
-       1.0,
-       0.5,
-       0.5
-      ],
-      [
-       0.52,
-       1.15,
-       0.5,
-       0.5
-      ],
-      [
-       1,
-       1.15,
-       0.5,
-       0.5
-      ]
-     ]
+     ],
+     "tr": "circle-open"
     },
     {
      "still": "proc:endcard",
-     "at": "call",
+     "at": "seth",
      "notype": true
     }
    ]
   }
- ]
+ ],
+ "endcard": {
+  "kicker": "WordPress development in Southern Utah",
+  "site": "sethshoultes.com",
+  "path": "/wordpress-development",
+  "sub": "I reply within two business days."
+ }
 }

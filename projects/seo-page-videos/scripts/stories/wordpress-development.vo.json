@@ -6,14 +6,9 @@
    "pace": 1.0
   },
   {
-   "id": "s02",
-   "vo": "A feature that won't fit. A plugin that doesn't exist. A site nobody can change.",
-   "pace": 0.97
-  },
-  {
    "id": "s03",
-   "vo": "That's my job. I've built WordPress products for over twenty-five years. I can build or improve yours.",
-   "pace": 0.95
+   "vo": "I'm Seth Shoultes, a WordPress veteran in Southern Utah. I've built WordPress products \u2014 for over twenty-five years. I can build or improve yours.",
+   "pace": 0.93
   },
   {
    "id": "s04",
@@ -47,8 +42,8 @@
   },
   {
    "id": "s10",
-   "vo": "So let's start with that call. Seth Shoultes dot com.",
-   "pace": 0.95
+   "vo": "Book a call, and tell me about your site. Seth Shoultes dot com.",
+   "pace": 0.92
   }
  ]
 }

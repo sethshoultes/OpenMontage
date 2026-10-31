@@ -26,9 +26,14 @@ CFG = json.load(open(HERE / "config.json"))
 W, H, FPS = 1920, 1080, 30
 BEAT_T, INTRA_T = 0.5, 0.3   # transition length between beats, and between the sub-shots of one beat (s)
 INTRA = ["slide-left", "wipe-right", "circle-open", "push-right", "wipe-up"]
+PHRASE_LEAD = 0.25            # a caption appears this much before its spoken word, so it lands with the picture change
 GAP = 0.18                    # breath after each line
 LEAD = 0.35
-TAIL = 1.4
+TAIL = 3.0                    # the closing card holds long enough to read the address and the button
+BAND_PX, BAND_MAX = 38, 120   # the caption sits in the bottom BAND_PX rows of the art box; at most BAND_MAX art pixels may reach into it
+CHECK_ONLY = False
+CLEAR = 0.90                  # the art may fill at most this fraction of the art box height (the rest is ground above the caption)
+MAX_HOLD = 6.0                # no single still stays on screen longer than this (s)
 HOLD_MIN = 1.5                # a kinetic title stays at least 1.5 s
 ART_W, ART_H = 1680, 950      # the still is shown in the top 950 px; the bottom 130 px is the type band, so type never covers art
 ART_X = (W - ART_W) // 2
@@ -56,6 +61,32 @@ def word_times(align):
             cur += c
     if cur:
         out.append((re.sub(r"[^a-z0-9.'-]", "", cur.lower()), t0))
+    return out
+
+
+def content_bottom(img):
+    """Fraction of the still's height at which its art ends (rows differing from the ground colour)."""
+    a = np.asarray(img).astype(np.int16)
+    rows = (np.abs(a - np.array(ground_of(img), dtype=np.int16)).max(axis=2) > 60).sum(axis=1)
+    ys = np.where(rows > 3)[0]
+    return (ys.max() + 1) / a.shape[0] if len(ys) else 0.0
+
+
+def clamp_camera(sh, n, img):
+    """Lower a waypoint's zoom until the art's bottom edge sits above the caption band (at most CLEAR of the art box)."""
+    b = content_bottom(img)
+    pts = sh.get("cam") or [[0, 1.0, 0.5 - 0.02 * (-1) ** n, 0.5], [1, 1.07, 0.5 + 0.02 * (-1) ** n, 0.495]]
+    out = []
+    for u, z, cx, cy in pts:
+        z0 = z
+        while z > 1.0:
+            y0 = min(max(cy - 0.5 / z, 0), 1 - 1 / z)
+            if (b - y0) * z <= CLEAR:
+                break
+            z = round(z - 0.01, 2)
+        if z != z0:
+            print(f"  camera: {sh['still']} at {sh['at']:.1f}s zoom {z0} -> {z} (keeps the art clear of the caption)")
+        out.append([u, z, cx, cy])
     return out
 
 
@@ -147,14 +178,12 @@ def type_overlay(phrases, t, font, beat_end):
     widths = [d.textlength(w + " ", font=font) for w in words]
     x0, y0 = ART_X + 28, ART_H - 33   # the band sits clear of title-safe on a phone or player
     fade = 1.0 if t < end else max(0, 1 - (t - end) / 0.12)
-    rise = 0 if t < end else int(24 * (t - end) / 0.12)
     d.rectangle((ART_X - 6, y0 + 10, ART_X + 4, y0 + 96), fill=ORANGE + (int(255 * fade),))
     x = x0
     for idx, (w, wd) in enumerate(zip(words, widths)):
         k = ease((t - t0 - 0.05 * idx) / 0.10)
-        if k > 0:
-            yoff = int((1 - k) * 30) - rise
-            d.text((x, y0 + yoff), w, font=font, fill=(255, 255, 255, int(255 * fade)))
+        if k > 0:   # a word fades in on its own baseline; nothing drops below the line
+            d.text((x, y0), w, font=font, fill=(255, 255, 255, int(255 * fade * k)))
         x += wd
     return layer
 
@@ -219,51 +248,75 @@ def apply_fx(img, fx, t):
     return img
 
 
-def chip(frame_img, kind, k):
-    """The through-line object: an orange quote chip that rides every beat change, then is gone."""
-    d = ImageDraw.Draw(frame_img)
-    size = 270
-    if kind in ("push-left", "slide-left"):
-        cx, cy, sc = W * (1 - k) - 0, H * 0.45, 1.0
-    elif kind in ("push-right", "wipe-right"):
-        cx, cy, sc = W * k, H * 0.45, 1.0
-    elif kind == "wipe-up":
-        cx, cy, sc = W / 2, H * (1 - k), 1.0
-    else:   # circle-open, orb-burst, zoom-through: it punches out from the centre
-        cx, cy, sc = W / 2, H * 0.45, math.sin(math.pi * k) * 1.5
-    if sc <= 0.05:
-        return frame_img
-    s = int(size * sc)
-    if cy + s / 2 + 12 > ART_H - 45:
-        return frame_img
-    box = (cx - s / 2, cy - s / 2, cx + s / 2, cy + s / 2)
-    d.rounded_rectangle((box[0] + 12, box[1] + 12, box[2] + 12, box[3] + 12), s // 6, fill=(60, 30, 14))
-    d.rounded_rectangle(box, s // 6, fill=ORANGE)
-    d.text((cx, cy + s * 0.12), "\u201c", font=ImageFont.truetype(FONT, int(s * 1.1), index=1), fill=(255, 255, 255), anchor="mm")
-    return frame_img
-
-
-def endcard(t, site, label):
-    """The closing card, animated: a rule draws, the address slides up, the button pops with a little overshoot and presses."""
+def endcard(t, card):
+    """The closing card, animated: the service and place, the address with the page path, a button, and the page's own reply promise.
+    card = {kicker, site, path, label, sub}; every line is asserted to fit inside the frame with 120 px side margins."""
     ground = (23, 17, 12)
     im = Image.new("RGB", (W, H), ground)
     d = ImageDraw.Draw(im)
     cream = (241, 230, 214)
     back = lambda x: 1 + 2.70158 * (x - 1) ** 3 + 1.70158 * (x - 1) ** 2   # ease-out-back
-    rw = int(150 * ease(t / 0.4))
-    d.rectangle((W / 2 - rw, 372, W / 2 + rw, 380), fill=ORANGE)
-    k = ease((t - 0.15) / 0.45)
+    fnt = lambda s, b=1: ImageFont.truetype(FONT, s, index=b)
+    mix = lambda k: tuple(int(c * k + g * (1 - k)) for c, g in zip(cream, ground))
+    for text, size in ((card["kicker"], 64), (card["site"], 168), (card.get("path", ""), 84), (card.get("sub", ""), 54)):
+        assert not text or d.textlength(text, font=fnt(size)) <= W - 240, f"end card line too wide: {text!r}"
+    k0 = ease(t / 0.35)
+    if k0 > 0:
+        d.text((W / 2, 205 + int((1 - k0) * 30)), card["kicker"], font=fnt(64), fill=mix(k0), anchor="mm")
+    rw = int(150 * ease((t - 0.1) / 0.4))
+    d.rectangle((W / 2 - rw, 285, W / 2 + rw, 293), fill=ORANGE)
+    k = ease((t - 0.25) / 0.45)
     if k > 0:
-        d.text((W / 2, 480 + int((1 - k) * 46)), site, font=ImageFont.truetype(FONT, 168, index=1), fill=cream, anchor="mm")
-    kb = min(1.0, max(0.0, (t - 0.9) / 0.35))
+        d.text((W / 2, 420 + int((1 - k) * 46)), card["site"], font=fnt(168), fill=cream, anchor="mm")
+        if card.get("path"):
+            d.text((W / 2, 555 + int((1 - k) * 30)), card["path"], font=fnt(84), fill=ORANGE, anchor="mm")
+    kb = min(1.0, max(0.0, (t - 0.6) / 0.35))
     if kb > 0:
-        sc = back(kb) * (0.94 if 1.9 < t < 2.05 else 1.0)
-        bw, bh = int(700 * sc), int(170 * sc)
-        cx, cy = W / 2, 690
+        sc = back(kb) * (0.94 if 1.5 < t < 1.65 else 1.0)
+        bw, bh = int(700 * sc), int(160 * sc)
+        cx, cy = W / 2, 760
         d.rounded_rectangle((cx - bw / 2 + 12, cy - bh / 2 + 12, cx + bw / 2 + 12, cy + bh / 2 + 12), bh // 2, fill=(70, 38, 20))
         d.rounded_rectangle((cx - bw / 2, cy - bh / 2, cx + bw / 2, cy + bh / 2), bh // 2, fill=ORANGE)
-        d.text((cx, cy), label, font=ImageFont.truetype(FONT, int(84 * sc), index=1), fill=ground, anchor="mm")
+        d.text((cx, cy), card["label"], font=fnt(int(84 * sc)), fill=ground, anchor="mm")
+    ks = ease((t - 1.0) / 0.4)
+    if ks > 0 and card.get("sub"):
+        d.text((W / 2, 930), card["sub"], font=fnt(54, 0), fill=mix(ks), anchor="mm")
     return im
+
+
+def srt_cues(beats):
+    """Phrase cues on the real spoken word times: a cue ends at . ? ! , ; : or after 7 words; a one-word cue joins its neighbour."""
+    cues = []
+    for bt in beats:
+        toks = re.sub(r"\s+", " ", re.sub(r"\[[^\]]*\]", "", bt["vo"])).strip().split()
+        times = [w[1] for w in bt["words"]]
+        if len(toks) == len(times):
+            starts = [bt["start"] + x for x in times]
+        else:   # the aligned words differ from the script tokens (a spelled-out URL, say): spread by character count
+            total = sum(len(x) + 1 for x in toks)
+            starts, c = [], 0
+            for x in toks:
+                starts.append(bt["start"] + bt["d"] * c / total)
+                c += len(x) + 1
+        chunks, cur = [], []
+        for i, x in enumerate(toks):
+            cur.append(i)
+            if re.search(r"[.?!,;:]$", x) or len(cur) >= 7:
+                chunks.append(cur)
+                cur = []
+        if cur:
+            chunks.append(cur)
+        merged = []
+        for c in chunks:
+            if merged and (len(c) == 1 or len(merged[-1]) == 1) and len(merged[-1]) + len(c) <= 8:
+                merged[-1] += c
+            else:
+                merged.append(c)
+        for j, c in enumerate(merged):
+            a = starts[c[0]]
+            b = starts[merged[j + 1][0]] if j + 1 < len(merged) else bt["start"] + bt["d"]
+            cues.append((a, b, " ".join(toks[i] for i in c)))
+    return cues
 
 
 def main(story_path, stills, vo_dir, out, music, sfx_files):
@@ -271,6 +324,7 @@ def main(story_path, stills, vo_dir, out, music, sfx_files):
     picked = json.load(open(Path(vo_dir) / "picked.json"))
     beats = story["beats"]
     font = ImageFont.truetype(FONT, 96, index=1)
+    CARD = {"label": CFG["cta"], **story["endcard"]}   # every story states its own card: place line, address, reply promise
     # beat timeline: each line starts after the last one plus a breath
     t = LEAD
     for bt in beats:
@@ -278,7 +332,7 @@ def main(story_path, stills, vo_dir, out, music, sfx_files):
         mp3 = Path(vo_dir) / pk["file"]
         al = json.load(open(str(mp3)[:-4] + ".json"))
         bt["mp3"], bt["d"], bt["words"], bt["start"] = mp3, dur(mp3), word_times(al), t
-        t += bt["d"] + GAP
+        t += bt["d"] + bt.get("pause", GAP)   # a beat can ask for more air after its line (the voice direction)
     total = round(t + TAIL, 2)
     # flat shot list; a sub-shot starts at its anchor word (a hair early, so the picture leads the voice)
     shots, bi = [], 0
@@ -300,7 +354,7 @@ def main(story_path, stills, vo_dir, out, music, sfx_files):
             m = next((i for i in range(j, len(bt["words"])) if bt["words"][i][0].startswith(anchor.lower())), None)
             if m is None:
                 sys.exit(f"{bt['id']}: kinetic anchor {anchor!r} not found")
-            ph.append((text, bt["start"] if not ph else bt["start"] + bt["words"][m][1]))
+            ph.append((text, bt["start"] if not ph else max(ph[-1][1] + 0.6, bt["start"] + bt["words"][m][1] - PHRASE_LEAD)))
             j = m + 1
         bt["phrases"] = ph
     for bt in beats:   # a caption wider than the frame is clipped on screen, so refuse to build it
@@ -313,7 +367,29 @@ def main(story_path, stills, vo_dir, out, music, sfx_files):
         sh["end"] = shots[i + 1]["at"] if i + 1 < n else total
         sh["T"] = BEAT_T if i + 1 < n and shots[i + 1]["beat"] != sh["beat"] else INTRA_T
     shots[0]["at"] = 0.0
+    long_holds = [(sh["still"], round(sh["at"], 1), round(sh["end"] - sh["at"], 1)) for sh in shots if sh["end"] - sh["at"] > MAX_HOLD and not sh["still"].startswith("proc:")]
+    if long_holds:
+        sys.exit(f"shots held longer than {MAX_HOLD} s (still, start, length): {long_holds}; add a second shot on a word anchor\ntimeline: " + ", ".join(f"{sh['still']}@{sh['at']:.1f}-{sh['end']:.1f}" for sh in shots))
     imgs = [None if sh["still"].startswith("proc:") else Image.open(Path(stills) / sh["still"]).convert("RGB") for sh in shots]
+    for i, sh in enumerate(shots):
+        if imgs[i] is not None:
+            sh["cam"] = clamp_camera(sh, i, imgs[i])
+    clash = []
+    for i, sh in enumerate(shots):   # art must never run into the caption band, at the start, middle or end of the camera move
+        if imgs[i] is None:
+            continue
+        ground = np.array(ground_of(imgs[i]), dtype=np.int16)
+        for u in (0.0, 0.5, 1.0):
+            z, cx, cy = camera(sh, u, i)
+            band = np.asarray(view(imgs[i], z, cx, cy))[ART_H - BAND_PX:ART_H, ART_X:ART_X + ART_W].astype(np.int16)
+            n_art = int((np.abs(band - ground).max(axis=2) > 60).sum())
+            if n_art > BAND_MAX:
+                clash.append((sh["still"], round(sh["at"], 1), u, n_art))
+                break
+    if clash:
+        sys.exit("art runs into the caption band (still, start s, camera u, art px): " + str(clash) + "; lower the zoom or move the crop up")
+    if CHECK_ONLY:
+        sys.exit("checks passed: no long holds, no art in the caption band")
     nframes = int(total * FPS)
     tmp = Path(out).with_suffix(".silent.mp4")
     ff = subprocess.Popen(["ffmpeg", "-v", "error", "-y", "-f", "rawvideo", "-pix_fmt", "rgb24", "-s", f"{W}x{H}", "-r", str(FPS), "-i", "-",
@@ -322,7 +398,7 @@ def main(story_path, stills, vo_dir, out, music, sfx_files):
     def frame_of(i, tt):
         sh = shots[i]
         if imgs[i] is None:   # procedural shot: the animated end card
-            return endcard(max(0.0, tt - sh["at"]), CFG["site"], CFG["cta"])
+            return endcard(max(0.0, tt - sh["at"]), CARD)
         u = (tt - sh["at"]) / max(1e-6, sh["end"] - sh["at"])
         z, cx, cy = camera(sh, min(max(u, 0), 1), i)
         src = imgs[i]
@@ -339,12 +415,10 @@ def main(story_path, stills, vo_dir, out, music, sfx_files):
             b = np.asarray(frame_of(i + 1, tt), dtype=np.float32)
             k = (tt - (sh["end"] - sh["T"])) / sh["T"]
             frame = blend(a, b, sh["tr"], k)
-            frame[ART_H - 45:] = (a if k < 0.5 else b)[ART_H - 45:]   # wipes and the chip never cross the caption band
+            frame[ART_H - 75:] = (a if k < 0.5 else b)[ART_H - 75:]   # wipes never cross the caption band
         else:
             frame = np.asarray(frame_of(i, tt), dtype=np.float32)
         img = Image.fromarray(np.clip(frame, 0, 255).astype(np.uint8))
-        if i + 1 < n and tt >= sh["end"] - sh["T"]:
-            img = chip(img, sh["tr"], (tt - (sh["end"] - sh["T"])) / sh["T"])
         if not sh["notype"] or (i + 1 < n and tt >= sh["end"] - sh["T"] and not shots[i + 1]["notype"]):
             bt = beats[sh["beat"]]
             ov = type_overlay(bt["phrases"], tt, font, bt["start"] + bt["d"])
@@ -357,12 +431,7 @@ def main(story_path, stills, vo_dir, out, music, sfx_files):
     def tc(s):
         ms = int(s * 1000)
         return f"{ms // 3600000:02d}:{ms // 60000 % 60:02d}:{ms // 1000 % 60:02d},{ms % 1000:03d}"
-    cues = []
-    for bt in beats:
-        ws = re.sub(r"\s+", " ", re.sub(r"\[[^\]]*\]", "", bt["vo"])).strip().split()
-        ch = [ws[i:i + 6] for i in range(0, len(ws), 6)]
-        for k, c in enumerate(ch):
-            cues.append((bt["start"] + bt["d"] * k / len(ch), bt["start"] + bt["d"] * (k + 1) / len(ch), " ".join(c)))
+    cues = srt_cues(beats)
     Path(out).with_suffix(".srt").write_text("".join(f"{i}\n{tc(a)} --> {tc(b)}\n{x}\n\n" for i, (a, b, x) in enumerate(cues, 1)))
     json.dump({"total": total, "shots": [{"still": sh["still"], "at": round(sh["at"], 2), "end": round(sh["end"], 2)} for sh in shots],
                "beats": [{"id": bt["id"], "start": round(bt["start"], 2), "dur": round(bt["d"], 2)} for bt in beats]},
@@ -374,6 +443,8 @@ def main(story_path, stills, vo_dir, out, music, sfx_files):
 
 if __name__ == "__main__":
     argv, opts = sys.argv[1:], {}
+    CHECK_ONLY = "--check" in argv
+    argv = [a for a in argv if a != "--check"]
     for key in ("--music", "--sfx"):
         if key in argv:
             i = argv.index(key)

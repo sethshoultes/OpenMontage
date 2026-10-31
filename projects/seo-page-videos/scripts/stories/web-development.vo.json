@@ -7,13 +7,13 @@
   },
   {
    "id": "s02",
-   "vo": "A site that loads slowly, says little, and can't be found... isn't doing its job.",
-   "pace": 0.97
+   "vo": "Does it load fast? Is it made to be found?",
+   "pace": 0.95
   },
   {
    "id": "s03",
-   "vo": "That's my job. I build websites and web tools that load fast and do something for your customers.",
-   "pace": 0.95
+   "vo": "I'm Seth Shoultes. In Southern Utah, I build websites and web tools that load fast, are made to be found, and do something for your customers.",
+   "pace": 0.93
   },
   {
    "id": "s04",
@@ -47,8 +47,8 @@
   },
   {
    "id": "s10",
-   "vo": "So let's start with that call. Seth Shoultes dot com.",
-   "pace": 0.95
+   "vo": "Book a call, and tell me about your business. Seth Shoultes dot com.",
+   "pace": 0.92
   }
  ]
 }

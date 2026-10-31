@@ -41,7 +41,7 @@
   {
    "id": "b02",
    "vo": "Ads and search work on the same customers. So they should be planned as one.",
-   "to_next": "zoom-through",
+   "to_next": "push-right",
    "kinetic": [
     [
      "THE SAME CUSTOMERS",
@@ -343,7 +343,7 @@
   {
    "id": "b08",
    "vo": "Southern Utah is home, and I work with businesses anywhere.",
-   "to_next": "zoom-through",
+   "to_next": "push-right",
    "kinetic": [
     [
      "SOUTHERN UTAH IS HOME",

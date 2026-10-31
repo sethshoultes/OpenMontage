@@ -6,19 +6,14 @@
    "pace": 1.0
   },
   {
-   "id": "s02",
-   "vo": "Searchers pick from the first few results.",
-   "pace": 0.97
-  },
-  {
    "id": "s03",
    "vo": "SEO is making sure the people searching for what you sell can find you. And that what they find makes them call.",
    "pace": 1.0
   },
   {
    "id": "s04",
-   "vo": "That's my job. I've worked on search for almost twenty years.",
-   "pace": 0.95
+   "vo": "I'm Seth Shoultes, and I help Southern Utah businesses get found. I've worked on search \u2014 for almost twenty years.",
+   "pace": 0.93
   },
   {
    "id": "s05",
@@ -47,8 +42,8 @@
   },
   {
    "id": "s10",
-   "vo": "So let's start with a call about your business. Seth Shoultes dot com.",
-   "pace": 0.95
+   "vo": "Book a call about your business. Seth Shoultes dot com.",
+   "pace": 0.92
   }
  ]
 }

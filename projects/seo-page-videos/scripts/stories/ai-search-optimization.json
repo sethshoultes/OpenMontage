@@ -49,7 +49,7 @@
   {
    "id": "b02",
    "vo": "More and more people ask an AI assistant.",
-   "to_next": "zoom-through",
+   "to_next": "push-right",
    "kinetic": [
     [
      "MORE AND MORE",
@@ -245,7 +245,7 @@
   {
    "id": "b08",
    "vo": "Plus plain-text versions, and an llms-dot-txt file. I run it all on my own site.",
-   "to_next": "zoom-through",
+   "to_next": "push-right",
    "kinetic": [
     [
      "PLAIN-TEXT VERSIONS",

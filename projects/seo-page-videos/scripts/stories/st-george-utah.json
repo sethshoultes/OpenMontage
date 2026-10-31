@@ -41,7 +41,7 @@
   {
    "id": "b02",
    "vo": "St. George is the biggest city in Southern Utah. Settled in 1861. About ninety-five thousand people at the 2020 census.",
-   "to_next": "zoom-through",
+   "to_next": "push-right",
    "kinetic": [
     [
      "SOUTHERN UTAH'S BIGGEST",
@@ -267,7 +267,7 @@
   {
    "id": "b08",
    "vo": "Add a university, and about twelve and a half thousand students in 2023. Your customers search in different ways. One page rarely serves them all.",
-   "to_next": "zoom-through",
+   "to_next": "push-right",
    "kinetic": [
     [
      "12,567 STUDENTS, 2023",

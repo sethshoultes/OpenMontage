@@ -41,7 +41,7 @@
   {
    "id": "b02",
    "vo": "Words and photos only go so far. Motion and imagery can show what words can't.",
-   "to_next": "zoom-through",
+   "to_next": "push-right",
    "kinetic": [
     [
      "MOTION AND IMAGERY",
@@ -325,7 +325,7 @@
   {
    "id": "b08",
    "vo": "Southern Utah is home, and I work with businesses anywhere.",
-   "to_next": "zoom-through",
+   "to_next": "push-right",
    "kinetic": [
     [
      "SOUTHERN UTAH IS HOME",

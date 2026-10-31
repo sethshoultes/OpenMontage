@@ -24,47 +24,42 @@
    ],
    "shots": [
     {
-     "still": "c01.png",
+     "still": "s_pin.png",
      "cam": [
       [
        0,
-       1.0,
+       1.15,
        0.5,
        0.5
       ],
       [
        1,
-       1.16,
-       0.56,
+       1.25,
+       0.5,
        0.5
       ]
      ]
     },
     {
      "still": "c04.png",
-     "at": "searches"
+     "at": "searches",
+     "cam": [
+      [
+       0,
+       1.1,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.2,
+       0.5,
+       0.5
+      ]
+     ]
     }
-   ]
-  },
-  {
-   "id": "b02",
-   "vo": "Searchers pick from the first few results.",
-   "to_next": "zoom-through",
-   "kinetic": [
-    [
-     "THE FIRST FEW",
-     "first"
-    ],
-    [
-     "RESULTS",
-     "results"
-    ]
    ],
-   "shots": [
-    {
-     "still": "c02.png"
-    }
-   ]
+   "pause": 1.8
   },
   {
    "id": "b03",
@@ -82,27 +77,7 @@
    ],
    "shots": [
     {
-     "still": "c03.png"
-    }
-   ]
-  },
-  {
-   "id": "b04",
-   "vo": "That's my job. I've worked on search for almost twenty years.",
-   "to_next": "push-left",
-   "kinetic": [
-    [
-     "THAT'S MY JOB.",
-     "that's"
-    ],
-    [
-     "ALMOST 20 YEARS",
-     "almost"
-    ]
-   ],
-   "shots": [
-    {
-     "still": "c06.png",
+     "still": "c03.png",
      "cam": [
       [
        0,
@@ -112,13 +87,89 @@
       ],
       [
        1,
-       1.08,
+       1.0,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "s_call.png",
+     "at": "and",
+     "cam": [
+      [
+       0,
+       1.05,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.15,
        0.5,
        0.5
       ]
      ]
     }
-   ]
+   ],
+   "pause": 1.0
+  },
+  {
+   "id": "b04",
+   "vo": "I'm Seth Shoultes, and I help Southern Utah businesses get found. I've worked on search \u2014 for almost twenty years.",
+   "to_next": "push-left",
+   "kinetic": [
+    [
+     "I'M SETH SHOULTES.",
+     "seth"
+    ],
+    [
+     "SOUTHERN UTAH",
+     "southern"
+    ],
+    [
+     "ALMOST 20 YEARS",
+     "almost"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "s_utah.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.1,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "c06.png",
+     "at": "worked",
+     "cam": [
+      [
+       0,
+       1.15,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.25,
+       0.5,
+       0.5
+      ]
+     ]
+    }
+   ],
+   "pause": 0.8
   },
   {
    "id": "b05",
@@ -150,7 +201,8 @@
      "still": "d17.png",
      "at": "ran"
     }
-   ]
+   ],
+   "pause": 0.6
   },
   {
    "id": "b06",
@@ -196,7 +248,8 @@
      "still": "c09.png",
      "at": "reviews"
     }
-   ]
+   ],
+   "pause": 0.8
   },
   {
    "id": "b07",
@@ -228,18 +281,37 @@
       ],
       [
        1,
-       1.18,
+       1.15,
        0.5,
        0.55
       ]
      ]
+    },
+    {
+     "still": "c06.png",
+     "at": "within",
+     "cam": [
+      [
+       0,
+       1.55,
+       0.5,
+       0.7
+      ],
+      [
+       1,
+       1.65,
+       0.5,
+       0.7
+      ]
+     ]
     }
-   ]
+   ],
+   "pause": 0.7
   },
   {
    "id": "b08",
    "vo": "I grew its reviews. I built neighborhood pages and a checklist. Once it was outranking everyone, I sold it to a competitor.",
-   "to_next": "zoom-through",
+   "to_next": "push-right",
    "kinetic": [
     [
      "MORE REVIEWS",
@@ -308,7 +380,8 @@
       ]
      ]
     }
-   ]
+   ],
+   "pause": 1.0
   },
   {
    "id": "b09",
@@ -330,7 +403,7 @@
    ],
    "shots": [
     {
-     "still": "c11.png",
+     "still": "s_clock.png",
      "cam": [
       [
        0,
@@ -340,61 +413,78 @@
       ],
       [
        1,
-       1.08,
-       0.5,
-       0.5
-      ]
-     ]
-    }
-   ]
-  },
-  {
-   "id": "b10",
-   "vo": "So let's start with a call about your business. Seth Shoultes dot com.",
-   "to_next": "end",
-   "kinetic": [
-    [
-     "LET'S START WITH A CALL",
-     "start"
-    ]
-   ],
-   "shots": [
-    {
-     "still": "c05.png",
-     "tr": "circle-open",
-     "cam": [
-      [
-       0,
-       1.0,
-       0.5,
-       0.5
-      ],
-      [
-       0.45,
-       1.0,
-       0.5,
-       0.5
-      ],
-      [
-       0.52,
-       1.4,
-       0.5,
-       0.5
-      ],
-      [
-       1,
-       1.4,
+       1.07,
        0.5,
        0.5
       ]
      ]
     },
     {
+     "still": "c07.png",
+     "at": "depends",
+     "cam": [
+      [
+       0,
+       1.1,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.2,
+       0.5,
+       0.5
+      ]
+     ]
+    }
+   ],
+   "pause": 1.0
+  },
+  {
+   "id": "b10",
+   "vo": "Book a call about your business. Seth Shoultes dot com.",
+   "to_next": "end",
+   "kinetic": [
+    [
+     "BOOK A CALL",
+     "book"
+    ],
+    [
+     "ABOUT YOUR BUSINESS",
+     "about"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "c05.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.1,
+       0.5,
+       0.5
+      ]
+     ],
+     "tr": "circle-open"
+    },
+    {
      "still": "proc:endcard",
-     "at": "about",
+     "at": "seth",
      "notype": true
     }
    ]
   }
- ]
+ ],
+ "endcard": {
+  "kicker": "SEO services in Southern Utah",
+  "site": "sethshoultes.com",
+  "path": "/seo-services",
+  "sub": "We start with a call about your business."
+ }
 }

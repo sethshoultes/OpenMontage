@@ -41,7 +41,7 @@
   {
    "id": "b02",
    "vo": "Your company runs on it. The question is how much you get out of it.",
-   "to_next": "zoom-through",
+   "to_next": "push-right",
    "kinetic": [
     [
      "YOUR COMPANY RUNS ON IT",
@@ -311,7 +311,7 @@
   {
    "id": "b08",
    "vo": "And I've built on the web for over twenty-five years.",
-   "to_next": "zoom-through",
+   "to_next": "push-right",
    "kinetic": [
     [
      "OVER 25 YEARS",
