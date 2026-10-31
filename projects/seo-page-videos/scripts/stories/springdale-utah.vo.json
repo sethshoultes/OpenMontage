@@ -1,0 +1,54 @@
+{
+ "shots": [
+  {
+   "id": "s01",
+   "vo": "Quick question... When someone plans a trip to Zion, do they find your business?",
+   "pace": 0.9
+  },
+  {
+   "id": "s02",
+   "vo": "Springdale was settled in eighteen sixty-two. It began as a farming community in Zion Canyon.",
+   "pace": 0.92
+  },
+  {
+   "id": "s03",
+   "vo": "Mount Kinesava stands to the west, and The Watchman to the east. The North Fork of the Virgin River runs through town.",
+   "pace": 0.9
+  },
+  {
+   "id": "s04",
+   "vo": "I live down the river in Washington City. I'm Seth Shoultes. I help Springdale businesses get found online, and get more done with AI.",
+   "pace": 0.9
+  },
+  {
+   "id": "s05",
+   "vo": "Springdale sits right beside the boundary of Zion National Park. It is called a gateway community... About five hundred people live here.",
+   "pace": 0.9
+  },
+  {
+   "id": "s06",
+   "vo": "Springdale is a very small town with a very large audience. Most of it finds you on a screen first.",
+   "pace": 0.9
+  },
+  {
+   "id": "s07",
+   "vo": "Many of your customers are not local. They're planning a trip from somewhere else. They search for where to sleep, eat, and book a guide before they arrive.",
+   "pace": 0.92
+  },
+  {
+   "id": "s08",
+   "vo": "I build pages that give clear, accurate answers about your business, so search and AI assistants can quote you.",
+   "pace": 0.92
+  },
+  {
+   "id": "s09",
+   "vo": "I know the canyon... I'm an avid hiker. I hike in Zion a lot.",
+   "pace": 0.9
+  },
+  {
+   "id": "s10",
+   "vo": "I'm not affiliated with the Town of Springdale or the National Park Service. Zion is named only as a local fact. So let's start with a call about your business. I reply within two business days. Seth Shoultes dot com.",
+   "pace": 0.88
+  }
+ ]
+}
