@@ -29,9 +29,10 @@ INTRA = ["slide-left", "wipe-right", "circle-open", "push-right", "wipe-up"]
 PHRASE_LEAD = 0.25            # a caption appears this much before its spoken word, so it lands with the picture change
 GAP = 0.18                    # breath after each line
 LEAD = 0.35
-TAIL = 4.5                    # the closing card holds long enough to read the address and the button
+TAIL = 5.5                    # the closing card holds long enough to read the address and the button
 BAND_PX, BAND_MAX = 38, 120   # the caption sits in the bottom BAND_PX rows of the art box; at most BAND_MAX art pixels may reach into it
 CHECK_ONLY = False
+SRT_ONLY = False
 CLEAR = 0.90                  # the art may fill at most this fraction of the art box height (the rest is ground above the caption)
 MAX_HOLD = 5.8                # no single still stays on screen longer than this (s)
 HOLD_MIN = 1.5                # a kinetic title stays at least 1.5 s
@@ -282,25 +283,25 @@ def endcard(t, card):
     mix = lambda k: tuple(int(c * k + g * (1 - k)) for c, g in zip(cream, ground))
     for text, size in ((card["kicker"], 72), (card["site"], 168), (card.get("path", ""), 84), (card.get("sub", ""), 62)):
         assert not text or d.textlength(text, font=fnt(size)) <= W - 240, f"end card line too wide: {text!r}"
-    k0 = ease(t / 0.35)
+    k0 = ease(t / 0.25)
     if k0 > 0:
         d.text((W / 2, 205 + int((1 - k0) * 30)), card["kicker"], font=fnt(72), fill=mix(k0), anchor="mm")
-    rw = int(150 * ease((t - 0.1) / 0.4))
+    rw = int(150 * ease((t - 0.05) / 0.3))
     d.rectangle((W / 2 - rw, 285, W / 2 + rw, 293), fill=ORANGE)
-    k = ease((t - 0.25) / 0.45)
+    k = ease((t - 0.1) / 0.3)
     if k > 0:
         d.text((W / 2, 420 + int((1 - k) * 46)), card["site"], font=fnt(168), fill=cream, anchor="mm")
         if card.get("path"):
             d.text((W / 2, 555 + int((1 - k) * 30)), card["path"], font=fnt(84), fill=ORANGE, anchor="mm")
-    kb = min(1.0, max(0.0, (t - 0.6) / 0.35))
+    kb = min(1.0, max(0.0, (t - 0.3) / 0.3))
     if kb > 0:
-        sc = back(kb) * (0.94 if 1.5 < t < 1.65 else 1.0)
+        sc = back(kb) * (0.94 if 1.3 < t < 1.45 else 1.0)
         bw, bh = int(700 * sc), int(160 * sc)
         cx, cy = W / 2, 760
         d.rounded_rectangle((cx - bw / 2 + 12, cy - bh / 2 + 12, cx + bw / 2 + 12, cy + bh / 2 + 12), bh // 2, fill=(70, 38, 20))
         d.rounded_rectangle((cx - bw / 2, cy - bh / 2, cx + bw / 2, cy + bh / 2), bh // 2, fill=ORANGE)
         d.text((cx, cy), card["label"], font=fnt(int(84 * sc)), fill=ground, anchor="mm")
-    ks = ease((t - 1.0) / 0.4)
+    ks = ease((t - 0.5) / 0.3)
     if ks > 0 and card.get("sub"):
         d.text((W / 2, 930), card["sub"], font=fnt(62, 0), fill=mix(ks), anchor="mm")
     return im
@@ -310,8 +311,8 @@ BREAK_BEFORE = {"and", "but", "so", "that", "because", "when", "if", "for", "wit
 
 
 def split_phrase(idx, toks):
-    """Split one clause (list of token indexes) of more than 8 words at the break word nearest its middle; both halves keep 3+ words."""
-    if len(idx) <= 8:
+    """Split one clause (list of token indexes) of more than 14 words at the break word nearest its middle; both halves keep 3+ words."""
+    if len(idx) <= 14:
         return [idx]
     mid = len(idx) / 2
     cands = [k for k in range(3, len(idx) - 2) if re.sub(r"[^a-z']", "", toks[idx[k]].lower()) in BREAK_BEFORE]
@@ -320,7 +321,7 @@ def split_phrase(idx, toks):
 
 
 def srt_cues(beats):
-    """Phrase cues on the real spoken word times. A cue ends at . ? ! , ; : or a dash; a clause over 8 words splits before a
+    """Phrase cues on the real spoken word times. A cue ends at . ? ! , ; : or ...; a clause over 14 words splits before a
     conjunction or preposition near its middle; a cue of under 3 words joins its neighbour. Standalone dashes are not shown."""
     cues = []
     for bt in beats:
@@ -336,13 +337,10 @@ def srt_cues(beats):
                 c += len(x) + 1
         clauses, cur = [], []
         for i, x in enumerate(toks):
-            if x in ("\u2014", "-", "--"):   # a dash ends the clause and is not shown
-                if cur:
-                    clauses.append(cur)
-                    cur = []
+            if x in ("\u2014", "-", "--"):   # a dash is a stress mark for the voice: not a break and not shown
                 continue
             cur.append(i)
-            if re.search(r"[.?!,;:]$", x) and not re.search(r"\.\.\.$", x):
+            if re.search(r"[.?!,;:]$", x):
                 clauses.append(cur)
                 cur = []
         if cur:
@@ -376,6 +374,12 @@ def main(story_path, stills, vo_dir, out, music, sfx_files):
         bt["mp3"], bt["d"], bt["words"], bt["start"] = mp3, dur(mp3), word_times(al), t
         t += bt["d"] + bt.get("pause", GAP)   # a beat can ask for more air after its line (the voice direction)
     total = round(t + TAIL, 2)
+    if SRT_ONLY:   # rewrite the sidecar captions from the voice timings, no picture
+        def tc0(x):
+            ms = int(x * 1000)
+            return f"{ms // 3600000:02d}:{ms // 60000 % 60:02d}:{ms // 1000 % 60:02d},{ms % 1000:03d}"
+        Path(out).with_suffix(".srt").write_text("".join(f"{i}\n{tc0(a)} --> {tc0(b)}\n{x}\n\n" for i, (a, b, x) in enumerate(srt_cues(beats), 1)))
+        sys.exit(f"srt written: {Path(out).with_suffix('.srt')}")
     # flat shot list; a sub-shot starts at its anchor word (a hair early, so the picture leads the voice)
     shots, bi = [], 0
     for bn, bt in enumerate(beats):
@@ -494,6 +498,8 @@ def main(story_path, stills, vo_dir, out, music, sfx_files):
 if __name__ == "__main__":
     argv, opts = sys.argv[1:], {}
     CHECK_ONLY = "--check" in argv
+    SRT_ONLY = "--srt" in argv
+    argv = [a for a in argv if a != "--srt"]
     argv = [a for a in argv if a != "--check"]
     for key in ("--music", "--sfx"):
         if key in argv:
