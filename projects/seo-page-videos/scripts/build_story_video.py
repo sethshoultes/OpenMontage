@@ -36,6 +36,7 @@ CHECK_ONLY = False
 SRT_ONLY = False
 CLEAR = 0.90                  # the art may fill at most this fraction of the art box height (the rest is ground above the caption)
 MAX_HOLD = 5.8                # no single still stays on screen longer than this (s)
+ANCHOR_FIRST = False          # a story may anchor each beat's first caption on its word too (whisper word times)
 CAP_MAX = 99.0                # a story may set caption_max to clear a caption that outstays its words
 HOLD_MIN = 1.5                # a kinetic title stays at least 1.5 s
 ART_W, ART_H = 1680, 950      # the still is shown in the top 950 px; the bottom 130 px is the type band, so type never covers art
@@ -389,7 +390,8 @@ def main(story_path, stills, vo_dir, out, music, sfx_files):
     story = json.load(open(story_path))
     picked = json.load(open(Path(vo_dir) / "picked.json"))
     beats = story["beats"]
-    global PHRASE_LEAD, SRT_LEAD, CAP_MAX
+    global PHRASE_LEAD, SRT_LEAD, CAP_MAX, ANCHOR_FIRST
+    ANCHOR_FIRST = story.get("anchor_first", False)
     CAP_MAX = story.get("caption_max", CAP_MAX)
     PHRASE_LEAD, SRT_LEAD = story.get("phrase_lead", PHRASE_LEAD), story.get("srt_lead", SRT_LEAD)   # a story whose voice runs late can ask for more
     font = ImageFont.truetype(FONT, 96, index=1)
@@ -400,7 +402,13 @@ def main(story_path, stills, vo_dir, out, music, sfx_files):
         pk = picked["s" + bt["id"][1:]]
         mp3 = Path(vo_dir) / pk["file"]
         al = json.load(open(str(mp3)[:-4] + ".json"))
-        bt["mp3"], bt["d"], bt["words"], bt["start"] = mp3, dur(mp3), word_times(al), t
+        ww = Path(str(mp3)[:-4] + ".ww.json")   # whisper_words.py output: real word onsets, preferred when present
+        words = word_times(al)
+        if ww.exists():
+            real = json.load(open(ww))["words"]
+            assert len(real) == len(words), f"{ww.name}: {len(real)} whisper-aligned words vs {len(words)}"
+            words = [(w, x) for (w, _), (_, x) in zip(words, real)]
+        bt["mp3"], bt["d"], bt["words"], bt["start"] = mp3, dur(mp3), words, t
         t += bt["d"] + bt.get("pause", GAP)   # a beat can ask for more air after its line (the voice direction)
     total = round(t + TAIL, 2)
     if SRT_ONLY:   # rewrite the sidecar captions from the voice timings, no picture
@@ -433,7 +441,7 @@ def main(story_path, stills, vo_dir, out, music, sfx_files):
             m = next((i for i in range(j, len(bt["words"])) if bt["words"][i][0].startswith(anchor.lower())), None)
             if m is None:
                 sys.exit(f"{bt['id']}: kinetic anchor {anchor!r} not found")
-            ph.append((text, bt["start"] - bt.get("lead", 0) if not ph else max(ph[-1][1] + 0.6, bt["start"] + bt["words"][m][1] - PHRASE_LEAD + (delay[0] if delay else 0))))
+            ph.append((text, (max(bt["start"] - bt.get("lead", 0), bt["start"] + bt["words"][m][1] - PHRASE_LEAD + (delay[0] if delay else 0)) if ANCHOR_FIRST else bt["start"] - bt.get("lead", 0)) if not ph else max(ph[-1][1] + 0.6, bt["start"] + bt["words"][m][1] - PHRASE_LEAD + (delay[0] if delay else 0))))
             j = m + 1
         bt["phrases"] = ph
     for bt in beats:   # a caption wider than the frame is clipped on screen, so refuse to build it
@@ -485,7 +493,7 @@ def main(story_path, stills, vo_dir, out, music, sfx_files):
     def frame_of(i, tt):
         sh = shots[i]
         if imgs[i] is None:   # procedural shot: the animated end card
-            return endcard(max(0.0, tt - sh["at"]), CARD)
+            return endcard(max(0.0, tt - (sh["at"] - (shots[i - 1]["T"] if i else 0))), CARD)   # the card builds while it transitions in, not from black after
         u = (tt - sh["at"]) / max(1e-6, sh["end"] - sh["at"])
         z, cx, cy = camera(sh, min(max(u, 0), 1), i)
         src = imgs[i]
@@ -521,6 +529,13 @@ def main(story_path, stills, vo_dir, out, music, sfx_files):
         ms = int(s * 1000)
         return f"{ms // 3600000:02d}:{ms // 60000 % 60:02d}:{ms // 1000 % 60:02d},{ms % 1000:03d}"
     cues = srt_cues(beats)
+    for first, at in story.get("srt_at", []):   # srt_check.py --fix: a cue that starts at a measured time
+        for k, (a, b, x) in enumerate(cues):
+            if x.startswith(first):
+                cues[k] = (at, b, x)
+                if k:
+                    cues[k - 1] = (cues[k - 1][0], at, cues[k - 1][2])
+                break
     Path(out).with_suffix(".srt").write_text("".join(f"{i}\n{tc(a)} --> {tc(b)}\n{x}\n\n" for i, (a, b, x) in enumerate(cues, 1)))
     json.dump({"total": total, "shots": [{"still": sh["still"], "at": round(sh["at"], 2), "end": round(sh["end"], 2)} for sh in shots],
                "beats": [{"id": bt["id"], "start": round(bt["start"], 2), "dur": round(bt["d"], 2)} for bt in beats]},

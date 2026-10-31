@@ -22,9 +22,36 @@ CANON = [(r"\bseth\s*(?:sh|sch|s)\w*\b", "seth"), (r"\bsethshoultes\b", "seth"),
          (r"\bhouse\s*call\b", "housecall"), (r"\bchat\s*gpt\b", "chatgpt"), (r"\bservice\s*titan\b", "servicetitan"),
          (r"\bevent\s*espresso\b", "eventespresso"), (r"\bllms\s*(?:dot\s*)?txt\b", "llmstxt"), (r"\bwish\s*list\b", "wishlist"), (r"\bsuper\s*pro\b", "superpro"), (r"\bweb side\b", "website")]
 
+_ONES = "zero one two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen sixteen seventeen eighteen nineteen".split()
+_TENS = "_ _ twenty thirty forty fifty sixty seventy eighty ninety".split()
+
+
+def _below100(n):
+    return _ONES[n] if n < 20 else _TENS[n // 10] + ("" if n % 10 == 0 else " " + _ONES[n % 10])
+
+
+def _spoken(n, year=False):
+    """A whole number as it is said: 1865 as 'eighteen sixty five' when it reads as a year, 32300 as 'thirty two thousand three hundred'."""
+    if year and 1100 <= n <= 2099 and n % 100:
+        return _below100(n // 100) + " " + _below100(n % 100)
+    out = []
+    if n >= 1000:
+        out.append(_spoken(n // 1000) + " thousand")
+        n %= 1000
+    if n >= 100:
+        out.append(_ONES[n // 100] + " hundred")
+        n %= 100
+    if n or not out:
+        out.append(_below100(n))
+    return " ".join(out)
+
+
+def _numerals_to_words(t):
+    return re.sub(r"\b\d[\d,]*\d\b|\b\d\b", lambda m: _spoken(int(m.group().replace(",", "")), year="," not in m.group() and len(m.group()) == 4), t)
+
 
 def norm(t):
-    t = re.sub(r"\[[^\]]*\]", "", t.lower()).replace("\u2014", " ").replace("...", " ").replace("llms.txt", "llms txt")
+    t = _numerals_to_words(re.sub(r"\[[^\]]*\]", "", t.lower())).replace("\u2014", " ").replace("...", " ").replace("llms.txt", "llms txt")
     t = t.replace("$40,000", "40000 dollar").replace("40,000", "40000").replace("memberpress dot a i", "memberpress ai").replace("memberpress.ai", "memberpress ai")
     for k, v in NUM.items():
         t = t.replace(k, v)

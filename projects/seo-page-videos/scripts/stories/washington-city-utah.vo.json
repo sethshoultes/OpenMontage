@@ -1,0 +1,54 @@
+{
+ "shots": [
+  {
+   "id": "s01",
+   "vo": "Quick question... when someone new to Washington City searches for what you do... do they find you?",
+   "pace": 0.92
+  },
+  {
+   "id": "s02",
+   "vo": "This town grew up along the Virgin River... Settled in eighteen fifty-seven, by families sent here to grow cotton.",
+   "pace": 0.9
+  },
+  {
+   "id": "s03",
+   "vo": "The Washington Cotton Factory, built in eighteen sixty-five, still stands here. It's on the National Register of Historic Places.",
+   "pace": 0.91
+  },
+  {
+   "id": "s04",
+   "vo": "I live here too... along the same river. I'm Seth Shoultes, and I help local businesses get found online... and get more done with AI.",
+   "pace": 0.9
+  },
+  {
+   "id": "s05",
+   "vo": "It's a young, busy place. About thirty-two thousand three hundred people... and about thirteen thousand seven hundred fifty homes.",
+   "pace": 0.92
+  },
+  {
+   "id": "s06",
+   "vo": "Many people here are new to town. New neighbors search for a plumber, a dentist, or a landscaper. The business with a clear page and good reviews is the one they call.",
+   "pace": 0.9
+  },
+  {
+   "id": "s07",
+   "vo": "I offer AI services with SEO built in. Content, media, and interactive websites, made to be found.",
+   "pace": 0.92
+  },
+  {
+   "id": "s08",
+   "vo": "I've worked on search for almost twenty years. I owned a website development agency... and I worked inside a marketing department.",
+   "pace": 0.92
+  },
+  {
+   "id": "s09",
+   "vo": "In Southern Utah, I bought a garage door company, and took it to number one within three months. Then I sold it to a competitor.",
+   "pace": 0.9
+  },
+  {
+   "id": "s10",
+   "vo": "That's the playbook for a business in Washington City... So let's start with a call about your business. Seth Shoultes dot com.",
+   "pace": 0.88
+  }
+ ]
+}
