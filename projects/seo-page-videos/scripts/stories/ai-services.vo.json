@@ -12,8 +12,8 @@
   },
   {
    "id": "s03",
-   "vo": "That's my job. I offer AI services with SEO built in, so what I build for you is made to be found.",
-   "pace": 0.95
+   "vo": "I'm Seth Shoultes, in Southern Utah. I offer AI services with SEO built in \u2014 so what I build for you is made to be found.",
+   "pace": 0.93
   },
   {
    "id": "s04",
@@ -52,8 +52,8 @@
   },
   {
    "id": "s11",
-   "vo": "So let's start with a call about your business. Seth Shoultes dot com.",
-   "pace": 0.95
+   "vo": "Book a call, and tell me about your business. Seth Shoultes dot com.",
+   "pace": 0.92
   }
  ]
 }

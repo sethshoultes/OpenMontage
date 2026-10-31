@@ -6,7 +6,7 @@
  "beats": [
   {
    "id": "b01",
-   "vo": "Quick question. Is the software your home service company runs on... actually working for you?",
+   "vo": "Quick question. Are you getting the most out of the software... your home service company runs on?",
    "to_next": "push-left",
    "kinetic": [
     [
@@ -14,8 +14,8 @@
      "quick"
     ],
     [
-     "IS YOUR SOFTWARE WORKING?",
-     "software"
+     "MOST FROM YOUR SOFTWARE?",
+     "most"
     ]
    ],
    "shots": [
@@ -35,26 +35,10 @@
        0.5
       ]
      ]
-    }
-   ]
-  },
-  {
-   "id": "b02",
-   "vo": "Your company runs on it. The question is how much you get out of it.",
-   "to_next": "push-right",
-   "kinetic": [
-    [
-     "YOUR COMPANY RUNS ON IT",
-     "runs"
-    ],
-    [
-     "HOW MUCH DO YOU GET?",
-     "much"
-    ]
-   ],
-   "shots": [
+    },
     {
-     "still": "f02.png",
+     "still": "f_st.png",
+     "at": "software",
      "cam": [
       [
        0,
@@ -70,16 +54,17 @@
       ]
      ]
     }
-   ]
+   ],
+   "pause": 1.8
   },
   {
    "id": "b03",
-   "vo": "That's my job. I help home service businesses get more out of the software they run on.",
+   "vo": "I'm Seth Shoultes. I help home service businesses get more out of the software they run on.",
    "to_next": "wipe-up",
    "kinetic": [
     [
-     "THAT'S MY JOB.",
-     "that's"
+     "I'M SETH SHOULTES.",
+     "seth"
     ],
     [
      "GET MORE OUT OF IT",
@@ -88,7 +73,25 @@
    ],
    "shots": [
     {
+     "still": "f_name.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.06,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
      "still": "f03.png",
+     "at": "help",
      "cam": [
       [
        0,
@@ -104,7 +107,8 @@
       ]
      ]
     }
-   ]
+   ],
+   "pause": 0.8
   },
   {
    "id": "b04",
@@ -122,7 +126,7 @@
    ],
    "shots": [
     {
-     "still": "f04a.png",
+     "still": "f_st.png",
      "cam": [
       [
        0,
@@ -156,7 +160,8 @@
       ]
      ]
     }
-   ]
+   ],
+   "pause": 0.7
   },
   {
    "id": "b05",
@@ -170,6 +175,10 @@
     [
      "AWARDED EVERY MONTH",
      "every"
+    ],
+    [
+     "DEPENDABLE, TRANSPARENT",
+     "dependable"
     ]
    ],
    "shots": [
@@ -189,8 +198,45 @@
        0.5
       ]
      ]
+    },
+    {
+     "still": "a_month.png",
+     "at": "every",
+     "cam": [
+      [
+       0,
+       1.05,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.15,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "f_trust.png",
+     "at": "dependable",
+     "cam": [
+      [
+       0,
+       1.05,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.15,
+       0.5,
+       0.5
+      ]
+     ]
     }
-   ]
+   ],
+   "pause": 0.8
   },
   {
    "id": "b06",
@@ -249,8 +295,27 @@
        0.5
       ]
      ]
+    },
+    {
+     "still": "f_built.png",
+     "at": "built",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.06,
+       0.5,
+       0.5
+      ]
+     ]
     }
-   ]
+   ],
+   "pause": 0.8
   },
   {
    "id": "b07",
@@ -272,7 +337,25 @@
    ],
    "shots": [
     {
+     "still": "f_owned.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.06,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
      "still": "g09.png",
+     "at": "grew",
      "cam": [
       [
        0,
@@ -306,16 +389,21 @@
       ]
      ]
     }
-   ]
+   ],
+   "pause": 1.0
   },
   {
    "id": "b08",
-   "vo": "And I've built on the web for over twenty-five years.",
+   "vo": "And I've built on the web for over twenty-five years \u2014 so I can help you get more out of your software.",
    "to_next": "push-right",
    "kinetic": [
     [
      "OVER 25 YEARS",
      "twenty"
+    ],
+    [
+     "MORE OUT OF YOUR SOFTWARE",
+     "more"
     ]
    ],
    "shots": [
@@ -335,8 +423,27 @@
        0.5
       ]
      ]
+    },
+    {
+     "still": "f03.png",
+     "at": "so",
+     "cam": [
+      [
+       0,
+       1.05,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.15,
+       0.5,
+       0.5
+      ]
+     ]
     }
-   ]
+   ],
+   "pause": 0.8
   },
   {
    "id": "b09",
@@ -370,16 +477,21 @@
       ]
      ]
     }
-   ]
+   ],
+   "pause": 1.0
   },
   {
    "id": "b10",
-   "vo": "We start with a call about your business and the software you run it on. I'll tell you what I see, and what I'd do first. Seth Shoultes dot com.",
+   "vo": "Book a call, about your business and the software you run it on. I'll tell you what I see, and what I'd do first. Seth Shoultes dot com.",
    "to_next": "push-left",
    "kinetic": [
     [
-     "A CALL ABOUT YOUR BUSINESS",
-     "call"
+     "BOOK A CALL",
+     "book"
+    ],
+    [
+     "WHAT I SEE",
+     "see"
     ],
     [
      "WHAT I'D DO FIRST",
@@ -388,8 +500,7 @@
    ],
    "shots": [
     {
-     "still": "c05.png",
-     "tr": "circle-open",
+     "still": "n_call.png",
      "cam": [
       [
        0,
@@ -398,24 +509,49 @@
        0.5
       ],
       [
-       0.45,
-       1.0,
+       1,
+       1.1,
        0.5,
        0.5
-      ],
+      ]
+     ]
+    },
+    {
+     "still": "f_st.png",
+     "at": "software",
+     "cam": [
       [
-       0.52,
-       1.12,
+       0,
+       1.05,
        0.5,
        0.5
       ],
       [
        1,
-       1.12,
+       1.15,
        0.5,
        0.5
       ]
      ]
+    },
+    {
+     "still": "d14.png",
+     "at": "tell",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.1,
+       0.5,
+       0.5
+      ]
+     ],
+     "tr": "circle-open"
     },
     {
      "still": "proc:endcard",
@@ -424,5 +560,11 @@
     }
    ]
   }
- ]
+ ],
+ "endcard": {
+  "kicker": "ServiceTitan and Housecall Pro expert",
+  "site": "sethshoultes.com",
+  "path": "/field-service-software",
+  "sub": "I reply within two business days."
+ }
 }

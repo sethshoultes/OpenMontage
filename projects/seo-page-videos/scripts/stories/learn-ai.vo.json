@@ -7,13 +7,13 @@
   },
   {
    "id": "s02",
-   "vo": "You don't. I teach in plain words, and we start from your real work.",
-   "pace": 0.97
+   "vo": "You don't. I'm Seth Shoultes, and I teach in plain words \u2014 and we start from your real work.",
+   "pace": 0.95
   },
   {
    "id": "s03",
-   "vo": "That's my job. I help you learn AI by doing real work.",
-   "pace": 0.95
+   "vo": "I help you learn AI... by doing real work.",
+   "pace": 0.92
   },
   {
    "id": "s04",
@@ -42,8 +42,8 @@
   },
   {
    "id": "s09",
-   "vo": "Why learn from me? I've spoken and run workshops inside companies, on and off, for over twenty years.",
-   "pace": 0.97
+   "vo": "Why learn from me? I've spoken at small events and run workshops inside companies, on and off \u2014 for over twenty years.",
+   "pace": 0.95
   },
   {
    "id": "s10",
@@ -52,8 +52,8 @@
   },
   {
    "id": "s11",
-   "vo": "So let's start with a call. Tell me where you are with AI. Seth Shoultes dot com.",
-   "pace": 0.95
+   "vo": "Book a call, and tell me where you are with AI. Seth Shoultes dot com.",
+   "pace": 0.92
   }
  ]
 }

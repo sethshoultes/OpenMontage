@@ -6,7 +6,7 @@
  "beats": [
   {
    "id": "b01",
-   "vo": "Quick question. Is your Google Ads money bringing in customers... or just clicks?",
+   "vo": "Quick question. Are your Google Ads... and your search planned as one?",
    "to_next": "push-left",
    "kinetic": [
     [
@@ -14,42 +14,8 @@
      "quick"
     ],
     [
-     "CUSTOMERS OR JUST CLICKS?",
-     "customers"
-    ]
-   ],
-   "shots": [
-    {
-     "still": "g01.png",
-     "cam": [
-      [
-       0,
-       1.05,
-       0.5,
-       0.5
-      ],
-      [
-       1,
-       1.18,
-       0.5,
-       0.5
-      ]
-     ]
-    }
-   ]
-  },
-  {
-   "id": "b02",
-   "vo": "Ads and search work on the same customers. So they should be planned as one.",
-   "to_next": "push-right",
-   "kinetic": [
-    [
-     "THE SAME CUSTOMERS",
-     "same"
-    ],
-    [
-     "PLANNED AS ONE",
-     "planned"
+     "ADS AND SEARCH, AS ONE?",
+     "are"
     ]
    ],
    "shots": [
@@ -69,17 +35,71 @@
        0.5
       ]
      ]
+    },
+    {
+     "still": "g_ads.png",
+     "at": "search",
+     "cam": [
+      [
+       0,
+       1.05,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.15,
+       0.5,
+       0.5
+      ]
+     ]
     }
-   ]
+   ],
+   "pause": 1.4
+  },
+  {
+   "id": "b02",
+   "vo": "Ads and search work on the same customers. So they should be planned as one.",
+   "to_next": "push-right",
+   "kinetic": [
+    [
+     "THE SAME CUSTOMERS",
+     "same"
+    ],
+    [
+     "PLANNED AS ONE",
+     "planned"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "g06.png",
+     "cam": [
+      [
+       0,
+       1.05,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.18,
+       0.5,
+       0.5
+      ]
+     ]
+    }
+   ],
+   "pause": 1.0
   },
   {
    "id": "b03",
-   "vo": "That's my job. I'm an expert with Google Ads, and I have nearly twenty years of SEO behind me.",
+   "vo": "I'm Seth Shoultes. I'm an expert with Google Ads, with nearly twenty years of SEO behind me \u2014 and I help small businesses use the two together.",
    "to_next": "wipe-up",
    "kinetic": [
     [
-     "THAT'S MY JOB.",
-     "that's"
+     "I'M SETH SHOULTES.",
+     "seth"
     ],
     [
      "A GOOGLE ADS EXPERT",
@@ -88,6 +108,10 @@
     [
      "NEARLY 20 YEARS OF SEO",
      "twenty"
+    ],
+    [
+     "SMALL BUSINESSES",
+     "small"
     ]
    ],
    "shots": [
@@ -109,12 +133,30 @@
      ]
     },
     {
-     "still": "g04.png",
+     "still": "g_ads.png",
      "at": "expert",
      "cam": [
       [
        0,
        1.05,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.15,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "g_20.png",
+     "at": "twenty",
+     "cam": [
+      [
+       0,
+       1.1,
        0.5,
        0.5
       ],
@@ -127,28 +169,29 @@
      ]
     },
     {
-     "still": "d17.png",
-     "at": "twenty",
+     "still": "c07.png",
+     "at": "small",
      "cam": [
       [
        0,
-       1.2,
+       1.05,
        0.5,
        0.5
       ],
       [
        1,
-       1.4,
+       1.15,
        0.5,
        0.5
       ]
      ]
     }
-   ]
+   ],
+   "pause": 0.8
   },
   {
    "id": "b04",
-   "vo": "Google Ads. SEO. And both together... planned as one.",
+   "vo": "Google Ads. SEO. And both, together.",
    "to_next": "push-left",
    "kinetic": [
     [
@@ -166,7 +209,7 @@
    ],
    "shots": [
     {
-     "still": "g04.png",
+     "still": "g_ads.png",
      "cam": [
       [
        0,
@@ -176,25 +219,25 @@
       ],
       [
        1,
-       1.25,
+       1.2,
        0.5,
        0.5
       ]
      ]
     },
     {
-     "still": "d17.png",
+     "still": "g03.png",
      "at": "seo",
      "cam": [
       [
        0,
-       1.2,
+       1.05,
        0.5,
        0.5
       ],
       [
        1,
-       1.4,
+       1.2,
        0.5,
        0.5
       ]
@@ -218,25 +261,22 @@
       ]
      ]
     }
-   ]
+   ],
+   "pause": 0.9
   },
   {
    "id": "b05",
-   "vo": "SEO is the foundation of my work. Ads and SEO are best planned together.",
+   "vo": "SEO is the foundation of my work.",
    "to_next": "wipe-right",
    "kinetic": [
     [
      "SEO IS THE FOUNDATION",
      "foundation"
-    ],
-    [
-     "BEST PLANNED TOGETHER",
-     "together"
     ]
    ],
    "shots": [
     {
-     "still": "g03.png",
+     "still": "g_found.png",
      "cam": [
       [
        0,
@@ -252,7 +292,8 @@
       ]
      ]
     }
-   ]
+   ],
+   "pause": 0.8
   },
   {
    "id": "b06",
@@ -286,7 +327,8 @@
       ]
      ]
     }
-   ]
+   ],
+   "pause": 0.6
   },
   {
    "id": "b07",
@@ -338,7 +380,8 @@
       ]
      ]
     }
-   ]
+   ],
+   "pause": 0.6
   },
   {
    "id": "b08",
@@ -372,7 +415,8 @@
       ]
      ]
     }
-   ]
+   ],
+   "pause": 0.8
   },
   {
    "id": "b09",
@@ -390,7 +434,7 @@
    ],
    "shots": [
     {
-     "still": "g10.png",
+     "still": "n_call.png",
      "cam": [
       [
        0,
@@ -406,13 +450,18 @@
       ]
      ]
     }
-   ]
+   ],
+   "pause": 1.0
   },
   {
    "id": "b10",
-   "vo": "I'll tell you what I'd look at first. Seth Shoultes dot com.",
+   "vo": "Book a call, and I'll tell you what I'd look at first. Seth Shoultes dot com.",
    "to_next": "push-left",
    "kinetic": [
+    [
+     "BOOK A CALL",
+     "book"
+    ],
     [
      "WHAT I'D LOOK AT FIRST",
      "look"
@@ -420,8 +469,7 @@
    ],
    "shots": [
     {
-     "still": "c05.png",
-     "tr": "circle-open",
+     "still": "d14.png",
      "cam": [
       [
        0,
@@ -430,24 +478,13 @@
        0.5
       ],
       [
-       0.45,
-       1.0,
-       0.5,
-       0.5
-      ],
-      [
-       0.52,
-       1.15,
-       0.5,
-       0.5
-      ],
-      [
        1,
-       1.15,
+       1.1,
        0.5,
        0.5
       ]
-     ]
+     ],
+     "tr": "circle-open"
     },
     {
      "still": "proc:endcard",
@@ -456,5 +493,11 @@
     }
    ]
   }
- ]
+ ],
+ "endcard": {
+  "kicker": "Google Ads expert for small businesses",
+  "site": "sethshoultes.com",
+  "path": "/google-ads",
+  "sub": "I reply within two business days."
+ }
 }

@@ -29,11 +29,11 @@ INTRA = ["slide-left", "wipe-right", "circle-open", "push-right", "wipe-up"]
 PHRASE_LEAD = 0.25            # a caption appears this much before its spoken word, so it lands with the picture change
 GAP = 0.18                    # breath after each line
 LEAD = 0.35
-TAIL = 3.0                    # the closing card holds long enough to read the address and the button
+TAIL = 4.5                    # the closing card holds long enough to read the address and the button
 BAND_PX, BAND_MAX = 38, 120   # the caption sits in the bottom BAND_PX rows of the art box; at most BAND_MAX art pixels may reach into it
 CHECK_ONLY = False
 CLEAR = 0.90                  # the art may fill at most this fraction of the art box height (the rest is ground above the caption)
-MAX_HOLD = 6.0                # no single still stays on screen longer than this (s)
+MAX_HOLD = 5.8                # no single still stays on screen longer than this (s)
 HOLD_MIN = 1.5                # a kinetic title stays at least 1.5 s
 ART_W, ART_H = 1680, 950      # the still is shown in the top 950 px; the bottom 130 px is the type band, so type never covers art
 ART_X = (W - ART_W) // 2
@@ -72,16 +72,23 @@ def content_bottom(img):
     return (ys.max() + 1) / a.shape[0] if len(ys) else 0.0
 
 
+def content_top(img):
+    a = np.asarray(img).astype(np.int16)
+    rows = (np.abs(a - np.array(ground_of(img), dtype=np.int16)).max(axis=2) > 60).sum(axis=1)
+    ys = np.where(rows > 3)[0]
+    return ys.min() / a.shape[0] if len(ys) else 0.0
+
+
 def clamp_camera(sh, n, img):
     """Lower a waypoint's zoom until the art's bottom edge sits above the caption band (at most CLEAR of the art box)."""
-    b = content_bottom(img)
+    b, tp = content_bottom(img), content_top(img)
     pts = sh.get("cam") or [[0, 1.0, 0.5 - 0.02 * (-1) ** n, 0.5], [1, 1.07, 0.5 + 0.02 * (-1) ** n, 0.495]]
     out = []
     for u, z, cx, cy in pts:
         z0 = z
         while z > 1.0:
             y0 = min(max(cy - 0.5 / z, 0), 1 - 1 / z)
-            if (b - y0) * z <= CLEAR:
+            if (b - y0) * z <= CLEAR and y0 <= tp - 0.02:   # the art's bottom clears the caption and its top is not sliced
                 break
             z = round(z - 0.01, 2)
         if z != z0:
@@ -258,11 +265,11 @@ def endcard(t, card):
     back = lambda x: 1 + 2.70158 * (x - 1) ** 3 + 1.70158 * (x - 1) ** 2   # ease-out-back
     fnt = lambda s, b=1: ImageFont.truetype(FONT, s, index=b)
     mix = lambda k: tuple(int(c * k + g * (1 - k)) for c, g in zip(cream, ground))
-    for text, size in ((card["kicker"], 64), (card["site"], 168), (card.get("path", ""), 84), (card.get("sub", ""), 54)):
+    for text, size in ((card["kicker"], 72), (card["site"], 168), (card.get("path", ""), 84), (card.get("sub", ""), 62)):
         assert not text or d.textlength(text, font=fnt(size)) <= W - 240, f"end card line too wide: {text!r}"
     k0 = ease(t / 0.35)
     if k0 > 0:
-        d.text((W / 2, 205 + int((1 - k0) * 30)), card["kicker"], font=fnt(64), fill=mix(k0), anchor="mm")
+        d.text((W / 2, 205 + int((1 - k0) * 30)), card["kicker"], font=fnt(72), fill=mix(k0), anchor="mm")
     rw = int(150 * ease((t - 0.1) / 0.4))
     d.rectangle((W / 2 - rw, 285, W / 2 + rw, 293), fill=ORANGE)
     k = ease((t - 0.25) / 0.45)
@@ -280,38 +287,58 @@ def endcard(t, card):
         d.text((cx, cy), card["label"], font=fnt(int(84 * sc)), fill=ground, anchor="mm")
     ks = ease((t - 1.0) / 0.4)
     if ks > 0 and card.get("sub"):
-        d.text((W / 2, 930), card["sub"], font=fnt(54, 0), fill=mix(ks), anchor="mm")
+        d.text((W / 2, 930), card["sub"], font=fnt(62, 0), fill=mix(ks), anchor="mm")
     return im
 
 
+BREAK_BEFORE = {"and", "but", "so", "that", "because", "when", "if", "for", "with", "in", "on", "at", "to", "of", "from", "by", "or", "than", "about", "inside", "while"}
+
+
+def split_phrase(idx, toks):
+    """Split one clause (list of token indexes) of more than 8 words at the break word nearest its middle; both halves keep 3+ words."""
+    if len(idx) <= 8:
+        return [idx]
+    mid = len(idx) / 2
+    cands = [k for k in range(3, len(idx) - 2) if re.sub(r"[^a-z']", "", toks[idx[k]].lower()) in BREAK_BEFORE]
+    k = min(cands, key=lambda c: abs(c - mid)) if cands else int(mid)
+    return split_phrase(idx[:k], toks) + split_phrase(idx[k:], toks)
+
+
 def srt_cues(beats):
-    """Phrase cues on the real spoken word times: a cue ends at . ? ! , ; : or after 7 words; a one-word cue joins its neighbour."""
+    """Phrase cues on the real spoken word times. A cue ends at . ? ! , ; : or a dash; a clause over 8 words splits before a
+    conjunction or preposition near its middle; a cue of under 3 words joins its neighbour. Standalone dashes are not shown."""
     cues = []
     for bt in beats:
         toks = re.sub(r"\s+", " ", re.sub(r"\[[^\]]*\]", "", bt["vo"])).strip().split()
         times = [w[1] for w in bt["words"]]
         if len(toks) == len(times):
             starts = [bt["start"] + x for x in times]
-        else:   # the aligned words differ from the script tokens (a spelled-out URL, say): spread by character count
+        else:   # the aligned words differ from the script tokens: spread by character count
             total = sum(len(x) + 1 for x in toks)
             starts, c = [], 0
             for x in toks:
                 starts.append(bt["start"] + bt["d"] * c / total)
                 c += len(x) + 1
-        chunks, cur = [], []
+        clauses, cur = [], []
         for i, x in enumerate(toks):
+            if x in ("\u2014", "-", "--"):   # a dash ends the clause and is not shown
+                if cur:
+                    clauses.append(cur)
+                    cur = []
+                continue
             cur.append(i)
-            if re.search(r"[.?!,;:]$", x) or len(cur) >= 7:
-                chunks.append(cur)
+            if re.search(r"[.?!,;:]$", x) and not re.search(r"\.\.\.$", x):
+                clauses.append(cur)
                 cur = []
         if cur:
-            chunks.append(cur)
+            clauses.append(cur)
+        phrases = [p for c in clauses for p in split_phrase(c, toks)]
         merged = []
-        for c in chunks:
-            if merged and (len(c) == 1 or len(merged[-1]) == 1) and len(merged[-1]) + len(c) <= 8:
-                merged[-1] += c
+        for p in phrases:
+            if merged and (len(p) < 3 or len(merged[-1]) < 3) and len(merged[-1]) + len(p) <= 10:
+                merged[-1] += p
             else:
-                merged.append(c)
+                merged.append(p)
         for j, c in enumerate(merged):
             a = starts[c[0]]
             b = starts[merged[j + 1][0]] if j + 1 < len(merged) else bt["start"] + bt["d"]
@@ -367,7 +394,14 @@ def main(story_path, stills, vo_dir, out, music, sfx_files):
         sh["end"] = shots[i + 1]["at"] if i + 1 < n else total
         sh["T"] = BEAT_T if i + 1 < n and shots[i + 1]["beat"] != sh["beat"] else INTRA_T
     shots[0]["at"] = 0.0
-    long_holds = [(sh["still"], round(sh["at"], 1), round(sh["end"] - sh["at"], 1)) for sh in shots if sh["end"] - sh["at"] > MAX_HOLD and not sh["still"].startswith("proc:")]
+    long_holds, k = [], 0
+    while k < n:   # consecutive shots on the same still read as one hold
+        j = k
+        while j + 1 < n and shots[j + 1]["still"] == shots[k]["still"]:
+            j += 1
+        if not shots[k]["still"].startswith("proc:") and shots[j]["end"] - shots[k]["at"] > MAX_HOLD:
+            long_holds.append((shots[k]["still"], round(shots[k]["at"], 1), round(shots[j]["end"] - shots[k]["at"], 1)))
+        k = j + 1
     if long_holds:
         sys.exit(f"shots held longer than {MAX_HOLD} s (still, start, length): {long_holds}; add a second shot on a word anchor\ntimeline: " + ", ".join(f"{sh['still']}@{sh['at']:.1f}-{sh['end']:.1f}" for sh in shots))
     imgs = [None if sh["still"].startswith("proc:") else Image.open(Path(stills) / sh["still"]).convert("RGB") for sh in shots]

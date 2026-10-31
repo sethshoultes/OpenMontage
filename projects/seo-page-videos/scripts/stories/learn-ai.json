@@ -36,13 +36,22 @@
       ]
      ]
     }
-   ]
+   ],
+   "pause": 1.6
   },
   {
    "id": "b02",
-   "vo": "You don't. I teach in plain words, and we start from your real work.",
+   "vo": "You don't. I'm Seth Shoultes, and I teach in plain words \u2014 and we start from your real work.",
    "to_next": "push-right",
    "kinetic": [
+    [
+     "YOU DON'T.",
+     "don't"
+    ],
+    [
+     "I'M SETH SHOULTES.",
+     "seth"
+    ],
     [
      "PLAIN WORDS",
      "plain"
@@ -64,25 +73,44 @@
       ],
       [
        1,
-       1.18,
+       1.15,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "l_name.png",
+     "at": "seth",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.06,
        0.5,
        0.5
       ]
      ]
     }
-   ]
+   ],
+   "pause": 0.9
   },
   {
    "id": "b03",
-   "vo": "That's my job. I help you learn AI by doing real work.",
+   "vo": "I help you learn AI... by doing real work.",
    "to_next": "wipe-up",
    "kinetic": [
     [
-     "THAT'S MY JOB.",
-     "that's"
+     "I HELP YOU LEARN AI",
+     "help"
     ],
     [
-     "LEARN BY DOING",
+     "BY DOING REAL WORK",
      "doing"
     ]
    ],
@@ -104,7 +132,8 @@
       ]
      ]
     }
-   ]
+   ],
+   "pause": 1.0
   },
   {
    "id": "b04",
@@ -143,7 +172,7 @@
      ]
     },
     {
-     "still": "l04b.png",
+     "still": "l_path.png",
      "at": "careers",
      "cam": [
       [
@@ -178,7 +207,8 @@
       ]
      ]
     }
-   ]
+   ],
+   "pause": 0.8
   },
   {
    "id": "b05",
@@ -211,8 +241,27 @@
        0.5
       ]
      ]
+    },
+    {
+     "still": "l03.png",
+     "at": "plan",
+     "cam": [
+      [
+       0,
+       1.05,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.2,
+       0.5,
+       0.5
+      ]
+     ]
     }
-   ]
+   ],
+   "pause": 0.7
   },
   {
    "id": "b06",
@@ -224,8 +273,8 @@
      "workshop"
     ],
     [
-     "HANDS-ON",
-     "hands-on"
+     "FOR YOU AND YOUR PEOPLE",
+     "people"
     ]
    ],
    "shots": [
@@ -246,7 +295,8 @@
       ]
      ]
     }
-   ]
+   ],
+   "pause": 0.6
   },
   {
    "id": "b07",
@@ -280,7 +330,8 @@
       ]
      ]
     }
-   ]
+   ],
+   "pause": 0.6
   },
   {
    "id": "b08",
@@ -314,16 +365,25 @@
       ]
      ]
     }
-   ]
+   ],
+   "pause": 1.0
   },
   {
    "id": "b09",
-   "vo": "Why learn from me? I've spoken and run workshops inside companies, on and off, for over twenty years.",
+   "vo": "Why learn from me? I've spoken at small events and run workshops inside companies, on and off \u2014 for over twenty years.",
    "to_next": "wipe-up",
    "kinetic": [
     [
      "WHY LEARN FROM ME?",
      "why"
+    ],
+    [
+     "SMALL EVENTS",
+     "small"
+    ],
+    [
+     "WORKSHOPS IN COMPANIES",
+     "workshops"
     ],
     [
      "OVER 20 YEARS",
@@ -332,7 +392,43 @@
    ],
    "shots": [
     {
+     "still": "l_stage.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.1,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "l06.png",
+     "at": "workshops",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.1,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
      "still": "l09.png",
+     "at": "twenty",
      "cam": [
       [
        0,
@@ -348,7 +444,8 @@
       ]
      ]
     }
-   ]
+   ],
+   "pause": 0.8
   },
   {
    "id": "b10",
@@ -382,22 +479,26 @@
       ]
      ]
     }
-   ]
+   ],
+   "pause": 1.0
   },
   {
    "id": "b11",
-   "vo": "So let's start with a call. Tell me where you are with AI. Seth Shoultes dot com.",
+   "vo": "Book a call, and tell me where you are with AI. Seth Shoultes dot com.",
    "to_next": "push-left",
    "kinetic": [
     [
-     "LET'S START WITH A CALL",
-     "start"
+     "BOOK A CALL",
+     "book"
+    ],
+    [
+     "WHERE YOU ARE WITH AI",
+     "where"
     ]
    ],
    "shots": [
     {
      "still": "c05.png",
-     "tr": "circle-open",
      "cam": [
       [
        0,
@@ -406,24 +507,13 @@
        0.5
       ],
       [
-       0.45,
-       1.0,
-       0.5,
-       0.5
-      ],
-      [
-       0.52,
-       1.15,
-       0.5,
-       0.5
-      ],
-      [
        1,
-       1.15,
+       1.1,
        0.5,
        0.5
       ]
-     ]
+     ],
+     "tr": "circle-open"
     },
     {
      "still": "proc:endcard",
@@ -432,5 +522,11 @@
     }
    ]
   }
- ]
+ ],
+ "endcard": {
+  "kicker": "Learn AI with Seth Shoultes",
+  "site": "sethshoultes.com",
+  "path": "/learn-ai",
+  "sub": "I reply within two business days."
+ }
 }

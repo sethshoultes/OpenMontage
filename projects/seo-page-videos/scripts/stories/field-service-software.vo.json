@@ -2,18 +2,13 @@
  "shots": [
   {
    "id": "s01",
-   "vo": "Quick question. Is the software your home service company runs on... actually working for you?",
-   "pace": 1.0
-  },
-  {
-   "id": "s02",
-   "vo": "Your company runs on it. The question is how much you get out of it.",
+   "vo": "Quick question. Are you getting the most out of the software... your home service company runs on?",
    "pace": 0.97
   },
   {
    "id": "s03",
-   "vo": "That's my job. I help home service businesses get more out of the software they run on.",
-   "pace": 0.95
+   "vo": "I'm Seth Shoultes. I help home service businesses get more out of the software they run on.",
+   "pace": 0.93
   },
   {
    "id": "s04",
@@ -37,8 +32,8 @@
   },
   {
    "id": "s08",
-   "vo": "And I've built on the web for over twenty-five years.",
-   "pace": 1.0
+   "vo": "And I've built on the web for over twenty-five years \u2014 so I can help you get more out of your software.",
+   "pace": 0.97
   },
   {
    "id": "s09",
@@ -47,8 +42,8 @@
   },
   {
    "id": "s10",
-   "vo": "We start with a call about your business and the software you run it on. I'll tell you what I see, and what I'd do first. Seth Shoultes dot com.",
-   "pace": 0.96
+   "vo": "Book a call, about your business and the software you run it on. I'll tell you what I see, and what I'd do first. Seth Shoultes dot com.",
+   "pace": 0.92
   }
  ]
 }

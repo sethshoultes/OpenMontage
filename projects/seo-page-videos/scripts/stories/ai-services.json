@@ -35,8 +35,27 @@
        0.5
       ]
      ]
+    },
+    {
+     "still": "c07.png",
+     "at": "win",
+     "cam": [
+      [
+       0,
+       1.05,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.15,
+       0.5,
+       0.5
+      ]
+     ]
     }
-   ]
+   ],
+   "pause": 1.2
   },
   {
    "id": "b02",
@@ -66,25 +85,52 @@
       ]
      ]
     }
-   ]
+   ],
+   "pause": 1.0
   },
   {
    "id": "b03",
-   "vo": "That's my job. I offer AI services with SEO built in, so what I build for you is made to be found.",
+   "vo": "I'm Seth Shoultes, in Southern Utah. I offer AI services with SEO built in \u2014 so what I build for you is made to be found.",
    "to_next": "wipe-up",
    "kinetic": [
     [
-     "THAT'S MY JOB.",
-     "that's"
+     "I'M SETH SHOULTES.",
+     "seth"
+    ],
+    [
+     "SOUTHERN UTAH",
+     "southern"
     ],
     [
      "SEO BUILT IN",
-     "seo"
+     "built"
+    ],
+    [
+     "MADE TO BE FOUND",
+     "found"
     ]
    ],
    "shots": [
     {
+     "still": "w_utah.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.1,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
      "still": "a03.png",
+     "at": "offer",
      "cam": [
       [
        0,
@@ -99,8 +145,27 @@
        0.5
       ]
      ]
+    },
+    {
+     "still": "g11.png",
+     "at": "so",
+     "cam": [
+      [
+       0,
+       1.05,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.15,
+       0.5,
+       0.5
+      ]
+     ]
     }
-   ]
+   ],
+   "pause": 0.9
   },
   {
    "id": "b04",
@@ -133,8 +198,27 @@
        0.5
       ]
      ]
+    },
+    {
+     "still": "c07.png",
+     "at": "about",
+     "cam": [
+      [
+       0,
+       1.05,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.2,
+       0.5,
+       0.5
+      ]
+     ]
     }
-   ]
+   ],
+   "pause": 0.6
   },
   {
    "id": "b05",
@@ -167,8 +251,27 @@
        0.5
       ]
      ]
+    },
+    {
+     "still": "n03.png",
+     "at": "load",
+     "cam": [
+      [
+       0,
+       1.3,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.4,
+       0.5,
+       0.5
+      ]
+     ]
     }
-   ]
+   ],
+   "pause": 0.6
   },
   {
    "id": "b06",
@@ -186,27 +289,68 @@
     [
      "A BOOKING FLOW",
      "booking"
+    ],
+    [
+     "A PAGE THAT ANSWERS",
+     "answers"
     ]
    ],
    "shots": [
     {
-     "still": "n05.png",
+     "still": "n_tool.png",
      "cam": [
       [
        0,
-       1.15,
+       1.1,
        0.5,
        0.5
       ],
       [
        1,
-       1.3,
+       1.25,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "n_call.png",
+     "at": "booking",
+     "cam": [
+      [
+       0,
+       1.05,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.2,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "n07.png",
+     "at": "page",
+     "cam": [
+      [
+       0,
+       1.05,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.2,
        0.5,
        0.5
       ]
      ]
     }
-   ]
+   ],
+   "pause": 0.7
   },
   {
    "id": "b07",
@@ -224,7 +368,25 @@
    ],
    "shots": [
     {
-     "still": "a07.png",
+     "still": "a_month.png",
+     "cam": [
+      [
+       0,
+       1.05,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.2,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "g06.png",
+     "at": "build",
      "cam": [
       [
        0,
@@ -240,7 +402,8 @@
       ]
      ]
     }
-   ]
+   ],
+   "pause": 0.8
   },
   {
    "id": "b08",
@@ -296,7 +459,8 @@
       ]
      ]
     }
-   ]
+   ],
+   "pause": 0.8
   },
   {
    "id": "b09",
@@ -310,23 +474,27 @@
     [
      "MEMBERPRESS.AI",
      "memberpress"
+    ],
+    [
+     "RUNS A MEMBERSHIP SITE",
+     "runs"
     ]
    ],
    "shots": [
     {
-     "still": "a09a.png",
+     "still": "d15.png",
      "cam": [
       [
        0,
-       1.0,
+       1.1,
        0.5,
-       0.47
+       0.5
       ],
       [
        1,
-       1.05,
+       1.2,
        0.5,
-       0.47
+       0.5
       ]
      ]
     },
@@ -348,7 +516,8 @@
       ]
      ]
     }
-   ]
+   ],
+   "pause": 0.8
   },
   {
    "id": "b10",
@@ -387,18 +556,18 @@
      ]
     },
     {
-     "still": "d17.png",
-     "at": "almost",
+     "still": "g_20.png",
+     "at": "worked",
      "cam": [
       [
        0,
-       1.15,
+       1.1,
        0.5,
        0.5
       ],
       [
        1,
-       1.35,
+       1.25,
        0.5,
        0.5
       ]
@@ -406,7 +575,7 @@
     },
     {
      "still": "n10.png",
-     "at": "been",
+     "at": "know",
      "cam": [
       [
        0,
@@ -416,28 +585,32 @@
       ],
       [
        1,
-       1.45,
+       1.4,
        0.5,
        0.5
       ]
      ]
     }
-   ]
+   ],
+   "pause": 1.2
   },
   {
    "id": "b11",
-   "vo": "So let's start with a call about your business. Seth Shoultes dot com.",
+   "vo": "Book a call, and tell me about your business. Seth Shoultes dot com.",
    "to_next": "push-left",
    "kinetic": [
     [
-     "LET'S START WITH A CALL",
-     "start"
+     "BOOK A CALL",
+     "book"
+    ],
+    [
+     "ABOUT YOUR BUSINESS",
+     "about"
     ]
    ],
    "shots": [
     {
-     "still": "c05.png",
-     "tr": "circle-open",
+     "still": "n_call.png",
      "cam": [
       [
        0,
@@ -446,24 +619,13 @@
        0.5
       ],
       [
-       0.45,
-       1.0,
-       0.5,
-       0.5
-      ],
-      [
-       0.52,
-       1.15,
-       0.5,
-       0.5
-      ],
-      [
        1,
-       1.15,
+       1.1,
        0.5,
        0.5
       ]
-     ]
+     ],
+     "tr": "circle-open"
     },
     {
      "still": "proc:endcard",
@@ -472,5 +634,11 @@
     }
    ]
   }
- ]
+ ],
+ "endcard": {
+  "kicker": "AI services in Southern Utah",
+  "site": "sethshoultes.com",
+  "path": "/ai-services",
+  "sub": "I reply within two business days."
+ }
 }

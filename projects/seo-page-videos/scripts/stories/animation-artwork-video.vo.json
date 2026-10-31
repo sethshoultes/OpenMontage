@@ -6,14 +6,9 @@
    "pace": 1.0
   },
   {
-   "id": "s02",
-   "vo": "Words and photos only go so far. Motion and imagery can show what words can't.",
-   "pace": 0.97
-  },
-  {
    "id": "s03",
-   "vo": "That's my job. I build custom animations, artwork and video.",
-   "pace": 0.95
+   "vo": "I'm Seth Shoultes. I build custom animations, artwork, and video.",
+   "pace": 0.93
   },
   {
    "id": "s04",
@@ -22,8 +17,8 @@
   },
   {
    "id": "s05",
-   "vo": "I've done this since the 2000s, when I started with Macromedia Flash and ActionScript, alongside PHP and MySQL development.",
-   "pace": 1.02
+   "vo": "I've done this since the 2000s \u2014 when I started with Macromedia Flash and ActionScript.",
+   "pace": 0.95
   },
   {
    "id": "s06",
@@ -32,8 +27,8 @@
   },
   {
    "id": "s07",
-   "vo": "You can see the flyover video on each city page, and the illustrations on my case studies page.",
-   "pace": 1.0
+   "vo": "You can see the flyover video on each city page, such as St. George and Little Valley \u2014 and the illustrations on my case studies page.",
+   "pace": 0.97
   },
   {
    "id": "s08",
@@ -42,8 +37,8 @@
   },
   {
    "id": "s09",
-   "vo": "We start with a call about what you want to show, and where it will live. I'll tell you what I'd make. Seth Shoultes dot com.",
-   "pace": 0.96
+   "vo": "Book a call about what you want to show, and where it will live. I'll tell you what I'd make. Seth Shoultes dot com.",
+   "pace": 0.92
   }
  ]
 }

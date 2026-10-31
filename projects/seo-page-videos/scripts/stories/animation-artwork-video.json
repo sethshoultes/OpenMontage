@@ -36,50 +36,17 @@
       ]
      ]
     }
-   ]
-  },
-  {
-   "id": "b02",
-   "vo": "Words and photos only go so far. Motion and imagery can show what words can't.",
-   "to_next": "push-right",
-   "kinetic": [
-    [
-     "MOTION AND IMAGERY",
-     "motion"
-    ],
-    [
-     "WHAT WORDS CAN'T",
-     "words"
-    ]
    ],
-   "shots": [
-    {
-     "still": "v02.png",
-     "cam": [
-      [
-       0,
-       1.05,
-       0.5,
-       0.5
-      ],
-      [
-       1,
-       1.18,
-       0.5,
-       0.5
-      ]
-     ]
-    }
-   ]
+   "pause": 1.6
   },
   {
    "id": "b03",
-   "vo": "That's my job. I build custom animations, artwork and video.",
+   "vo": "I'm Seth Shoultes. I build custom animations, artwork, and video.",
    "to_next": "wipe-up",
    "kinetic": [
     [
-     "THAT'S MY JOB.",
-     "that's"
+     "I'M SETH SHOULTES.",
+     "seth"
     ],
     [
      "ANIMATION, ARTWORK, VIDEO",
@@ -104,7 +71,8 @@
       ]
      ]
     }
-   ]
+   ],
+   "pause": 0.8
   },
   {
    "id": "b04",
@@ -178,11 +146,12 @@
       ]
      ]
     }
-   ]
+   ],
+   "pause": 0.9
   },
   {
    "id": "b05",
-   "vo": "I've done this since the 2000s, when I started with Macromedia Flash and ActionScript, alongside PHP and MySQL development.",
+   "vo": "I've done this since the 2000s \u2014 when I started with Macromedia Flash and ActionScript.",
    "to_next": "slide-left",
    "kinetic": [
     [
@@ -192,10 +161,6 @@
     [
      "FLASH AND ACTIONSCRIPT",
      "flash"
-    ],
-    [
-     "PHP AND MYSQL",
-     "php"
     ]
    ],
    "shots": [
@@ -210,31 +175,32 @@
       ],
       [
        1,
-       1.12,
+       1.1,
        0.5,
        0.5
       ]
      ]
     },
     {
-     "still": "v05b.png",
-     "at": "php",
+     "still": "v_flash.png",
+     "at": "actionscript",
      "cam": [
       [
        0,
-       1.05,
+       1.0,
        0.5,
        0.5
       ],
       [
        1,
-       1.2,
+       1.06,
        0.5,
        0.5
       ]
      ]
     }
-   ]
+   ],
+   "pause": 0.7
   },
   {
    "id": "b06",
@@ -268,16 +234,21 @@
       ]
      ]
     }
-   ]
+   ],
+   "pause": 0.8
   },
   {
    "id": "b07",
-   "vo": "You can see the flyover video on each city page, and the illustrations on my case studies page.",
+   "vo": "You can see the flyover video on each city page, such as St. George and Little Valley \u2014 and the illustrations on my case studies page.",
    "to_next": "push-left",
    "kinetic": [
     [
      "FLYOVER VIDEO",
      "flyover"
+    ],
+    [
+     "ST. GEORGE, LITTLE VALLEY",
+     "george"
     ],
     [
      "CASE-STUDY ILLUSTRATIONS",
@@ -303,6 +274,24 @@
      ]
     },
     {
+     "still": "v_city.png",
+     "at": "george",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.06,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
      "still": "v07b.png",
      "at": "illustrations",
      "cam": [
@@ -314,13 +303,14 @@
       ],
       [
        1,
-       1.15,
+       1.12,
        0.5,
        0.5
       ]
      ]
     }
-   ]
+   ],
+   "pause": 0.8
   },
   {
    "id": "b08",
@@ -354,13 +344,18 @@
       ]
      ]
     }
-   ]
+   ],
+   "pause": 0.9
   },
   {
    "id": "b09",
-   "vo": "We start with a call about what you want to show, and where it will live. I'll tell you what I'd make. Seth Shoultes dot com.",
+   "vo": "Book a call about what you want to show, and where it will live. I'll tell you what I'd make. Seth Shoultes dot com.",
    "to_next": "push-left",
    "kinetic": [
+    [
+     "BOOK A CALL",
+     "book"
+    ],
     [
      "WHAT YOU WANT TO SHOW",
      "want"
@@ -372,8 +367,7 @@
    ],
    "shots": [
     {
-     "still": "c05.png",
-     "tr": "circle-open",
+     "still": "n_call.png",
      "cam": [
       [
        0,
@@ -382,24 +376,13 @@
        0.5
       ],
       [
-       0.45,
-       1.0,
-       0.5,
-       0.5
-      ],
-      [
-       0.52,
-       1.15,
-       0.5,
-       0.5
-      ],
-      [
        1,
-       1.15,
+       1.1,
        0.5,
        0.5
       ]
-     ]
+     ],
+     "tr": "circle-open"
     },
     {
      "still": "proc:endcard",
@@ -408,5 +391,11 @@
     }
    ]
   }
- ]
+ ],
+ "endcard": {
+  "kicker": "Animation, artwork and video",
+  "site": "sethshoultes.com",
+  "path": "/animation-artwork-video",
+  "sub": "I reply within two business days."
+ }
 }
