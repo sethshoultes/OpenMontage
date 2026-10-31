@@ -25,7 +25,9 @@ def main(out, cards):
     n = len(cards)
     cols = 1 if n == 1 else 2
     rows = (n + cols - 1) // cols
-    cw, ch = (1500, 560) if n == 1 else (900, 360)
+    if n == 2:   # a two-card row: big, equal type, an orange check or minus for "+" and "-" cards
+        cols, rows = 2, 1
+    cw, ch = (1500, 560) if n == 1 else ((1120, 640) if n == 2 else (900, 360))
     gap = 60
     x0 = (W - (cols * cw + (cols - 1) * gap)) // 2
     y0 = (H - (rows * ch + (rows - 1) * gap)) // 2
@@ -35,9 +37,19 @@ def main(out, cards):
         d.rounded_rectangle((x, y, x + cw, y + ch), 40, fill=CREAM)
         d.rounded_rectangle((x, y, x + cw, y + 40), 20, fill=ORANGE)
         d.rectangle((x, y + 20, x + cw, y + 40), fill=ORANGE)
-        f = fit(d, title, cw - 120, 150 if n == 1 else 110)
+        mark = title[0] if title[:1] in "+-" else ""
+        title = title[1:] if mark else title
+        sizes = [fit(d, t.partition("|")[0].lstrip("+-"), cw - 120, 150 if n == 1 else (118 if n == 2 else 110)).size for t in cards]
+        f = ImageFont.truetype(FONT, min(sizes), index=1)   # every card in a set uses the same type size
         assert d.textlength(title, font=f) <= cw - 120, title
-        ty = y + ch / 2 + (-30 if small else 20)
+        ty = y + ch / 2 + (-30 if small else 20) + (60 if mark else 0)
+        if mark:
+            cx, cy, r = x + cw / 2, y + 190, 90
+            d.ellipse((cx - r, cy - r, cx + r, cy + r), fill=ORANGE)
+            if mark == "+":
+                d.line([(cx - 44, cy + 4), (cx - 12, cy + 36), (cx + 46, cy - 34)], fill=CREAM, width=22, joint="curve")
+            else:
+                d.line([(cx - 44, cy), (cx + 44, cy)], fill=CREAM, width=22)
         d.text((x + cw / 2, ty), title, font=f, fill=INK, anchor="mm")
         if small:
             fs = fit(d, small, cw - 160, 90)

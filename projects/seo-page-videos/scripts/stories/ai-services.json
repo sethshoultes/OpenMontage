@@ -200,8 +200,8 @@
      ]
     },
     {
-     "still": "c07.png",
-     "at": "about",
+     "still": "ai_voice.png",
+     "at": "voice",
      "cam": [
       [
        0,
@@ -211,7 +211,7 @@
       ],
       [
        1,
-       1.2,
+       1.15,
        0.5,
        0.5
       ]
@@ -556,36 +556,36 @@
      ]
     },
     {
-     "still": "g_20.png",
+     "still": "a03.png",
      "at": "worked",
      "cam": [
       [
        0,
-       1.1,
+       1.05,
        0.5,
        0.5
       ],
       [
        1,
-       1.25,
+       1.15,
        0.5,
        0.5
       ]
      ]
     },
     {
-     "still": "n10.png",
-     "at": "know",
+     "still": "ai_store.png",
+     "at": "because",
      "cam": [
       [
        0,
-       1.2,
+       1.05,
        0.5,
        0.5
       ],
       [
        1,
-       1.4,
+       1.15,
        0.5,
        0.5
       ]
@@ -610,7 +610,7 @@
    ],
    "shots": [
     {
-     "still": "n_call.png",
+     "still": "wd_call3.png",
      "cam": [
       [
        0,

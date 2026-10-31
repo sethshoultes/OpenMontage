@@ -300,7 +300,7 @@ def endcard(t, card):
         cx, cy = W / 2, 760
         d.rounded_rectangle((cx - bw / 2 + 12, cy - bh / 2 + 12, cx + bw / 2 + 12, cy + bh / 2 + 12), bh // 2, fill=(70, 38, 20))
         d.rounded_rectangle((cx - bw / 2, cy - bh / 2, cx + bw / 2, cy + bh / 2), bh // 2, fill=ORANGE)
-        d.text((cx, cy), card["label"], font=fnt(int(84 * sc)), fill=ground, anchor="mm")
+        d.text((cx, cy), card["label"], font=fnt(max(8, int(84 * sc))), fill=ground, anchor="mm")
     ks = ease((t - 0.5) / 0.3)
     if ks > 0 and card.get("sub"):
         d.text((W / 2, 930), card["sub"], font=fnt(62, 0), fill=mix(ks), anchor="mm")
@@ -337,10 +337,13 @@ def srt_cues(beats):
                 c += len(x) + 1
         clauses, cur = [], []
         for i, x in enumerate(toks):
-            if x in ("\u2014", "-", "--"):   # a dash is a stress mark for the voice: not a break and not shown
+            if x in ("\u2014", "-", "--"):   # a dash is a stress mark for the voice, not shown; it breaks a long clause
+                if len(cur) >= 6:
+                    clauses.append(cur)
+                    cur = []
                 continue
             cur.append(i)
-            if re.search(r"[.?!,;:]$", x):
+            if re.search(r"[.?!,;:]$", x) and x.lower().rstrip(",;:") not in ("st.", "dr.", "mr.", "mrs.", "ms.", "no."):
                 clauses.append(cur)
                 cur = []
         if cur:
