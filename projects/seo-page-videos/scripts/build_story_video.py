@@ -36,6 +36,7 @@ CHECK_ONLY = False
 SRT_ONLY = False
 CLEAR = 0.90                  # the art may fill at most this fraction of the art box height (the rest is ground above the caption)
 MAX_HOLD = 5.8                # no single still stays on screen longer than this (s)
+CAP_MAX = 99.0                # a story may set caption_max to clear a caption that outstays its words
 HOLD_MIN = 1.5                # a kinetic title stays at least 1.5 s
 ART_W, ART_H = 1680, 950      # the still is shown in the top 950 px; the bottom 130 px is the type band, so type never covers art
 ART_X = (W - ART_W) // 2
@@ -194,13 +195,14 @@ def blend(a, b, kind, k):
     return a * (1 - k) + b * k
 
 
-def type_overlay(phrases, t, font, beat_end):
+def type_overlay(phrases, t, font, beat_end, holds=None):
     """RGBA kinetic title for time t. Each phrase pops in word by word and holds until the next phrase arrives (the band is never
     empty while he is speaking); the last one holds to the end of the line. A title is on screen at least HOLD_MIN seconds."""
     act = None
     for i, (text, t0) in enumerate(phrases):
         end = phrases[i + 1][1] if i + 1 < len(phrases) else beat_end + 0.3
         end = max(end, t0 + HOLD_MIN) if i + 1 == len(phrases) else end
+        end = min(end, t0 + (holds or {}).get(text, CAP_MAX))   # a caption leaves after CAP_MAX s (or its own hold) even if the line goes on
         if t0 <= t < end + 0.12:
             act = (text, t0, end)
     if not act:
@@ -322,8 +324,8 @@ BREAK_BEFORE = {"and", "but", "so", "that", "because", "when", "if", "for", "wit
 
 
 def split_phrase(idx, toks):
-    """Split one clause (list of token indexes) of more than 14 words at the break word nearest its middle; both halves keep 3+ words."""
-    if len(idx) <= 14:
+    """Split one clause (list of token indexes) of more than 12 words at the break word nearest its middle; both halves keep 3+ words."""
+    if len(idx) <= 12:
         return [idx]
     mid = len(idx) / 2
     cands = [k for k in range(3, len(idx) - 2) if re.sub(r"[^a-z']", "", toks[idx[k]].lower()) in BREAK_BEFORE]
@@ -332,14 +334,24 @@ def split_phrase(idx, toks):
 
 
 def srt_cues(beats):
-    """Phrase cues on the real spoken word times. A cue ends at . ? ! , ; : or ...; a clause over 14 words splits before a
+    """Phrase cues on the real spoken word times. A cue ends at . ? ! , ; : or ...; a clause over 12 words splits before a
     conjunction or preposition near its middle; a cue of under 3 words joins its neighbour. Standalone dashes are not shown."""
     cues = []
     for bt in beats:
         toks = re.sub(r"\s+", " ", re.sub(r"\[[^\]]*\]", "", bt["vo"])).strip().split()
         times = [w[1] for w in bt["words"]]
+        if len(toks) == len(times) and bt.get("srt_drop"):   # words the take leaves out stay out of the captions
+            keep = [i for i in range(len(toks)) if i not in bt["srt_drop"]]
+            toks, times = [toks[i] for i in keep], [times[i] for i in keep]
+            for i in bt["srt_drop"]:
+                if i < len(toks):
+                    toks[i] = toks[i][:1].upper() + toks[i][1:]   # the word after a dropped one starts the sentence
         if len(toks) == len(times):
             starts = [max(bt["start"] - max(bt.get("lead", 0), 0), bt["start"] + x - bt.get("srt_lead", SRT_LEAD)) for x in times]
+            if bt.get("srt_tail"):   # the closing words are spoken later than aligned: [first token index, lead] for them
+                for i in range(bt["srt_tail"][0], len(starts)):
+                    starts[i] = bt["start"] + times[i] - bt["srt_tail"][1]
+            starts[0] += bt.get("srt_first", 0)   # the take starts later than its aligned first word
         else:   # the aligned words differ from the script tokens: spread by character count
             total = sum(len(x) + 1 for x in toks)
             starts, c = [], 0
@@ -362,7 +374,7 @@ def srt_cues(beats):
         phrases = [p for c in clauses for p in split_phrase(c, toks)]
         merged = []
         for p in phrases:
-            if merged and (len(p) < 3 or len(merged[-1]) < 3) and len(merged[-1]) + len(p) <= 10:
+            if merged and (len(p) < 3 or len(merged[-1]) < 3) and len(merged[-1]) + len(p) <= 10 and not (len(p) < 3 <= len(merged[-1]) and re.search(r"[.?!]$", toks[merged[-1][-1]])):
                 merged[-1] += p
             else:
                 merged.append(p)
@@ -377,7 +389,8 @@ def main(story_path, stills, vo_dir, out, music, sfx_files):
     story = json.load(open(story_path))
     picked = json.load(open(Path(vo_dir) / "picked.json"))
     beats = story["beats"]
-    global PHRASE_LEAD, SRT_LEAD
+    global PHRASE_LEAD, SRT_LEAD, CAP_MAX
+    CAP_MAX = story.get("caption_max", CAP_MAX)
     PHRASE_LEAD, SRT_LEAD = story.get("phrase_lead", PHRASE_LEAD), story.get("srt_lead", SRT_LEAD)   # a story whose voice runs late can ask for more
     font = ImageFont.truetype(FONT, 96, index=1)
     CARD = {"label": CFG["cta"], **story["endcard"]}   # every story states its own card: place line, address, reply promise
@@ -401,7 +414,7 @@ def main(story_path, stills, vo_dir, out, music, sfx_files):
     for bn, bt in enumerate(beats):
         j = 0
         for k, sh in enumerate(bt["shots"]):
-            at = bt["start"] - (bt.get("lead", 0) if k == 0 else 0)   # a beat whose voice starts before its slot asks for an earlier cut
+            at = bt["start"] - (max(bt.get("lead", 0), 0) if k == 0 else 0)   # a beat whose voice starts before its slot asks for an earlier cut
             if sh.get("at"):
                 m = next((i for i in range(j, len(bt["words"])) if bt["words"][i][0].startswith(sh["at"].lower())), None)
                 if m is None:
@@ -412,7 +425,11 @@ def main(story_path, stills, vo_dir, out, music, sfx_files):
                           "tr": bt["to_next"] if k == len(bt["shots"]) - 1 else sh.get("tr", INTRA[(len(shots)) % len(INTRA)])})
         # kinetic phrases for the beat, absolute time, anchored on the spoken word (searched in order)
         ph, j = [], 0
-        for text, anchor, *delay in bt["kinetic"]:   # an optional third value holds a phrase back (seconds)
+        bt["holds"] = {}
+        for text, anchor, *extra in bt["kinetic"]:
+            delay = extra[:1]
+            if len(extra) > 1:
+                bt["holds"][text] = extra[1]   # an optional third value holds a phrase back (seconds)
             m = next((i for i in range(j, len(bt["words"])) if bt["words"][i][0].startswith(anchor.lower())), None)
             if m is None:
                 sys.exit(f"{bt['id']}: kinetic anchor {anchor!r} not found")
@@ -489,9 +506,11 @@ def main(story_path, stills, vo_dir, out, music, sfx_files):
         else:
             frame = np.asarray(frame_of(i, tt), dtype=np.float32)
         img = Image.fromarray(np.clip(frame, 0, 255).astype(np.uint8))
-        if not sh["notype"] or (i + 1 < n and tt >= sh["end"] - sh["T"] and not shots[i + 1]["notype"]):
+        if sh["still"].startswith("proc:"):
+            pass   # nothing is laid over the end card
+        elif not sh["notype"] or (i + 1 < n and tt >= sh["end"] - sh["T"] and not shots[i + 1]["notype"]):
             bt = beats[sh["beat"]]
-            ov = type_overlay(bt["phrases"], tt, font, bt["start"] + bt["d"])
+            ov = type_overlay(bt["phrases"], tt, font, bt["start"] + bt["d"], bt.get("holds"))
             if ov is not None:
                 img = Image.alpha_composite(img.convert("RGBA"), ov).convert("RGB")
         ff.stdin.write(img.tobytes())

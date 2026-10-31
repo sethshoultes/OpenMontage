@@ -6,12 +6,17 @@
  "beats": [
   {
    "id": "b01",
-   "vo": "Quick question. Who's searching for your business in St. George... a neighbor, or a visitor?",
+   "vo": "Quick question... who's searching for your business in St. George? ... A neighbor, or a visitor?",
    "to_next": "push-left",
    "kinetic": [
     [
      "QUICK QUESTION.",
      "quick"
+    ],
+    [
+     "WHO'S SEARCHING?",
+     "searching",
+     -0.3
     ],
     [
      "A NEIGHBOR OR A VISITOR?",
@@ -20,63 +25,7 @@
    ],
    "shots": [
     {
-     "still": "s01.png",
-     "cam": [
-      [
-       0,
-       1.05,
-       0.5,
-       0.5
-      ],
-      [
-       1,
-       1.15,
-       0.5,
-       0.5
-      ]
-     ]
-    }
-   ]
-  },
-  {
-   "id": "b02",
-   "vo": "St. George is the biggest city in Southern Utah. Settled in 1861. About ninety-five thousand people at the 2020 census.",
-   "to_next": "push-right",
-   "kinetic": [
-    [
-     "SOUTHERN UTAH'S BIGGEST",
-     "biggest"
-    ],
-    [
-     "SETTLED IN 1861",
-     "settled"
-    ],
-    [
-     "95,342 PEOPLE, 2020 CENSUS",
-     "ninety-five"
-    ]
-   ],
-   "shots": [
-    {
-     "still": "s02.png",
-     "cam": [
-      [
-       0,
-       1.0,
-       0.5,
-       0.5
-      ],
-      [
-       1,
-       1.1,
-       0.5,
-       0.5
-      ]
-     ]
-    },
-    {
-     "still": "s03.png",
-     "at": "ninety-five",
+     "still": "g01.png",
      "cam": [
       [
        0,
@@ -91,17 +40,118 @@
        0.5
       ]
      ]
+    },
+    {
+     "still": "g10.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.0,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "business"
     }
+   ],
+   "pause": 1.6
+  },
+  {
+   "id": "b02",
+   "vo": "St. George is the biggest city in Southern Utah. Settled in 1861. And about ninety-five thousand people... at the 2020 census.",
+   "to_next": "push-right",
+   "kinetic": [
+    [
+     "BIGGEST CITY",
+     "biggest"
+    ],
+    [
+     "IN SOUTHERN UTAH",
+     "southern",
+     0,
+     1.0
+    ]
+   ],
+   "shots": [
+    {
+     "still": "g02.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "t_1861.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "settled"
+    },
+    {
+     "still": "t_pop.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "ninety-five"
+    }
+   ],
+   "pause": 0.9,
+   "lead": -1.0,
+   "srt_drop": [
+    12
    ]
   },
   {
    "id": "b03",
-   "vo": "And many of your customers haven't arrived yet. The St. George Marathon and Ironman races bring people who search before they come.",
+   "vo": "But many of your customers... haven't arrived yet. The St. George Marathon and Ironman races bring people who search before they come.",
    "to_next": "wipe-up",
    "kinetic": [
     [
      "MANY HAVEN'T ARRIVED YET",
-     "haven't"
+     "many",
+     0.2
+    ],
+    [
+     "MARATHON AND IRONMAN",
+     "marathon"
     ],
     [
      "THEY SEARCH FIRST",
@@ -110,27 +160,66 @@
    ],
    "shots": [
     {
-     "still": "s04.png",
+     "still": "g12.png",
      "cam": [
       [
        0,
-       1.05,
+       1.0,
        0.5,
        0.5
       ],
       [
        1,
-       1.15,
+       1.08,
        0.5,
        0.5
       ]
      ]
+    },
+    {
+     "still": "g03.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "marathon"
+    },
+    {
+     "still": "g04.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "search"
     }
-   ]
+   ],
+   "pause": 1.2,
+   "lead": -0.6,
+   "srt_first": 0.45
   },
   {
    "id": "b04",
-   "vo": "That's my job. I live next door, in Washington City. I help St. George businesses get found by neighbors and visitors, and get more done with AI.",
+   "vo": "That's my job. I live right next door, in Washington City. I help St. George businesses get found, by neighbors and visitors... and get more done with AI.",
    "to_next": "push-left",
    "kinetic": [
     [
@@ -138,8 +227,10 @@
      "that's"
     ],
     [
-     "IN WASHINGTON CITY",
-     "next"
+     "I LIVE NEXT DOOR",
+     "next",
+     0,
+     1.7
     ],
     [
      "FOUND BY BOTH",
@@ -148,139 +239,61 @@
    ],
    "shots": [
     {
-     "still": "s05.png",
+     "still": "g05.png",
      "cam": [
       [
        0,
-       1.05,
+       1.0,
        0.5,
        0.5
       ],
       [
        1,
-       1.15,
+       1.08,
        0.5,
        0.5
       ]
      ]
-    }
-   ]
-  },
-  {
-   "id": "b05",
-   "vo": "For businesses that serve neighbors: pages about your service and your area, that a new resident can find on day one.",
-   "to_next": "slide-left",
-   "kinetic": [
-    [
-     "SERVING NEIGHBORS",
-     "neighbors"
-    ],
-    [
-     "FOUND ON DAY ONE",
-     "day"
-    ]
-   ],
-   "shots": [
+    },
     {
-     "still": "s06.png",
+     "still": "t_wash.png",
      "cam": [
       [
        0,
-       1.05,
+       1.0,
        0.5,
        0.5
       ],
       [
        1,
-       1.15,
+       1.08,
        0.5,
        0.5
       ]
-     ]
-    }
-   ]
-  },
-  {
-   "id": "b06",
-   "vo": "For businesses that serve visitors: clear pages and answers that AI assistants can quote.",
-   "to_next": "wipe-right",
-   "kinetic": [
-    [
-     "SERVING VISITORS",
-     "visitors"
-    ],
-    [
-     "ANSWERS AI CAN QUOTE",
-     "quote"
-    ]
-   ],
-   "shots": [
+     ],
+     "at": "washington"
+    },
     {
-     "still": "s07.png",
+     "still": "g11.png",
      "cam": [
       [
        0,
-       1.05,
+       1.0,
        0.5,
        0.5
       ],
       [
        1,
-       1.15,
+       1.08,
        0.5,
        0.5
       ]
-     ]
-    }
-   ]
-  },
-  {
-   "id": "b07",
-   "vo": "And for restaurants, shops and services in between, pages for each.",
-   "to_next": "push-left",
-   "kinetic": [
-    [
-     "IN BETWEEN: PAGES FOR EACH",
-     "between"
-    ]
-   ],
-   "shots": [
+     ],
+     "at": "found"
+    },
     {
-     "still": "s08.png",
-     "cam": [
-      [
-       0,
-       1.05,
-       0.5,
-       0.5
-      ],
-      [
-       1,
-       1.15,
-       0.5,
-       0.5
-      ]
-     ]
-    }
-   ]
-  },
-  {
-   "id": "b08",
-   "vo": "Add a university, and about twelve and a half thousand students in 2023. Your customers search in different ways. One page rarely serves them all.",
-   "to_next": "push-right",
-   "kinetic": [
-    [
-     "12,567 STUDENTS, 2023",
-     "twelve"
-    ],
-    [
-     "ONE PAGE RARELY SERVES ALL",
-     "rarely"
-    ]
-   ],
-   "shots": [
-    {
-     "still": "s09.png",
+     "still": "t_ai.png",
+     "at": "more",
      "cam": [
       [
        0,
@@ -296,7 +309,235 @@
       ]
      ]
     }
-   ]
+   ],
+   "pause": 1.3
+  },
+  {
+   "id": "b05",
+   "vo": "For businesses that serve neighbors: pages about your service and your area, that a new resident can find on day one.",
+   "to_next": "slide-left",
+   "kinetic": [
+    [
+     "SERVING NEIGHBORS",
+     "serve"
+    ],
+    [
+     "A NEW RESIDENT",
+     "new"
+    ],
+    [
+     "FOUND ON DAY ONE",
+     "day"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "g06.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "g13.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "pages"
+    }
+   ],
+   "pause": 0.6,
+   "lead": -0.8
+  },
+  {
+   "id": "b06",
+   "vo": "For businesses that serve visitors: clear pages, and answers that AI assistants can quote.",
+   "to_next": "wipe-right",
+   "kinetic": [
+    [
+     "SERVING VISITORS",
+     "serve"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "g07.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "t_clear.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "clear"
+    }
+   ],
+   "pause": 0.6,
+   "lead": -0.75
+  },
+  {
+   "id": "b07",
+   "vo": "And for restaurants, shops and services in between... pages for each.",
+   "to_next": "push-left",
+   "kinetic": [
+    [
+     "RESTAURANTS AND SHOPS",
+     "restaurants"
+    ],
+    [
+     "IN BETWEEN",
+     "between"
+    ],
+    [
+     "PAGES FOR EACH",
+     "pages"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "g08.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ]
+    }
+   ],
+   "pause": 1.0,
+   "lead": -0.25
+  },
+  {
+   "id": "b08",
+   "vo": "There's also a university... and about twelve and a half thousand students in 2023. Your customers search in different ways. One page... rarely serves them all.",
+   "to_next": "push-right",
+   "kinetic": [
+    [
+     "A UNIVERSITY",
+     "university",
+     0,
+     1.2
+    ],
+    [
+     "THEY SEARCH DIFFERENTLY",
+     "customers"
+    ],
+    [
+     "ONE PAGE RARELY SERVES ALL",
+     "one"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "g09.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "t_students.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "twelve"
+    },
+    {
+     "still": "t_neighbors.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "different"
+    }
+   ],
+   "pause": 1.4,
+   "lead": -0.8,
+   "srt_lead": 0.45
   },
   {
    "id": "b09",
@@ -304,8 +545,10 @@
    "to_next": "wipe-up",
    "kinetic": [
     [
-     "NOT AFFILIATED WITH THE CITY",
-     "affiliated"
+     "NOT AFFILIATED",
+     "affiliated",
+     0,
+     1.6
     ],
     [
      "THEY'RE LOCAL FACTS",
@@ -314,38 +557,7 @@
    ],
    "shots": [
     {
-     "still": "g11.png",
-     "cam": [
-      [
-       0,
-       1.05,
-       0.5,
-       0.5
-      ],
-      [
-       1,
-       1.15,
-       0.5,
-       0.5
-      ]
-     ]
-    }
-   ]
-  },
-  {
-   "id": "b10",
-   "vo": "So let's start with a call about your business and where your customers come from. Seth Shoultes dot com.",
-   "to_next": "push-left",
-   "kinetic": [
-    [
-     "A CALL ABOUT YOUR BUSINESS",
-     "call"
-    ]
-   ],
-   "shots": [
-    {
-     "still": "c05.png",
-     "tr": "circle-open",
+     "still": "t_notaff.png",
      "cam": [
       [
        0,
@@ -354,31 +566,84 @@
        0.5
       ],
       [
-       0.45,
-       1.0,
-       0.5,
-       0.5
-      ],
-      [
-       0.52,
-       1.12,
-       0.5,
-       0.5
-      ],
-      [
        1,
-       1.12,
+       1.08,
        0.5,
        0.5
       ]
      ]
     },
     {
-     "still": "proc:endcard",
-     "at": "seth",
-     "notype": true
+     "still": "g02.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "local"
     }
+   ],
+   "pause": 0.9,
+   "lead": 0.5
+  },
+  {
+   "id": "b10",
+   "vo": "So let's start with a call... about your business, and where your customers come from. Seth Shoultes dot com.",
+   "to_next": "push-left",
+   "kinetic": [
+    [
+     "LET'S START WITH A CALL",
+     "start"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "t_call.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "tr": "push-left"
+    },
+    {
+     "still": "proc:endcard",
+     "at": "from"
+    }
+   ],
+   "srt_lead": 0.75,
+   "lead": 0.4,
+   "srt_tail": [
+    15,
+    0.25
    ]
   }
- ]
+ ],
+ "endcard": {
+  "kicker": "AI and SEO in St. George, Utah",
+  "site": "sethshoultes.com",
+  "path": "/st-george-utah",
+  "sub": "I reply within two business days."
+ },
+ "phrase_lead": 0.45,
+ "srt_lead": 0.3,
+ "caption_max": 3.6
 }
