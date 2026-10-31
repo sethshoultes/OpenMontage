@@ -58,6 +58,21 @@ def smooth(env, attack, release):
     return out
 
 
+def loop_bed(a, n, xf=3.0):
+    """Cover n samples with the bed: trim its silent tail, then repeat it with a 3 s equal-power crossfade (a hard repeat clicks and leaves a gap)."""
+    live = np.where(np.abs(a) > 0.01 * np.abs(a).max())[0]
+    a = a[: live[-1] + 1]
+    if len(a) >= n:
+        return a[:n]
+    x = int(xf * SR)
+    out = a.copy()
+    ramp = np.linspace(0, np.pi / 2, x, dtype=np.float32)
+    while len(out) < n:   # equal-power crossfade: a linear one dips about 3 dB at the seam
+        out[-x:] = out[-x:] * np.cos(ramp) + a[:x] * np.sin(ramp)
+        out = np.concatenate([out, a[x:]])
+    return out[:n]
+
+
 def mix(beats, total, music, sfx_files, turn_t, out_wav):
     n = int(total * SR)
     vo = np.zeros(n, np.float32)
@@ -71,7 +86,7 @@ def mix(beats, total, music, sfx_files, turn_t, out_wav):
     # music: a cool (thin, dark) and a warm (full, low-shelf) rendering, crossfaded at the turn
     cool = decode(music, "highpass=f=250,lowpass=f=2800")
     warm = decode(music, "equalizer=f=120:t=h:w=200:g=3,treble=g=1")
-    cool, warm = (np.resize(a, n) if len(a) < n else a[:n] for a in (cool, warm))
+    cool, warm = (loop_bed(a, n) for a in (cool, warm))
     t = np.arange(frames) * HOP
     warmth = np.clip((t - (turn_t - MIX["turn_lead_s"])) / (MIX["turn_ramp_s"]), 0, 1)
     warmth = 0.5 - 0.5 * np.cos(np.pi * warmth)

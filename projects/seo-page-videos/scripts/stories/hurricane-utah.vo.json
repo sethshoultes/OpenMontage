@@ -1,0 +1,49 @@
+{
+ "shots": [
+  {
+   "id": "s01",
+   "vo": "Quick question... When someone new moves to Hurricane, do they know who to call?",
+   "pace": 0.9
+  },
+  {
+   "id": "s02",
+   "vo": "Hurricane was settled in eighteen ninety-six, as part of the cotton mission.",
+   "pace": 0.9
+  },
+  {
+   "id": "s03",
+   "vo": "The Hurricane Canal was finished in nineteen oh four. The Virgin River runs along nearly all of the city's north edge.",
+   "pace": 0.92
+  },
+  {
+   "id": "s04",
+   "vo": "I live nearby in Washington City... I'm Seth Shoultes. I help Hurricane businesses get found online and get more done with AI.",
+   "pace": 0.9
+  },
+  {
+   "id": "s05",
+   "vo": "Hurricane had about twenty thousand people at the 2020 census. Up almost forty-six percent in ten years.",
+   "pace": 0.9
+  },
+  {
+   "id": "s06",
+   "vo": "A fast-growing city fills with new households that don't yet know who to call... I build pages that answer them first.",
+   "pace": 0.92
+  },
+  {
+   "id": "s07",
+   "vo": "With two state park reservoirs, a river park, and a mountain bike festival, people come here to play... Visitors often search before they go.",
+   "pace": 0.92
+  },
+  {
+   "id": "s08",
+   "vo": "Several distribution centers have set up here. I help the businesses around them show up for the jobs they want.",
+   "pace": 0.92
+  },
+  {
+   "id": "s09",
+   "vo": "So let's start with a call about your business... I reply within two business days. Seth Shoultes dot com.",
+   "pace": 0.88
+  }
+ ]
+}

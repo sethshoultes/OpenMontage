@@ -1,0 +1,647 @@
+{
+ "page": "https://sethshoultes.com/hurricane-utah/",
+ "title": "AI and SEO Services in Hurricane, Utah",
+ "arc": "Hook (new households) > settled 1896 > canal 1904 and the river > guide (I live nearby) > growth 2010-2020 > new households > outdoor visitors > distribution > invitation. Facts only from the page.",
+ "style": "Flat editorial vector, hard edges, flat solid ground, art centered ~70% width, nothing touching an edge; no glow, haze, gradients, soft shadows; no people, no logos.",
+ "phrase_lead": 0.35,
+ "srt_lead": 0.25,
+ "caption_max": 3.6,
+ "endcard": {
+  "kicker": "AI and SEO in Hurricane, Utah",
+  "site": "sethshoultes.com",
+  "path": "/hurricane-utah",
+  "sub": "I reply within two business days."
+ },
+ "beats": [
+  {
+   "id": "b01",
+   "vo": "Quick question... When someone new moves to Hurricane, do they know who to call?",
+   "to_next": "push-right",
+   "kinetic": [
+    [
+     "QUICK QUESTION.",
+     "quick"
+    ],
+    [
+     "SOMEONE NEW MOVES IN",
+     "someone"
+    ],
+    [
+     "WHO TO CALL?",
+     "who"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "h01.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "h06.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "know"
+    }
+   ],
+   "pause": 1.6
+  },
+  {
+   "id": "b02",
+   "vo": "Hurricane was settled in eighteen ninety-six, as part of the cotton mission.",
+   "to_next": "wipe-up",
+   "kinetic": [
+    [
+     "SETTLED IN 1896",
+     "settled"
+    ],
+    [
+     "THE COTTON MISSION",
+     "cotton"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "h02.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "t_1896.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "part"
+    }
+   ],
+   "pause": 0.7
+  },
+  {
+   "id": "b03",
+   "vo": "The Hurricane Canal was finished in nineteen oh four. The Virgin River runs along nearly all of the city's north edge.",
+   "to_next": "slide-left",
+   "kinetic": [
+    [
+     "THE HURRICANE CANAL",
+     "the"
+    ],
+    [
+     "THE VIRGIN RIVER",
+     "virgin"
+    ],
+    [
+     "ALONG THE NORTH EDGE",
+     "along"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "h03.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "t_1904.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "finished"
+    },
+    {
+     "still": "h04.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "virgin"
+    }
+   ],
+   "pause": 1.0
+  },
+  {
+   "id": "b04",
+   "vo": "I live nearby in Washington City... I'm Seth Shoultes. I help Hurricane businesses get found online and get more done with AI.",
+   "to_next": "wipe-right",
+   "kinetic": [
+    [
+     "I LIVE NEARBY",
+     "live"
+    ],
+    [
+     "I'M SETH SHOULTES",
+     "i'm",
+     0,
+     1.6
+    ],
+    [
+     "I HELP HURRICANE BUSINESSES",
+     "help",
+     0,
+     1.9
+    ],
+    [
+     "FOUND ONLINE",
+     "found"
+    ],
+    [
+     "MORE DONE WITH AI",
+     "more"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "t_seth.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "h14.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "help"
+    },
+    {
+     "still": "t_ai.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "more"
+    }
+   ],
+   "pause": 1.2
+  },
+  {
+   "id": "b05",
+   "vo": "Hurricane had about twenty thousand people at the 2020 census. Up almost forty-six percent in ten years.",
+   "to_next": "circle-open",
+   "kinetic": [
+    [
+     "ABOUT 20,000 PEOPLE",
+     "about",
+     0.18
+    ],
+    [
+     "AT THE 2020 CENSUS",
+     "at"
+    ],
+    [
+     "UP ALMOST 46 PERCENT",
+     "up",
+     0.15
+    ]
+   ],
+   "shots": [
+    {
+     "still": "h05.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "t_pop.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "census"
+    }
+   ],
+   "pause": 0.8
+  },
+  {
+   "id": "b06",
+   "vo": "A fast-growing city fills with new households that don't yet know who to call... I build pages that answer them first.",
+   "to_next": "push-left",
+   "kinetic": [
+    [
+     "A FAST-GROWING CITY",
+     "fast-growing"
+    ],
+    [
+     "NEW HOUSEHOLDS",
+     "new"
+    ],
+    [
+     "PAGES THAT ANSWER FIRST",
+     "pages",
+     0.15
+    ]
+   ],
+   "shots": [
+    {
+     "still": "h11.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "h12.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "build"
+    }
+   ],
+   "pause": 1.2
+  },
+  {
+   "id": "b07",
+   "vo": "With two state park reservoirs, a river park, and a mountain bike festival, people come here to play... Visitors often search before they go.",
+   "to_next": "push-right",
+   "kinetic": [
+    [
+     "TWO STATE PARK RESERVOIRS",
+     "two",
+     0,
+     2.0
+    ],
+    [
+     "A RIVER PARK",
+     "river"
+    ],
+    [
+     "A MOUNTAIN BIKE FESTIVAL",
+     "mountain"
+    ],
+    [
+     "VISITORS SEARCH FIRST",
+     "visitors"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "h07.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "h08.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "mountain"
+    },
+    {
+     "still": "h13.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "visitors"
+    }
+   ],
+   "pause": 0.8
+  },
+  {
+   "id": "b08",
+   "vo": "Several distribution centers have set up here. I help the businesses around them show up for the jobs they want.",
+   "to_next": "wipe-up",
+   "kinetic": [
+    [
+     "DISTRIBUTION CENTERS",
+     "distribution"
+    ],
+    [
+     "BUSINESSES AROUND THEM",
+     "businesses"
+    ],
+    [
+     "SHOW UP FOR THE JOBS",
+     "show"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "h09.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "h10.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "help"
+    }
+   ],
+   "pause": 1.2
+  },
+  {
+   "id": "b09",
+   "vo": "So let's start with a call about your business... I reply within two business days. Seth Shoultes dot com.",
+   "to_next": "slide-left",
+   "kinetic": [
+    [
+     "LET'S START WITH A CALL",
+     "let's",
+     0,
+     1.7
+    ],
+    [
+     "ABOUT YOUR BUSINESS",
+     "about",
+     0.42,
+     1.45
+    ]
+   ],
+   "shots": [
+    {
+     "still": "t_call.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "t_reply.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "within"
+    },
+    {
+     "still": "proc:endcard",
+     "at": "seth"
+    }
+   ]
+  }
+ ],
+ "anchor_first": true,
+ "srt_at": [
+  [
+   "do they know",
+   2.95
+  ],
+  [
+   "and get more",
+   26.45
+  ],
+  [
+   "that don't yet",
+   40.57
+  ],
+  [
+   "for the jobs",
+   61.05
+  ],
+  [
+   "I reply within",
+   67.05
+  ],
+  [
+   "Seth Shoultes dot",
+   69.0
+  ],
+  [
+   "a river park",
+   48.4
+  ],
+  [
+   "and a mountain",
+   49.3
+  ],
+  [
+   "people come here",
+   50.7
+  ],
+  [
+   "Up almost",
+   33.6
+  ]
+ ]
+}
