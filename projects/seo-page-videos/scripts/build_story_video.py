@@ -26,7 +26,8 @@ CFG = json.load(open(HERE / "config.json"))
 W, H, FPS = 1920, 1080, 30
 BEAT_T, INTRA_T = 0.5, 0.3   # transition length between beats, and between the sub-shots of one beat (s)
 INTRA = ["slide-left", "wipe-right", "circle-open", "push-right", "wipe-up"]
-PHRASE_LEAD = 0.25            # a caption appears this much before its spoken word, so it lands with the picture change
+SRT_LEAD = 0.25              # sidecar caption cues start a hair before the spoken word
+PHRASE_LEAD = 0.35            # a caption appears this much before its spoken word, so it lands with the picture change
 GAP = 0.18                    # breath after each line
 LEAD = 0.35
 TAIL = 5.5                    # the closing card holds long enough to read the address and the button
@@ -73,18 +74,28 @@ def content_bottom(img):
     return (ys.max() + 1) / a.shape[0] if len(ys) else 0.0
 
 
+def content_cols(img):
+    """(left, right) fractions of the still's width between which its art lies."""
+    a = np.asarray(img).astype(np.int16)
+    cols = (np.abs(a - np.array(ground_of(img), dtype=np.int16)).max(axis=2) > 60).sum(axis=0)
+    xs = np.where(cols > 3)[0]
+    return (xs.min() / a.shape[1], (xs.max() + 1) / a.shape[1]) if len(xs) else (0.0, 1.0)
+
+
 def fit_still(img):
-    """A still whose art runs lower than CLEAR of its height (drawn edge to edge) is scaled down onto its own ground colour,
-    centred, so the art clears the caption band. Stills that already clear it are returned untouched."""
+    """A still drawn edge to edge (art lower than CLEAR of its height, or within 4 percent of the left or right edge) is scaled down onto
+    its own ground colour, centred, so the art clears the caption band and is never cut at the sides. Stills that fit are untouched."""
     b = content_bottom(img)
-    if b <= CLEAR:
+    left, right = content_cols(img)
+    f = min(1.0, (CLEAR - 0.03) / b if b > CLEAR else 1.0, 0.90 / (right - left) if (left < 0.04 or right > 0.96) else 1.0)
+    if f >= 0.999:
         return img
-    f = (CLEAR - 0.03) / b
     w, h = img.size
     small = img.resize((int(w * f), int(h * f)), Image.LANCZOS)
     out = Image.new("RGB", (w, h), ground_of(img))
-    out.paste(small, ((w - small.width) // 2, int(h * 0.03)))
-    print(f"  fit: a still was drawn to {b:.2f} of its height; scaled to {f:.2f} so it clears the caption")
+    cx = (left + right) / 2 * small.width   # keep the art centred on the frame
+    out.paste(small, (int(w / 2 - cx), int(h * 0.03) if b > CLEAR else (h - small.height) // 2))
+    print(f"  fit: a still (art {left:.2f}-{right:.2f} wide, to {b:.2f} high) scaled to {f:.2f} so it clears the caption and the sides")
     return out
 
 
@@ -328,7 +339,7 @@ def srt_cues(beats):
         toks = re.sub(r"\s+", " ", re.sub(r"\[[^\]]*\]", "", bt["vo"])).strip().split()
         times = [w[1] for w in bt["words"]]
         if len(toks) == len(times):
-            starts = [bt["start"] + x for x in times]
+            starts = [max(bt["start"] - max(bt.get("lead", 0), 0), bt["start"] + x - bt.get("srt_lead", SRT_LEAD)) for x in times]
         else:   # the aligned words differ from the script tokens: spread by character count
             total = sum(len(x) + 1 for x in toks)
             starts, c = [], 0
@@ -366,6 +377,8 @@ def main(story_path, stills, vo_dir, out, music, sfx_files):
     story = json.load(open(story_path))
     picked = json.load(open(Path(vo_dir) / "picked.json"))
     beats = story["beats"]
+    global PHRASE_LEAD, SRT_LEAD
+    PHRASE_LEAD, SRT_LEAD = story.get("phrase_lead", PHRASE_LEAD), story.get("srt_lead", SRT_LEAD)   # a story whose voice runs late can ask for more
     font = ImageFont.truetype(FONT, 96, index=1)
     CARD = {"label": CFG["cta"], **story["endcard"]}   # every story states its own card: place line, address, reply promise
     # beat timeline: each line starts after the last one plus a breath
@@ -388,7 +401,7 @@ def main(story_path, stills, vo_dir, out, music, sfx_files):
     for bn, bt in enumerate(beats):
         j = 0
         for k, sh in enumerate(bt["shots"]):
-            at = bt["start"]
+            at = bt["start"] - (bt.get("lead", 0) if k == 0 else 0)   # a beat whose voice starts before its slot asks for an earlier cut
             if sh.get("at"):
                 m = next((i for i in range(j, len(bt["words"])) if bt["words"][i][0].startswith(sh["at"].lower())), None)
                 if m is None:
@@ -399,11 +412,11 @@ def main(story_path, stills, vo_dir, out, music, sfx_files):
                           "tr": bt["to_next"] if k == len(bt["shots"]) - 1 else sh.get("tr", INTRA[(len(shots)) % len(INTRA)])})
         # kinetic phrases for the beat, absolute time, anchored on the spoken word (searched in order)
         ph, j = [], 0
-        for text, anchor in bt["kinetic"]:
+        for text, anchor, *delay in bt["kinetic"]:   # an optional third value holds a phrase back (seconds)
             m = next((i for i in range(j, len(bt["words"])) if bt["words"][i][0].startswith(anchor.lower())), None)
             if m is None:
                 sys.exit(f"{bt['id']}: kinetic anchor {anchor!r} not found")
-            ph.append((text, bt["start"] if not ph else max(ph[-1][1] + 0.6, bt["start"] + bt["words"][m][1] - PHRASE_LEAD)))
+            ph.append((text, bt["start"] - bt.get("lead", 0) if not ph else max(ph[-1][1] + 0.6, bt["start"] + bt["words"][m][1] - PHRASE_LEAD + (delay[0] if delay else 0))))
             j = m + 1
         bt["phrases"] = ph
     for bt in beats:   # a caption wider than the frame is clipped on screen, so refuse to build it

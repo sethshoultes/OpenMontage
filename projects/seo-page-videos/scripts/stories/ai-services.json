@@ -103,7 +103,7 @@
     ],
     [
      "SEO BUILT IN",
-     "built"
+     "offer"
     ],
     [
      "MADE TO BE FOUND",
@@ -533,8 +533,12 @@
      "almost"
     ],
     [
-     "I'VE BEEN A SMALL BUSINESS",
-     "been"
+     "A SMALL BUSINESS NEEDS",
+     "know"
+    ],
+    [
+     "BECAUSE I'VE BEEN ONE",
+     "because"
     ]
    ],
    "shots": [
@@ -556,8 +560,26 @@
      ]
     },
     {
-     "still": "a03.png",
+     "still": "s05a.png",
      "at": "worked",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "ai_store2.png",
+     "at": "know",
      "cam": [
       [
        0,
@@ -574,18 +596,18 @@
      ]
     },
     {
-     "still": "ai_store.png",
+     "still": "ai_open.png",
      "at": "because",
      "cam": [
       [
        0,
-       1.05,
+       1.0,
        0.5,
        0.5
       ],
       [
        1,
-       1.15,
+       1.08,
        0.5,
        0.5
       ]

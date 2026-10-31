@@ -1,4 +1,6 @@
 {
+ "phrase_lead": 0.45,
+ "srt_lead": 0.2,
  "page": "https://sethshoultes.com/field-service-software/",
  "title": "ServiceTitan and Housecall Pro Expert for Home Service Businesses",
  "arc": "Hook (is your software working?) > guide (that's my job) > the software I know (ServiceTitan, Housecall Pro, Superpro) > the web side (neighborhood pages, rank reports, staff apps, knowledge base) > where it comes from (owned and sold a garage door company; 25+ years) > anywhere > invitation (a call). Cool until 'That's my job', warm after. Claims only from _data/services/field-service-software.yml. Third-party names appear in voice and captions only; no logos and not the page's Superpro badge photo.",
@@ -14,7 +16,7 @@
      "quick"
     ],
     [
-     "MOST FROM YOUR SOFTWARE?",
+     "THE MOST OUT OF IT?",
      "most"
     ]
    ],
@@ -37,7 +39,7 @@
      ]
     },
     {
-     "still": "f_st.png",
+     "still": "ff_laptop.png",
      "at": "software",
      "cam": [
       [
@@ -67,7 +69,7 @@
      "seth"
     ],
     [
-     "GET MORE OUT OF IT",
+     "MORE OUT OF THE SOFTWARE",
      "more"
     ]
    ],
@@ -108,7 +110,8 @@
      ]
     }
    ],
-   "pause": 0.8
+   "pause": 0.8,
+   "lead": 0.4
   },
   {
    "id": "b04",
@@ -161,13 +164,18 @@
      ]
     }
    ],
-   "pause": 0.7
+   "pause": 0.7,
+   "lead": 0.4
   },
   {
    "id": "b05",
    "vo": "And I hold Housecall Pro Superpro status. It's awarded every month to home service companies committed to a dependable, transparent customer experience.",
    "to_next": "slide-left",
    "kinetic": [
+    [
+     "I HOLD HOUSECALL PRO",
+     "hold"
+    ],
     [
      "SUPERPRO STATUS",
      "superpro"
@@ -177,8 +185,16 @@
      "every"
     ],
     [
+     "HOME SERVICE COMPANIES",
+     "home"
+    ],
+    [
      "DEPENDABLE, TRANSPARENT",
      "dependable"
+    ],
+    [
+     "CUSTOMER EXPERIENCE",
+     "customer"
     ]
    ],
    "shots": [
@@ -244,6 +260,10 @@
    "to_next": "wipe-right",
    "kinetic": [
     [
+     "THE WEB SIDE TOO",
+     "web"
+    ],
+    [
      "NEIGHBORHOOD PAGES",
      "neighborhood"
     ],
@@ -258,11 +278,19 @@
     [
      "A KNOWLEDGE BASE",
      "knowledge"
+    ],
+    [
+     "A GARAGE DOOR COMPANY",
+     "built"
+    ],
+    [
+     "OVER THREE YEARS",
+     "three"
     ]
    ],
    "shots": [
     {
-     "still": "f06a.png",
+     "still": "ff_map.png",
      "cam": [
       [
        0,
@@ -279,8 +307,44 @@
      ]
     },
     {
-     "still": "f06b.png",
+     "still": "ff_rank.png",
+     "at": "rank",
+     "cam": [
+      [
+       0,
+       1.05,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.15,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "ff_phone.png",
      "at": "staff",
+     "cam": [
+      [
+       0,
+       1.05,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.15,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "ff_book.png",
+     "at": "knowledge",
      "cam": [
       [
        0,
@@ -315,7 +379,8 @@
      ]
     }
    ],
-   "pause": 0.8
+   "pause": 0.8,
+   "srt_lead": 0.1
   },
   {
    "id": "b07",
@@ -398,8 +463,12 @@
    "to_next": "push-right",
    "kinetic": [
     [
+     "I'VE BUILT ON THE WEB",
+     "built"
+    ],
+    [
      "OVER 25 YEARS",
-     "twenty"
+     "over"
     ],
     [
      "MORE OUT OF YOUR SOFTWARE",
@@ -425,7 +494,7 @@
      ]
     },
     {
-     "still": "f03.png",
+     "still": "ff_tools.png",
      "at": "so",
      "cam": [
       [
@@ -443,7 +512,8 @@
      ]
     }
    ],
-   "pause": 0.8
+   "pause": 0.8,
+   "lead": -0.9
   },
   {
    "id": "b09",
@@ -456,7 +526,8 @@
     ],
     [
      "ANYWHERE",
-     "anywhere"
+     "anywhere",
+     0.4
     ]
    ],
    "shots": [
@@ -478,7 +549,8 @@
      ]
     }
    ],
-   "pause": 1.0
+   "pause": 1.0,
+   "lead": 0.4
   },
   {
    "id": "b10",
@@ -488,6 +560,14 @@
     [
      "BOOK A CALL",
      "book"
+    ],
+    [
+     "ABOUT YOUR BUSINESS",
+     "about"
+    ],
+    [
+     "THE SOFTWARE YOU RUN",
+     "software"
     ],
     [
      "WHAT I SEE",
@@ -517,7 +597,7 @@
      ]
     },
     {
-     "still": "f_st.png",
+     "still": "g_ads.png",
      "at": "software",
      "cam": [
       [
@@ -558,7 +638,9 @@
      "at": "seth",
      "notype": true
     }
-   ]
+   ],
+   "lead": 0.4,
+   "srt_lead": 0.1
   }
  ],
  "endcard": {

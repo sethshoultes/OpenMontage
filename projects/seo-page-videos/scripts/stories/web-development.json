@@ -130,6 +130,18 @@
     [
      "WEBSITES AND WEB TOOLS",
      "websites"
+    ],
+    [
+     "THAT LOAD FAST",
+     "load"
+    ],
+    [
+     "MADE TO BE FOUND",
+     "made"
+    ],
+    [
+     "SOMETHING FOR CUSTOMERS",
+     "something"
     ]
    ],
    "shots": [
@@ -188,7 +200,7 @@
     },
     {
      "still": "wd_found.png",
-     "at": "found",
+     "at": "made",
      "cam": [
       [
        0,
@@ -462,6 +474,10 @@
     [
      "A CALL FIRST",
      "call"
+    ],
+    [
+     "BUILD AND LEAVE OUT",
+     "tell"
     ]
    ],
    "shots": [
