@@ -12,6 +12,10 @@ import sys
 from pathlib import Path
 
 HERE = Path(__file__).parent
+PROPER = {r"\bseth shoultes\b": "Seth Shoultes", r"\bwordpress\b": "WordPress", r"\bai\b": "AI", r"\bseo\b": "SEO", r"\bgeo\b": "GEO",
+          r"\bsouthern utah\b": "Southern Utah", r"\bevent espresso\b": "Event Espresso", r"\bgoogle ads\b": "Google Ads", r"\bllms\.txt\b": "llms.txt",
+          r"\bst\. george\b": "St. George", r"\bmemberpress\.ai\b": "MemberPress.ai", r"\bservicetitan\b": "ServiceTitan", r"\bhousecall pro\b": "Housecall Pro",
+          r"\butah entrepreneur\b": "Utah Entrepreneur", r"\bgarage door pro services\b": "Garage Door Pro Services"}
 
 
 def stamp(t):
@@ -34,6 +38,8 @@ def main(name, video, page_txt, out):
         if not chapters or start - last >= 10:
             cap = beats[b["id"]]["kinetic"][0][0].strip(" .?!").lower()
             cap = cap[0].upper() + cap[1:]
+            for low, proper in PROPER.items():
+                cap = re.sub(low, proper, cap, flags=re.I)
             chapters.append((start, cap))
             last = start
     if chapters[0][1].lower() == "quick question":
