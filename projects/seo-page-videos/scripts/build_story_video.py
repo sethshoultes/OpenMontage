@@ -72,6 +72,21 @@ def content_bottom(img):
     return (ys.max() + 1) / a.shape[0] if len(ys) else 0.0
 
 
+def fit_still(img):
+    """A still whose art runs lower than CLEAR of its height (drawn edge to edge) is scaled down onto its own ground colour,
+    centred, so the art clears the caption band. Stills that already clear it are returned untouched."""
+    b = content_bottom(img)
+    if b <= CLEAR:
+        return img
+    f = (CLEAR - 0.03) / b
+    w, h = img.size
+    small = img.resize((int(w * f), int(h * f)), Image.LANCZOS)
+    out = Image.new("RGB", (w, h), ground_of(img))
+    out.paste(small, ((w - small.width) // 2, int(h * 0.03)))
+    print(f"  fit: a still was drawn to {b:.2f} of its height; scaled to {f:.2f} so it clears the caption")
+    return out
+
+
 def content_top(img):
     a = np.asarray(img).astype(np.int16)
     rows = (np.abs(a - np.array(ground_of(img), dtype=np.int16)).max(axis=2) > 60).sum(axis=1)
@@ -407,6 +422,7 @@ def main(story_path, stills, vo_dir, out, music, sfx_files):
     imgs = [None if sh["still"].startswith("proc:") else Image.open(Path(stills) / sh["still"]).convert("RGB") for sh in shots]
     for i, sh in enumerate(shots):
         if imgs[i] is not None:
+            imgs[i] = fit_still(imgs[i])
             sh["cam"] = clamp_camera(sh, i, imgs[i])
     clash = []
     for i, sh in enumerate(shots):   # art must never run into the caption band, at the start, middle or end of the camera move

@@ -1,0 +1,69 @@
+{
+ "shots": [
+  {
+   "id": "s01",
+   "vo": "Quick question. When you want to know something... who do you ask first?",
+   "pace": 1.0
+  },
+  {
+   "id": "s02",
+   "vo": "More and more people ask an AI assistant first. I'm Seth Shoultes \u2014 and I help your business show up in the answers.",
+   "pace": 0.95
+  },
+  {
+   "id": "s03",
+   "vo": "The assistant quotes... a few sources.",
+   "pace": 0.9
+  },
+  {
+   "id": "s04",
+   "vo": "Just a few! So here's the question. Are you one of them?",
+   "pace": 0.95
+  },
+  {
+   "id": "s05",
+   "vo": "It's called AI search optimization. Or GEO, if you like acronyms.",
+   "pace": 0.95
+  },
+  {
+   "id": "s06",
+   "vo": "I build pages made to be quoted. Plain answers to what your customers actually ask... in your voice.",
+   "pace": 1.0
+  },
+  {
+   "id": "s07",
+   "vo": "Then structured data, so assistants know who you are, what you offer, and where.",
+   "pace": 1.06
+  },
+  {
+   "id": "s08",
+   "vo": "Plus plain-text versions \u2014 and an llms-dot-txt file. I publish these on my own site.",
+   "pace": 1.0
+  },
+  {
+   "id": "s09",
+   "vo": "It sits on nearly twenty years of SEO. Same foundation. Clearer pages.",
+   "pace": 1.02
+  },
+  {
+   "id": "s10",
+   "vo": "Garage Door Science, a site I built, is gaining ground in search and AI answers. Before that, I took Garage Door Pro Services in Southern Utah to number one \u2014 within the first three months.",
+   "pace": 0.95
+  },
+  {
+   "id": "s11",
+   "vo": "Can I promise ChatGPT will name you? No. Nobody can.",
+   "pace": 0.92
+  },
+  {
+   "id": "s12",
+   "vo": "I can make your pages clear, accurate, and easy to quote. And tell you what I'd change first.",
+   "pace": 1.0
+  },
+  {
+   "id": "s13",
+   "vo": "Book a call, about your business. Seth Shoultes dot com.",
+   "pace": 0.92
+  }
+ ]
+}

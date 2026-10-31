@@ -14,12 +14,8 @@
      "quick"
     ],
     [
-     "WHO DO YOU",
+     "WHO DO YOU ASK FIRST?",
      "who"
-    ],
-    [
-     "ASK FIRST?",
-     "ask"
     ]
    ],
    "shots": [
@@ -44,11 +40,12 @@
      "still": "s01b.png",
      "at": "when"
     }
-   ]
+   ],
+   "pause": 1.6
   },
   {
    "id": "b02",
-   "vo": "More and more people ask an AI assistant.",
+   "vo": "More and more people ask an AI assistant first. I'm Seth Shoultes \u2014 and I help your business show up in the answers.",
    "to_next": "push-right",
    "kinetic": [
     [
@@ -58,23 +55,60 @@
     [
      "ASK AN AI ASSISTANT",
      "ask"
+    ],
+    [
+     "I'M SETH SHOULTES.",
+     "seth"
+    ],
+    [
+     "SHOW UP IN THE ANSWERS",
+     "show"
     ]
    ],
    "shots": [
     {
-     "still": "s02.png"
+     "still": "s02.png",
+     "cam": [
+      [
+       0,
+       1.05,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.15,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "s_name.png",
+     "at": "seth",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.06,
+       0.5,
+       0.5
+      ]
+     ]
     }
-   ]
+   ],
+   "pause": 1.0
   },
   {
    "id": "b03",
-   "vo": "And it doesn't hand back ten links. It quotes... a few sources.",
+   "vo": "The assistant quotes... a few sources.",
    "to_next": "wipe-up",
    "kinetic": [
-    [
-     "NOT TEN LINKS",
-     "ten"
-    ],
     [
      "A FEW SOURCES",
      "few"
@@ -92,9 +126,10 @@
     },
     {
      "still": "s03b.png",
-     "at": "quotes"
+     "at": "few"
     }
-   ]
+   ],
+   "pause": 0.8
   },
   {
    "id": "b04",
@@ -148,17 +183,14 @@
      "still": "s04b.png",
      "at": "so"
     }
-   ]
+   ],
+   "pause": 1.4
   },
   {
    "id": "b05",
-   "vo": "That's my job. It's called AI search optimization. Or GEO, if you like acronyms.",
+   "vo": "It's called AI search optimization. Or GEO, if you like acronyms.",
    "to_next": "push-right",
    "kinetic": [
-    [
-     "MY JOB",
-     "job"
-    ],
     [
      "AI SEARCH OPTIMIZATION",
      "ai"
@@ -176,7 +208,8 @@
      "still": "s05b.png",
      "at": "or"
     }
-   ]
+   ],
+   "pause": 0.8
   },
   {
    "id": "b06",
@@ -208,7 +241,8 @@
      "still": "s06c.png",
      "at": "in"
     }
-   ]
+   ],
+   "pause": 0.8
   },
   {
    "id": "b07",
@@ -240,11 +274,12 @@
      "still": "s07a.png",
      "at": "who"
     }
-   ]
+   ],
+   "pause": 0.7
   },
   {
    "id": "b08",
-   "vo": "Plus plain-text versions, and an llms-dot-txt file. I run it all on my own site.",
+   "vo": "Plus plain-text versions \u2014 and an llms-dot-txt file. I publish these on my own site.",
    "to_next": "push-right",
    "kinetic": [
     [
@@ -256,8 +291,8 @@
      "llms"
     ],
     [
-     "ON MY OWN SITE",
-     "on"
+     "PUBLISHED ON MY SITE",
+     "publish"
     ]
    ],
    "shots": [
@@ -268,7 +303,8 @@
      "still": "s08b.png",
      "at": "llms"
     }
-   ]
+   ],
+   "pause": 0.8
   },
   {
    "id": "b09",
@@ -310,11 +346,12 @@
      "still": "s09b.png",
      "at": "clearer"
     }
-   ]
+   ],
+   "pause": 0.8
   },
   {
    "id": "b10",
-   "vo": "Garage Door Science, a site I built, is gaining ground in search and AI answers. Garage Door Pro Services? Number one within three months.",
+   "vo": "Garage Door Science, a site I built, is gaining ground in search and AI answers. Before that, I took Garage Door Pro Services in Southern Utah to number one \u2014 within the first three months.",
    "to_next": "wipe-up",
    "kinetic": [
     [
@@ -326,15 +363,36 @@
      "search"
     ],
     [
-     "NO. 1",
-     "number"
+     "BEFORE THAT",
+     "before"
     ],
     [
-     "WITHIN 3 MONTHS",
-     "within"
+     "GARAGE DOOR PRO SERVICES",
+     "pro"
+    ],
+    [
+     "NO. 1 WITHIN 3 MONTHS",
+     "number"
     ]
    ],
    "shots": [
+    {
+     "still": "s_gds.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.06,
+       0.5,
+       0.5
+      ]
+     ]
+    },
     {
      "still": "s10a.png",
      "cam": [
@@ -367,11 +425,12 @@
        "type": "pulse",
        "at": 2.4
       }
-     ]
+     ],
+     "at": "gaining"
     },
     {
      "still": "s10b.png",
-     "at": "pro",
+     "at": "before",
      "cam": [
       [
        0,
@@ -410,8 +469,27 @@
        0.6
       ]
      ]
+    },
+    {
+     "still": "s_proof.png",
+     "at": "number",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.06,
+       0.5,
+       0.5
+      ]
+     ]
     }
-   ]
+   ],
+   "pause": 1.2
   },
   {
    "id": "b11",
@@ -435,7 +513,8 @@
      "still": "s11b.png",
      "at": "no"
     }
-   ]
+   ],
+   "pause": 1.2
   },
   {
    "id": "b12",
@@ -465,18 +544,19 @@
     },
     {
      "still": "s12b.png",
-     "at": "tell"
+     "at": "change"
     }
-   ]
+   ],
+   "pause": 1.0
   },
   {
    "id": "b13",
-   "vo": "So let's start with a call about your business. Seth Shoultes dot com.",
+   "vo": "Book a call, about your business. Seth Shoultes dot com.",
    "to_next": "end",
    "kinetic": [
     [
-     "LET'S START WITH A CALL",
-     "start"
+     "BOOK A CALL",
+     "book"
     ]
    ],
    "shots": [
@@ -491,31 +571,25 @@
        0.5
       ],
       [
-       0.45,
-       1.0,
+       1,
+       1.1,
        0.5,
        0.5
-      ],
-      [
-       0.52,
-       1.5,
-       0.52,
-       0.6
-      ],
-      [
-       1,
-       1.5,
-       0.52,
-       0.6
       ]
      ]
     },
     {
      "still": "proc:endcard",
-     "at": "about",
+     "at": "seth",
      "notype": true
     }
    ]
   }
- ]
+ ],
+ "endcard": {
+  "kicker": "AI search optimization",
+  "site": "sethshoultes.com",
+  "path": "/ai-search-optimization",
+  "sub": "We start with a call about your business."
+ }
 }
