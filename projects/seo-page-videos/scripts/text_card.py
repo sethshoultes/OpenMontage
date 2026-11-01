@@ -25,9 +25,11 @@ def main(out, cards):
     n = len(cards)
     cols = 1 if n == 1 else 2
     rows = (n + cols - 1) // cols
+    if n == 3:   # three cards in one row, big
+        cols, rows = 3, 1
     if n == 2:   # a two-card row: big, equal type, an orange check or minus for "+" and "-" cards
         cols, rows = 2, 1
-    cw, ch = (2000, 780) if n == 1 else ((1220, 860) if n == 2 else (900, 360))
+    cw, ch = (2000, 780) if n == 1 else ((1220, 860) if n == 2 else ((840, 760) if n == 3 else (900, 360)))
     gap = 60
     x0 = (W - (cols * cw + (cols - 1) * gap)) // 2
     y0 = (H - (rows * ch + (rows - 1) * gap)) // 2
@@ -39,7 +41,7 @@ def main(out, cards):
         d.rectangle((x, y + 20, x + cw, y + 40), fill=ORANGE)
         mark = title[0] if title[:1] in "+-" else ""
         title = title[1:] if mark else title
-        sizes = [fit(d, t.partition("|")[0].lstrip("+-"), cw - 120, 200 if n == 1 else (140 if n == 2 else 110)).size for t in cards]
+        sizes = [fit(d, t.partition("|")[0].lstrip("+-"), cw - 120, 200 if n == 1 else (140 if n == 2 else (110 if n > 3 else 120))).size for t in cards]
         f = ImageFont.truetype(FONT, min(sizes), index=1)   # every card in a set uses the same type size
         assert d.textlength(title, font=f) <= cw - 120, title
         ty = y + ch / 2 + (-30 if small else 20) + (150 if mark else 0)

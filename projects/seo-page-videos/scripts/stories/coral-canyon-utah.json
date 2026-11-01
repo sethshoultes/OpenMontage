@@ -1,0 +1,894 @@
+{
+ "page": "https://sethshoultes.com/coral-canyon-utah/",
+ "title": "AI and SEO Services in Coral Canyon, Washington, Utah",
+ "arc": "Hook (new neighbor needs a plumber) > golf community in Washington, not St. George > size and trails > guide (I live close by) > new neighbors > golf visitors > the I-15 corridor > what I offer > disclaimer > invitation. Facts only from the page.",
+ "style": "Flat editorial vector, hard edges, flat solid ground, art centered ~70% width, nothing touching an edge; no glow, haze, gradients, soft shadows; no people, no logos.",
+ "phrase_lead": 0.35,
+ "srt_lead": 0.06,
+ "caption_max": 3.6,
+ "endcard": {
+  "kicker": "AI and SEO in Coral Canyon, Utah",
+  "site": "sethshoultes.com",
+  "path": "/coral-canyon-utah",
+  "sub": "I reply within two business days."
+ },
+ "beats": [
+  {
+   "id": "b01",
+   "vo": "Quick question... when a new neighbor in Coral Canyon needs a plumber, a painter, or a landscaper, do they find you?",
+   "to_next": "push-right",
+   "kinetic": [
+    [
+     "QUICK QUESTION.",
+     "quick",
+     0,
+     1.0
+    ],
+    [
+     "A NEW NEIGHBOR",
+     "new",
+     0,
+     4.1
+    ],
+    [
+     "DO THEY FIND YOU?",
+     "find",
+     0,
+     2.0
+    ]
+   ],
+   "shots": [
+    {
+     "still": "k01.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "k11.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "plumber"
+    },
+    {
+     "still": "k02.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "find"
+    }
+   ],
+   "pause": 0.8
+  },
+  {
+   "id": "b02",
+   "vo": "Coral Canyon is a master-planned golf community in the city of Washington, not in St. George. Development began in the year two thousand.",
+   "to_next": "wipe-up",
+   "kinetic": [
+    [
+     "CORAL CANYON",
+     "coral",
+     0,
+     1.3
+    ],
+    [
+     "MASTER-PLANNED GOLF",
+     "master",
+     -0.68,
+     2.6
+    ],
+    [
+     "IN WASHINGTON CITY",
+     "washington",
+     -0.3,
+     1.4
+    ],
+    [
+     "NOT IN ST. GEORGE",
+     "st",
+     0,
+     1.4
+    ],
+    [
+     "BEGAN IN THE YEAR 2000",
+     "began"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "k03.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "k04.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "washington"
+    },
+    {
+     "still": "t_2000.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "development"
+    }
+   ],
+   "pause": 0.9
+  },
+  {
+   "id": "b03",
+   "vo": "It covers about twenty-six hundred acres, with roughly one thousand three hundred thirty-eight homes.",
+   "to_next": "slide-left",
+   "kinetic": [
+    [
+     "ABOUT 2,600 ACRES",
+     "covers"
+    ],
+    [
+     "ROUGHLY 1,338 HOMES",
+     "roughly"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "t_stats.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "k05.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "homes"
+    }
+   ],
+   "pause": 0.7
+  },
+  {
+   "id": "b04",
+   "vo": "There are ten point seven miles of trails, two city parks, and six pocket parks. The golf course is open to the public.",
+   "to_next": "wipe-right",
+   "kinetic": [
+    [
+     "10.7 MILES OF TRAILS",
+     "ten"
+    ],
+    [
+     "TWO CITY PARKS",
+     "two"
+    ],
+    [
+     "SIX POCKET PARKS",
+     "six"
+    ],
+    [
+     "OPEN TO THE PUBLIC",
+     "open"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "k06.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "k07.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "two"
+    },
+    {
+     "still": "k08.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "golf"
+    }
+   ],
+   "pause": 0.9
+  },
+  {
+   "id": "b05",
+   "vo": "I live in Washington City, close to Coral Canyon... I'm Seth Shoultes, and I help businesses here get found online and get more done with AI.",
+   "to_next": "circle-open",
+   "kinetic": [
+    [
+     "I LIVE CLOSE BY",
+     "live"
+    ],
+    [
+     "I'M SETH SHOULTES",
+     "i'm",
+     0,
+     1.7
+    ],
+    [
+     "I HELP BUSINESSES HERE",
+     "help",
+     0,
+     2.0
+    ],
+    [
+     "FOUND ONLINE",
+     "found"
+    ],
+    [
+     "MORE DONE WITH AI",
+     "more",
+     0.4,
+     2.2
+    ]
+   ],
+   "shots": [
+    {
+     "still": "k09.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "t_seth.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "i'm"
+    },
+    {
+     "still": "t_ai.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "more"
+    }
+   ],
+   "pause": 1.0
+  },
+  {
+   "id": "b06",
+   "vo": "Many people who live here are new to the neighborhood... A new homeowner doesn't have a go-to plumber, painter, or landscaper yet. They search, and a clear page about your service and your area is what they find.",
+   "to_next": "push-left",
+   "kinetic": [
+    [
+     "MANY PEOPLE HERE",
+     "many",
+     0,
+     1.4
+    ],
+    [
+     "NEW TO THE NEIGHBORHOOD",
+     "new"
+    ],
+    [
+     "A NEW HOMEOWNER",
+     "homeowner",
+     0,
+     1.5
+    ],
+    [
+     "NO GO-TO PLUMBER YET",
+     "go-to",
+     -0.5,
+     4.0
+    ],
+    [
+     "THEY SEARCH",
+     "they",
+     0,
+     1.0
+    ],
+    [
+     "A CLEAR PAGE THEY FIND",
+     "clear",
+     0,
+     4.3
+    ]
+   ],
+   "shots": [
+    {
+     "still": "k10.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "k01.png",
+     "at": "homeowner",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "k11.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "go-to"
+    },
+    {
+     "still": "k13.png",
+     "at": "clear",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "k08.png",
+     "at": "what",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ]
+    }
+   ],
+   "pause": 1.2
+  },
+  {
+   "id": "b07",
+   "vo": "The public course and its clubhouse restaurant can bring people who are not local. I build pages and answers for the questions visitors ask before they arrive.",
+   "to_next": "push-right",
+   "kinetic": [
+    [
+     "THE PUBLIC COURSE",
+     "public",
+     -0.37
+    ],
+    [
+     "CLUBHOUSE RESTAURANT",
+     "clubhouse"
+    ],
+    [
+     "PEOPLE WHO ARE NOT LOCAL",
+     "people"
+    ],
+    [
+     "PAGES AND ANSWERS",
+     "pages"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "k12.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": null
+    },
+    {
+     "still": "k07.png",
+     "at": "people",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "k13.png",
+     "at": "build",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ]
+    }
+   ],
+   "pause": 0.1
+  },
+  {
+   "id": "b08",
+   "vo": "Coral Canyon sits on the I fifteen corridor between St. George and Hurricane. Businesses here serve both, and need pages that say so.",
+   "to_next": "wipe-up",
+   "kinetic": [
+    [
+     "CORAL CANYON SITS",
+     "coral",
+     0,
+     1.0
+    ],
+    [
+     "ON THE I-15 CORRIDOR",
+     "on",
+     0,
+     1.5
+    ],
+    [
+     "ST. GEORGE AND HURRICANE",
+     "between",
+     -0.3,
+     2.7
+    ],
+    [
+     "SERVE BOTH",
+     "serve",
+     -0.27,
+     1.6
+    ],
+    [
+     "PAGES THAT SAY SO",
+     "pages"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "k14.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "k15.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "between"
+    },
+    {
+     "still": "k04.png",
+     "at": "serve",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ]
+    }
+   ],
+   "pause": 0.8
+  },
+  {
+   "id": "b09",
+   "vo": "I offer AI services with SEO built in, plus content generation, media production, and interactive website development.",
+   "to_next": "slide-left",
+   "kinetic": [
+    [
+     "CONTENT GENERATION",
+     "content",
+     0.4
+    ],
+    [
+     "MEDIA PRODUCTION",
+     "media"
+    ],
+    [
+     "INTERACTIVE WEBSITES",
+     "interactive"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "t_ai.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "k16.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "content"
+    }
+   ],
+   "pause": 1.0
+  },
+  {
+   "id": "b10",
+   "vo": "I'm not affiliated with the Coral Canyon Community Association, the golf course or its operator, or the City of St. George. They're local facts... So let's start with a call about your business. I reply within two business days. Seth Shoultes dot com.",
+   "to_next": "wipe-right",
+   "kinetic": [
+    [
+     "THEY'RE LOCAL FACTS",
+     "they're",
+     0.27,
+     1.3
+    ],
+    [
+     "LET'S START WITH A CALL",
+     "let's",
+     0,
+     2.2
+    ]
+   ],
+   "shots": [
+    {
+     "still": "t_na1.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "t_na2.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "golf"
+    },
+    {
+     "still": "k17.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "they're"
+    },
+    {
+     "still": "t_call.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "let's"
+    },
+    {
+     "still": "t_reply.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "reply"
+    },
+    {
+     "still": "proc:endcard",
+     "at": "seth"
+    }
+   ]
+  }
+ ],
+ "anchor_first": true,
+ "srt_at": [
+  [
+   "Development began",
+   15.32
+  ]
+ ]
+}
