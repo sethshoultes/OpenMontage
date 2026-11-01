@@ -10,6 +10,7 @@ No overlay of any kind is blended over the art (no haze, no glow): transitions a
 Captions are written as a sidecar .srt, never burned in.
 """
 import json
+import textwrap
 import math
 import re
 import subprocess
@@ -36,6 +37,7 @@ CHECK_ONLY = False
 SRT_ONLY = False
 CLEAR = 0.90                  # the art may fill at most this fraction of the art box height (the rest is ground above the caption)
 MAX_HOLD = 5.8                # no single still stays on screen longer than this (s)
+SRT_END_PAD = None            # a story may set srt_end_pad: seconds a cue stays after its last word
 ANCHOR_FIRST = False          # a story may anchor each beat's first caption on its word too (whisper word times)
 CAP_MAX = 99.0                # a story may set caption_max to clear a caption that outstays its words
 HOLD_MIN = 1.5                # a kinetic title stays at least 1.5 s
@@ -382,6 +384,9 @@ def srt_cues(beats):
         for j, c in enumerate(merged):
             a = starts[c[0]]
             b = starts[merged[j + 1][0]] if j + 1 < len(merged) else bt["start"] + bt["d"]
+            if SRT_END_PAD is not None and len(toks) == len(times):   # a cue leaves SRT_END_PAD s after its last word, not at the next cue
+                last = bt["start"] + times[c[-1]] + 0.07 * len(toks[c[-1]]) + 0.1 + SRT_END_PAD
+                b = min(b, max(a + 0.5, last))
             cues.append((a, b, " ".join(toks[i] for i in c)))
     return cues
 
@@ -390,8 +395,9 @@ def main(story_path, stills, vo_dir, out, music, sfx_files):
     story = json.load(open(story_path))
     picked = json.load(open(Path(vo_dir) / "picked.json"))
     beats = story["beats"]
-    global PHRASE_LEAD, SRT_LEAD, CAP_MAX, ANCHOR_FIRST
+    global PHRASE_LEAD, SRT_LEAD, CAP_MAX, ANCHOR_FIRST, SRT_END_PAD
     ANCHOR_FIRST = story.get("anchor_first", False)
+    SRT_END_PAD = story.get("srt_end_pad")
     CAP_MAX = story.get("caption_max", CAP_MAX)
     PHRASE_LEAD, SRT_LEAD = story.get("phrase_lead", PHRASE_LEAD), story.get("srt_lead", SRT_LEAD)   # a story whose voice runs late can ask for more
     font = ImageFont.truetype(FONT, 96, index=1)
@@ -536,7 +542,7 @@ def main(story_path, stills, vo_dir, out, music, sfx_files):
                 if k:
                     cues[k - 1] = (cues[k - 1][0], at, cues[k - 1][2])
                 break
-    Path(out).with_suffix(".srt").write_text("".join(f"{i}\n{tc(a)} --> {tc(b)}\n{x}\n\n" for i, (a, b, x) in enumerate(cues, 1)))
+    Path(out).with_suffix(".srt").write_text("".join(f"{i}\n{tc(a)} --> {tc(b)}\n{chr(10).join(textwrap.wrap(x, 42))}\n\n" for i, (a, b, x) in enumerate(cues, 1)))
     json.dump({"total": total, "shots": [{"still": sh["still"], "at": round(sh["at"], 2), "end": round(sh["end"], 2)} for sh in shots],
                "beats": [{"id": bt["id"], "start": round(bt["start"], 2), "dur": round(bt["d"], 2)} for bt in beats]},
               open(Path(out).with_suffix(".timeline.json"), "w"), indent=1)

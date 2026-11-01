@@ -1,0 +1,49 @@
+{
+ "shots": [
+  {
+   "id": "s01",
+   "vo": "Quick question... when someone in Little Valley, or a family in town for a tournament, looks for a business like yours, do they find you?",
+   "pace": 0.88
+  },
+  {
+   "id": "s02",
+   "vo": "Little Valley is a neighborhood inside St. George. It's part of the city, not a separate town.",
+   "pace": 0.92
+  },
+  {
+   "id": "s03",
+   "vo": "The City of St. George runs The Fields at Little Valley, at twenty-nine ninety-five South twenty-three fifty East. It hosts tournaments, like the Summer Send Off softball event... for teams from ten and under to eighteen and under.",
+   "pace": 0.9
+  },
+  {
+   "id": "s04",
+   "vo": "I live in Washington City, a short drive from St. George. I'm Seth Shoultes, and I help Little Valley businesses get found online... and get more done with AI.",
+   "pace": 0.88
+  },
+  {
+   "id": "s05",
+   "vo": "If you serve the neighborhood, I write a page about your service and your part of St. George, for someone nearby who's searching on their phone.",
+   "pace": 0.92
+  },
+  {
+   "id": "s06",
+   "vo": "If you're near the fields, families look for food, a place to stay, and something to do between games. That's my reasoning... not a statistic. Those searches happen before the trip, so I build pages and answers a visitor, or an AI assistant, can find and quote.",
+   "pace": 0.92
+  },
+  {
+   "id": "s07",
+   "vo": "These facts come from the City of St. George and the school district. The park projects were completed in twenty twenty-four and twenty twenty-five: field lighting, turf, pickleball, and skate park lighting. I don't have neighborhood census figures... so I don't quote any.",
+   "pace": 0.92
+  },
+  {
+   "id": "s08",
+   "vo": "I offer AI services with SEO built in, plus content generation, media production, and interactive website development.",
+   "pace": 0.94
+  },
+  {
+   "id": "s09",
+   "vo": "So let's start with a call about your business. I reply within two business days... Seth Shoultes dot com.",
+   "pace": 0.88
+  }
+ ]
+}

@@ -50,7 +50,7 @@ def main(name, vo, keep=0.35, min_s=0.5):
             if not before or len(toks) != len(ww):
                 continue
             tok = toks[before[-1]]
-            if re.search(r"(\.|\?|!|:)$", tok):
+            if re.search(r"((?<!\.)\.|\?|!)$", tok):
                 continue
             cuts.append((round(a + keep, 2), round(b, 2), tok))
         for a, b, tok in sorted(cuts, reverse=True):

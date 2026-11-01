@@ -1,0 +1,886 @@
+{
+ "page": "https://sethshoultes.com/little-valley-st-george-utah/",
+ "title": "AI and SEO Services in Little Valley, St. George, Utah",
+ "arc": "Hook > neighborhood inside St. George > The Fields at Little Valley > guide > for neighborhood businesses > for businesses near the fields (reasoning, not a statistic) > the city's own facts > services > call. Facts only from the page.",
+ "style": "Flat editorial vector, hard edges, flat solid ground, art centered ~70% width, nothing touching an edge; no glow, haze, gradients, soft shadows; no people, no logos.",
+ "phrase_lead": 0.35,
+ "srt_lead": 0.06,
+ "caption_max": 3.6,
+ "endcard": {
+  "kicker": "AI and SEO in Little Valley, St. George",
+  "site": "sethshoultes.com",
+  "path": "/little-valley-st-george-utah",
+  "sub": "Not affiliated with the city or the school district."
+ },
+ "beats": [
+  {
+   "id": "b01",
+   "vo": "Quick question... when someone in Little Valley, or a family in town for a tournament, looks for a business like yours, do they find you?",
+   "to_next": "push-right",
+   "kinetic": [
+    [
+     "QUICK QUESTION.",
+     "quick",
+     0,
+     1.0
+    ],
+    [
+     "SOMEONE IN LITTLE VALLEY",
+     "someone"
+    ],
+    [
+     "A FAMILY IN TOWN",
+     "family"
+    ],
+    [
+     "DO THEY FIND YOU?",
+     "find",
+     -0.25
+    ]
+   ],
+   "shots": [
+    {
+     "still": "v01.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "v06.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "family"
+    },
+    {
+     "still": "v09.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "find"
+    }
+   ],
+   "pause": 0.7
+  },
+  {
+   "id": "b02",
+   "vo": "Little Valley is a neighborhood inside St. George. It's part of the city, not a separate town.",
+   "to_next": "wipe-up",
+   "kinetic": [
+    [
+     "LITTLE VALLEY IS",
+     "little",
+     0,
+     1.4
+    ],
+    [
+     "A NEIGHBORHOOD",
+     "neighborhood",
+     -0.2
+    ],
+    [
+     "PART OF THE CITY",
+     "it's"
+    ],
+    [
+     "NOT A SEPARATE TOWN",
+     "not"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "v02.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "v12.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "it's"
+    }
+   ],
+   "pause": 0.55
+  },
+  {
+   "id": "b03",
+   "vo": "The City of St. George runs The Fields at Little Valley, at twenty-nine ninety-five South twenty-three fifty East. It hosts tournaments, like the Summer Send Off softball event... for teams from ten and under to eighteen and under.",
+   "to_next": "slide-left",
+   "kinetic": [
+    [
+     "THE CITY OF ST. GEORGE",
+     "city",
+     0,
+     2.2
+    ],
+    [
+     "THE FIELDS AT LITTLE VALLEY",
+     "fields",
+     0,
+     1.1
+    ],
+    [
+     "IT HOSTS TOURNAMENTS",
+     "hosts",
+     0,
+     1.8
+    ],
+    [
+     "FOR TEAMS",
+     "teams",
+     0,
+     1.1
+    ],
+    [
+     "10 & UNDER TO 18 & UNDER",
+     "ten"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "v04.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "t_addr.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "twenty-nine"
+    },
+    {
+     "still": "v03.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "hosts"
+    },
+    {
+     "still": "t_cup.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "summer"
+    },
+    {
+     "still": "v05.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "teams"
+    }
+   ],
+   "pause": 0.8
+  },
+  {
+   "id": "b04",
+   "vo": "I live in Washington City, a short drive from St. George. I'm Seth Shoultes, and I help Little Valley businesses get found online... and get more done with AI.",
+   "to_next": "wipe-right",
+   "kinetic": [
+    [
+     "I LIVE IN WASHINGTON CITY",
+     "live",
+     0,
+     2.4
+    ],
+    [
+     "A SHORT DRIVE",
+     "short",
+     0,
+     2.3
+    ],
+    [
+     "I HELP BUSINESSES HERE",
+     "help",
+     0,
+     2.4
+    ],
+    [
+     "FOUND ONLINE",
+     "found"
+    ],
+    [
+     "MORE DONE WITH AI",
+     "more",
+     0,
+     2.2
+    ]
+   ],
+   "shots": [
+    {
+     "still": "v13.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "t_seth.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "i'm"
+    },
+    {
+     "still": "v02.png",
+     "at": "help",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "v16.png",
+     "at": "more",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ]
+    }
+   ],
+   "pause": 0.6
+  },
+  {
+   "id": "b05",
+   "vo": "If you serve the neighborhood, I write a page about your service and your part of St. George, for someone nearby who's searching on their phone.",
+   "to_next": "circle-open",
+   "kinetic": [
+    [
+     "SERVE THE NEIGHBORHOOD",
+     "serve"
+    ],
+    [
+     "A PAGE FOR YOUR AREA",
+     "page",
+     0,
+     1.9
+    ],
+    [
+     "YOUR PART OF ST. GEORGE",
+     "and",
+     0,
+     2.7
+    ],
+    [
+     "FOR SOMEONE NEARBY",
+     "someone"
+    ],
+    [
+     "SEARCHING ON THEIR PHONE",
+     "searching"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "v02.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "v12.png",
+     "at": "page",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "v15.png",
+     "at": "part",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "v01.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "searching"
+    }
+   ],
+   "pause": 0.8
+  },
+  {
+   "id": "b06",
+   "vo": "If you're near the fields, families look for food, a place to stay, and something to do between games. That's my reasoning... not a statistic. Those searches happen before the trip, so I build pages and answers a visitor, or an AI assistant, can find and quote.",
+   "to_next": "push-left",
+   "kinetic": [
+    [
+     "NEAR THE FIELDS",
+     "near"
+    ],
+    [
+     "FOOD, A PLACE TO STAY",
+     "food"
+    ],
+    [
+     "SOMETHING TO DO",
+     "something"
+    ],
+    [
+     "MY REASONING",
+     "reasoning",
+     0,
+     1.6
+    ],
+    [
+     "NOT A STATISTIC",
+     "not"
+    ],
+    [
+     "SEARCHES START BEFORE",
+     "those"
+    ],
+    [
+     "PAGES AN AI CAN QUOTE",
+     "pages",
+     0,
+     2.4
+    ],
+    [
+     "CAN FIND AND QUOTE",
+     "can",
+     0,
+     1.7
+    ]
+   ],
+   "shots": [
+    {
+     "still": "v03.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "v07.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "food"
+    },
+    {
+     "still": "v05.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "something"
+    },
+    {
+     "still": "v06.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "those"
+    },
+    {
+     "still": "v16.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "pages"
+    }
+   ],
+   "pause": 0.5
+  },
+  {
+   "id": "b07",
+   "vo": "These facts come from the City of St. George and the school district. The park projects were completed in twenty twenty-four and twenty twenty-five: field lighting, turf, pickleball, and skate park lighting. I don't have neighborhood census figures... so I don't quote any.",
+   "to_next": "push-right",
+   "kinetic": [
+    [
+     "THESE FACTS COME",
+     "these",
+     0,
+     1.6
+    ],
+    [
+     "THE PARK PROJECTS",
+     "park",
+     0,
+     2.0
+    ],
+    [
+     "FIELD LIGHTING AND TURF",
+     "field"
+    ],
+    [
+     "PICKLEBALL, SKATE PARK",
+     "pickleball",
+     0,
+     2.4
+    ]
+   ],
+   "shots": [
+    {
+     "still": "t_src.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "v04.png",
+     "at": "school",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "t_yrs.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "twenty"
+    },
+    {
+     "still": "v10.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "field"
+    },
+    {
+     "still": "v11.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "pickleball"
+    },
+    {
+     "still": "t_cen.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "have"
+    }
+   ],
+   "pause": 1.0
+  },
+  {
+   "id": "b08",
+   "vo": "I offer AI services with SEO built in, plus content generation, media production, and interactive website development.",
+   "to_next": "wipe-up",
+   "kinetic": [
+    [
+     "CONTENT GENERATION",
+     "content"
+    ],
+    [
+     "MEDIA PRODUCTION",
+     "media"
+    ],
+    [
+     "INTERACTIVE WEBSITES",
+     "interactive"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "t_ai.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "v14.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "content"
+    }
+   ],
+   "pause": 0.7
+  },
+  {
+   "id": "b09",
+   "vo": "So let's start with a call about your business. I reply within two business days... Seth Shoultes dot com.",
+   "to_next": "slide-left",
+   "kinetic": [],
+   "shots": [
+    {
+     "still": "t_call.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "t_reply.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "reply"
+    },
+    {
+     "still": "proc:endcard",
+     "at": "seth"
+    }
+   ]
+  }
+ ],
+ "anchor_first": true,
+ "srt_end_pad": 0.1
+}
