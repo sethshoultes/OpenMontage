@@ -1,0 +1,863 @@
+{
+ "page": "https://sethshoultes.com/ivins-santa-clara-utah/",
+ "title": "AI and SEO Services in Ivins and Santa Clara, Utah",
+ "arc": "Hook (resort guest or theater visitor searching) > Santa Clara 1854 and the Hamblin Home > the 1862 flood > guide (I live nearby) > Ivins, Tuacahn, Snow Canyon > the numbers > resorts and PGA Tour > arts and events > St. George metro neighbors > disclaimer > invitation. Facts only from the page.",
+ "style": "Flat editorial vector, hard edges, flat solid ground, art centered ~70% width, nothing touching an edge; no glow, haze, gradients, soft shadows; no people, no logos.",
+ "phrase_lead": 0.35,
+ "srt_lead": 0.06,
+ "caption_max": 3.6,
+ "endcard": {
+  "kicker": "AI and SEO in Ivins and Santa Clara, Utah",
+  "site": "sethshoultes.com",
+  "path": "/ivins-santa-clara-utah",
+  "sub": "I reply within two business days."
+ },
+ "beats": [
+  {
+   "id": "b01",
+   "vo": "Quick question. When a resort guest or a theater visitor searches for what you offer, do they find you?",
+   "to_next": "push-right",
+   "kinetic": [
+    [
+     "QUICK QUESTION.",
+     "quick",
+     0,
+     1.0
+    ],
+    [
+     "A GUEST OR A VISITOR",
+     "guest"
+    ],
+    [
+     "DO THEY FIND YOU?",
+     "find",
+     0.0,
+     3.6
+    ]
+   ],
+   "shots": [
+    {
+     "still": "v01.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "v02.png",
+     "at": "searches",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "v16.png",
+     "at": "find",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ]
+    }
+   ],
+   "pause": 0.6
+  },
+  {
+   "id": "b02",
+   "vo": "Santa Clara was settled in eighteen fifty-four. The Jacob Hamblin Home still stands as a house museum.",
+   "to_next": "wipe-up",
+   "kinetic": [
+    [
+     "THE JACOB HAMBLIN HOME",
+     "jacob"
+    ],
+    [
+     "A HOUSE MUSEUM",
+     "house"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "t_1854.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "v03.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "jacob"
+    }
+   ],
+   "pause": 0.7
+  },
+  {
+   "id": "b03",
+   "vo": "A flood on the Santa Clara River destroyed the first fort in eighteen sixty-two.",
+   "to_next": "slide-left",
+   "kinetic": [
+    [
+     "A FLOOD ON THE RIVER",
+     "flood"
+    ],
+    [
+     "THE FIRST FORT, 1862",
+     "destroyed",
+     0.45,
+     3.6
+    ]
+   ],
+   "shots": [
+    {
+     "still": "v04.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ]
+    }
+   ],
+   "pause": 1.2
+  },
+  {
+   "id": "b04",
+   "vo": "I live nearby in Washington City. I'm Seth Shoultes, and I help businesses in Ivins and Santa Clara get found online and get more done with AI.",
+   "to_next": "wipe-right",
+   "kinetic": [
+    [
+     "I LIVE NEARBY",
+     "live",
+     -0.5,
+     3.6
+    ],
+    [
+     "I'M SETH SHOULTES",
+     "i'm",
+     0,
+     2.0
+    ],
+    [
+     "I HELP LOCAL BUSINESSES",
+     "help",
+     0,
+     2.0
+    ],
+    [
+     "FOUND ONLINE",
+     "found"
+    ],
+    [
+     "MORE DONE WITH AI",
+     "more",
+     0,
+     2.2
+    ]
+   ],
+   "shots": [
+    {
+     "still": "v05.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "t_seth.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "i'm"
+    },
+    {
+     "still": "v17.png",
+     "at": "found",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "t_ai.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "more"
+    }
+   ],
+   "pause": 1.4
+  },
+  {
+   "id": "b05",
+   "vo": "Ivins became a city in nineteen ninety-eight. It's home to Tuacahn, the largest professional outdoor theater in Utah, and it's close to Snow Canyon State Park.",
+   "to_next": "circle-open",
+   "kinetic": [
+    [
+     "TUACAHN",
+     "tuacahn",
+     0.13,
+     3.6
+    ],
+    [
+     "LARGEST PROFESSIONAL",
+     "largest",
+     0,
+     1.7
+    ],
+    [
+     "OUTDOOR THEATER IN UTAH",
+     "outdoor"
+    ],
+    [
+     "CLOSE TO SNOW CANYON",
+     "close"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "t_1998.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "v06.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "tuacahn"
+    },
+    {
+     "still": "v07.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "close"
+    }
+   ],
+   "pause": 0.7
+  },
+  {
+   "id": "b06",
+   "vo": "Ivins had about nine thousand people at the 2020 census, and Santa Clara about seventy-five hundred. Together about sixteen and a half thousand.",
+   "to_next": "push-left",
+   "kinetic": [
+    [
+     "ABOUT 16,500 TOGETHER",
+     "together"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "t_ivins.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "t_sc.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "santa"
+    },
+    {
+     "still": "v08.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "together"
+    }
+   ],
+   "pause": 1.0
+  },
+  {
+   "id": "b07",
+   "vo": "Ivins has several resorts, including Red Mountain, Movara, Sentierre, and Black Desert. A PGA Tour event has been at Black Desert since twenty twenty-four.",
+   "to_next": "push-right",
+   "kinetic": [
+    [
+     "SEVERAL RESORTS",
+     "several"
+    ],
+    [
+     "RED MOUNTAIN, MOVARA",
+     "red"
+    ],
+    [
+     "SENTIERRE, BLACK DESERT",
+     "sentierre",
+     -0.38,
+     3.6
+    ],
+    [
+     "A PGA TOUR EVENT",
+     "pga"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "v09.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "v19.png",
+     "at": "red",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "v20.png",
+     "at": "black",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "v10.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "pga"
+    }
+   ],
+   "pause": 0.7
+  },
+  {
+   "id": "b08",
+   "vo": "Tuacahn and the Kayenta Art Village bring audiences who plan a visit around a show. I build pages and answers for the questions those visitors ask.",
+   "to_next": "wipe-up",
+   "kinetic": [
+    [
+     "TUACAHN, KAYENTA ARTS",
+     "tuacahn",
+     -0.6,
+     3.6
+    ],
+    [
+     "PLAN A VISIT AROUND A SHOW",
+     "plan"
+    ],
+    [
+     "PAGES AND ANSWERS",
+     "pages"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "v11.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "v21.png",
+     "at": "audiences",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "v12.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "pages"
+    }
+   ],
+   "pause": 0.9
+  },
+  {
+   "id": "b09",
+   "vo": "Both towns are part of the St. George metro area. A plumber, a dentist, or a landscaper here is one of many. So a clear page about your own neighborhood matters.",
+   "to_next": "slide-left",
+   "kinetic": [
+    [
+     "PART OF THE ST. GEORGE AREA",
+     "part",
+     0,
+     1.7
+    ],
+    [
+     "A PLUMBER, A DENTIST",
+     "plumber",
+     0,
+     1.6
+    ],
+    [
+     "A LANDSCAPER",
+     "landscaper",
+     0,
+     1.3
+    ],
+    [
+     "ONE OF MANY",
+     "many",
+     -0.18,
+     3.6
+    ],
+    [
+     "A CLEAR PAGE MATTERS",
+     "clear"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "v13.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "v14.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "plumber"
+    },
+    {
+     "still": "v22.png",
+     "at": "clear",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ]
+    }
+   ],
+   "pause": 0.7
+  },
+  {
+   "id": "b10",
+   "vo": "I'm not affiliated with the cities of Ivins or Santa Clara, Tuacahn, the resorts, or the church that runs the Jacob Hamblin Home. They're local facts. So let's start with a call about your business. I reply within two business days... Seth Shoultes dot com.",
+   "to_next": "wipe-right",
+   "kinetic": [
+    [
+     "TUACAHN, THE RESORTS",
+     "tuacahn",
+     0,
+     2.0
+    ],
+    [
+     "THE CHURCH THAT RUNS",
+     "church",
+     0,
+     1.2
+    ],
+    [
+     "THE JACOB HAMBLIN HOME",
+     "jacob",
+     0,
+     1.55
+    ],
+    [
+     "THEY'RE LOCAL FACTS",
+     "they're",
+     0,
+     1.25
+    ],
+    [
+     "LET'S START WITH A CALL",
+     "let's",
+     0,
+     2.2
+    ]
+   ],
+   "shots": [
+    {
+     "still": "t_na1.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "t_na2.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "tuacahn"
+    },
+    {
+     "still": "v03.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "church"
+    },
+    {
+     "still": "v15.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "they're"
+    },
+    {
+     "still": "t_call.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "let's"
+    },
+    {
+     "still": "t_reply.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "reply"
+    },
+    {
+     "still": "proc:endcard",
+     "at": "seth"
+    }
+   ]
+  }
+ ],
+ "anchor_first": true
+}

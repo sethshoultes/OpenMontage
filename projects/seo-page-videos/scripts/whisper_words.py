@@ -17,8 +17,15 @@ import numpy as np
 from faster_whisper import WhisperModel
 
 
+# how the recogniser spells names the script spells another way (a word it cannot match gets an interpolated time, which is the weak spot)
+ALIAS = {"evans": "ivins", "evins": "ivins", "ivans": "ivins", "tuacan": "tuacahn", "tuakan": "tuacahn", "tuacon": "tuacahn", "kianta": "kayenta",
+         "kayanta": "kayenta", "kiyenta": "kayenta", "suntier": "sentierre", "sentier": "sentierre", "sentiere": "sentierre",
+         "shultz": "shoultes", "shultes": "shoultes", "shulties": "shoultes", "schultz": "shoultes", "sholts": "shoultes", "hamblin's": "hamblin"}
+
+
 def norm(w):
-    return re.sub(r"[^a-z0-9]", "", w.lower())
+    w = re.sub(r"[^a-z0-9']", "", w.lower()).replace("'s", "s") if False else re.sub(r"[^a-z0-9]", "", w.lower())
+    return ALIAS.get(w, w)
 
 
 def align_words(chars):
@@ -112,6 +119,9 @@ def main(vo_dir):
                         if (env[k:k + 3] >= 0.02).all():
                             t[i] = k / 100
                             break
+        first = np.where(env >= 0.02)[0]
+        if len(first):   # a take starts on its first word; whisper often places that word late (after the silence inside its own span)
+            t[0] = min(t[0], first[0] / 100)
         json.dump({"words": [[w, round(x, 3)] for w, x in zip(aw, t)]}, open(str(mp3)[:-4] + ".ww.json", "w"))
         print(sid, "matched", len(known), "of", len(aw), "first %.2f" % t[0])
 

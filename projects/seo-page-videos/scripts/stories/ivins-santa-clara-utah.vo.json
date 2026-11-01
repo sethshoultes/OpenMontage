@@ -1,0 +1,54 @@
+{
+ "shots": [
+  {
+   "id": "s01",
+   "vo": "Quick question. When a resort guest or a theater visitor searches for what you offer, do they find you?",
+   "pace": 0.9
+  },
+  {
+   "id": "s02",
+   "vo": "Santa Clara was settled in eighteen fifty-four. The Jacob Hamblin Home still stands as a house museum.",
+   "pace": 0.91
+  },
+  {
+   "id": "s03",
+   "vo": "A flood on the Santa Clara River destroyed the first fort in eighteen sixty-two.",
+   "pace": 0.88
+  },
+  {
+   "id": "s04",
+   "vo": "I live nearby in Washington City. I'm Seth Shoultes, and I help businesses in Ivins and Santa Clara get found online and get more done with AI.",
+   "pace": 0.9
+  },
+  {
+   "id": "s05",
+   "vo": "Ivins became a city in nineteen ninety-eight. It's home to Tuacahn, the largest professional outdoor theater in Utah, and it's close to Snow Canyon State Park.",
+   "pace": 0.91
+  },
+  {
+   "id": "s06",
+   "vo": "Ivins had about nine thousand people at the 2020 census, and Santa Clara about seventy-five hundred. Together about sixteen and a half thousand.",
+   "pace": 0.9
+  },
+  {
+   "id": "s07",
+   "vo": "Ivins has several resorts, including Red Mountain, Movara, Sentierre, and Black Desert. A PGA Tour event has been at Black Desert since twenty twenty-four.",
+   "pace": 0.91
+  },
+  {
+   "id": "s08",
+   "vo": "Tuacahn and the Kayenta Art Village bring audiences who plan a visit around a show. I build pages and answers for the questions those visitors ask.",
+   "pace": 0.92
+  },
+  {
+   "id": "s09",
+   "vo": "Both towns are part of the St. George metro area. A plumber, a dentist, or a landscaper here is one of many. So a clear page about your own neighborhood matters.",
+   "pace": 0.91
+  },
+  {
+   "id": "s10",
+   "vo": "I'm not affiliated with the cities of Ivins or Santa Clara, Tuacahn, the resorts, or the church that runs the Jacob Hamblin Home. They're local facts. So let's start with a call about your business. I reply within two business days... Seth Shoultes dot com.",
+   "pace": 0.88
+  }
+ ]
+}
