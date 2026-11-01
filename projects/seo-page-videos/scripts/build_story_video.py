@@ -336,6 +336,24 @@ def split_phrase(idx, toks):
     return split_phrase(idx[:k], toks) + split_phrase(idx[k:], toks)
 
 
+def wrap_cue(text, width=42):
+    """Two lines of at most `width` characters, broken at the phrase break nearest the middle (after a comma or stop, or before a conjunction or preposition)."""
+    if len(text) <= width:
+        return text
+    words = text.split()
+    best = None
+    for i in range(1, len(words)):
+        a, b = " ".join(words[:i]), " ".join(words[i:])
+        if len(a) > width or len(b) > width:
+            continue
+        pen = abs(len(a) - len(b)) * 0.3
+        pen -= 6 if re.search(r"[,.:;?!]$|\.\.\.$", words[i - 1]) else 0
+        pen -= 3 if words[i].lower() in ("and", "or", "but", "so", "in", "at", "to", "of", "with", "through", "for", "near", "get") else 0
+        if best is None or pen < best[0]:
+            best = (pen, a, b)
+    return f"{best[1]}\n{best[2]}" if best else "\n".join(textwrap.wrap(text, width))
+
+
 def srt_cues(beats):
     """Phrase cues on the real spoken word times. A cue ends at . ? ! , ; : or ...; a clause over 12 words splits before a
     conjunction or preposition near its middle; a cue of under 3 words joins its neighbour. Standalone dashes are not shown."""
@@ -542,7 +560,7 @@ def main(story_path, stills, vo_dir, out, music, sfx_files):
                 if k:
                     cues[k - 1] = (cues[k - 1][0], at, cues[k - 1][2])
                 break
-    Path(out).with_suffix(".srt").write_text("".join(f"{i}\n{tc(a)} --> {tc(b)}\n{chr(10).join(textwrap.wrap(x, 42))}\n\n" for i, (a, b, x) in enumerate(cues, 1)))
+    Path(out).with_suffix(".srt").write_text("".join(f"{i}\n{tc(a)} --> {tc(b)}\n{wrap_cue(x)}\n\n" for i, (a, b, x) in enumerate(cues, 1)))
     json.dump({"total": total, "shots": [{"still": sh["still"], "at": round(sh["at"], 2), "end": round(sh["end"], 2)} for sh in shots],
                "beats": [{"id": bt["id"], "start": round(bt["start"], 2), "dur": round(bt["d"], 2)} for bt in beats]},
               open(Path(out).with_suffix(".timeline.json"), "w"), indent=1)

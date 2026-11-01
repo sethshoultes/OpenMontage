@@ -1,0 +1,39 @@
+{
+ "shots": [
+  {
+   "id": "s01",
+   "vo": "Quick question... if your business is in Southern Utah, can your neighbors find you online?",
+   "pace": 0.88
+  },
+  {
+   "id": "s02",
+   "vo": "I live along the Virgin River in Washington City. I'm Seth Shoultes, and I help local businesses get found online and get more done with AI.",
+   "pace": 0.92
+  },
+  {
+   "id": "s03",
+   "vo": "I work with businesses in Cedar City, a university town and the road to the parks. And in Hurricane, next door to Washington City, near Sand Hollow and the road to Zion.",
+   "pace": 0.92
+  },
+  {
+   "id": "s04",
+   "vo": "In Springdale, the gateway town at the mouth of Zion Canyon. And in Ivins and Santa Clara, two small cities west of St. George, at the foot of red cliffs.",
+   "pace": 0.92
+  },
+  {
+   "id": "s05",
+   "vo": "In St. George, the region's largest city, and in Little Valley, a St. George neighborhood. And right here in Washington City, my home town, including Coral Canyon, a golf community.",
+   "pace": 0.92
+  },
+  {
+   "id": "s06",
+   "vo": "I offer AI services with SEO built in: content, media, and interactive websites. I also do SEO services, Google Ads, WordPress and web development, field service software, and AI coaching.",
+   "pace": 0.94
+  },
+  {
+   "id": "s07",
+   "vo": "I work with businesses across the region, and with businesses anywhere through my monthly plans. So let's start with a call about your business... Seth Shoultes dot com.",
+   "pace": 0.88
+  }
+ ]
+}

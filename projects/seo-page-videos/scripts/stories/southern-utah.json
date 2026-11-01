@@ -1,0 +1,719 @@
+{
+ "page": "https://sethshoultes.com/southern-utah/",
+ "title": "AI and SEO Services in Southern Utah",
+ "arc": "Hook > guide > Cedar City, Hurricane > Springdale, Ivins and Santa Clara > St. George, Little Valley, Washington City, Coral Canyon > services > across the region and monthly plans > call. Facts only from the page.",
+ "style": "Flat editorial vector, hard edges, flat solid ground, art centered ~70% width, nothing touching an edge; no glow, haze, gradients, soft shadows; no people, no logos.",
+ "phrase_lead": 0.35,
+ "srt_lead": 0.06,
+ "caption_max": 3.6,
+ "endcard": {
+  "kicker": "AI and SEO across Southern Utah",
+  "site": "sethshoultes.com",
+  "path": "/southern-utah",
+  "sub": ""
+ },
+ "beats": [
+  {
+   "id": "b01",
+   "vo": "Quick question... if your business is in Southern Utah, can your neighbors find you online?",
+   "to_next": "push-right",
+   "kinetic": [
+    [
+     "QUICK QUESTION.",
+     "quick",
+     0,
+     1.0
+    ],
+    [
+     "YOUR BUSINESS",
+     "your",
+     0,
+     1.0
+    ],
+    [
+     "IN SOUTHERN UTAH",
+     "southern",
+     0,
+     1.2
+    ],
+    [
+     "CAN NEIGHBORS FIND YOU?",
+     "can",
+     0,
+     1.8
+    ]
+   ],
+   "shots": [
+    {
+     "still": "h01.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "h07.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "neighbors"
+    }
+   ],
+   "pause": 0.7
+  },
+  {
+   "id": "b02",
+   "vo": "I live along the Virgin River in Washington City. I'm Seth Shoultes, and I help local businesses get found online and get more done with AI.",
+   "to_next": "wipe-up",
+   "kinetic": [
+    [
+     "ALONG THE VIRGIN RIVER",
+     "live",
+     0.4
+    ],
+    [
+     "I HELP LOCAL BUSINESSES",
+     "help",
+     0,
+     2.0
+    ],
+    [
+     "FOUND ONLINE",
+     "found",
+     0.27
+    ],
+    [
+     "MORE DONE WITH AI",
+     "more",
+     0,
+     2.2
+    ]
+   ],
+   "shots": [
+    {
+     "still": "h02.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "t_seth.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "i'm"
+    },
+    {
+     "still": "t_ai.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "more"
+    }
+   ],
+   "pause": 0.6
+  },
+  {
+   "id": "b03",
+   "vo": "I work with businesses in Cedar City, a university town and the road to the parks. And in Hurricane, next door to Washington City, near Sand Hollow and the road to Zion.",
+   "to_next": "slide-left",
+   "kinetic": [
+    [
+     "I WORK WITH BUSINESSES",
+     "work",
+     0,
+     1.7
+    ],
+    [
+     "CEDAR CITY",
+     "cedar",
+     0,
+     1.4
+    ],
+    [
+     "A UNIVERSITY TOWN",
+     "university"
+    ],
+    [
+     "HURRICANE",
+     "hurricane",
+     0,
+     1.4
+    ],
+    [
+     "NEXT DOOR TO WASHINGTON",
+     "next"
+    ],
+    [
+     "SAND HOLLOW AND ZION",
+     "sand"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "h03.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "h07.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "road"
+    },
+    {
+     "still": "h04.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "hurricane"
+    },
+    {
+     "still": "h02.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "next"
+    },
+    {
+     "still": "h04.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "near"
+    }
+   ],
+   "pause": 0.7
+  },
+  {
+   "id": "b04",
+   "vo": "In Springdale, the gateway town at the mouth of Zion Canyon. And in Ivins and Santa Clara, two small cities west of St. George, at the foot of red cliffs.",
+   "to_next": "wipe-right",
+   "kinetic": [
+    [
+     "SPRINGDALE",
+     "springdale",
+     0,
+     1.4
+    ],
+    [
+     "AT THE MOUTH OF ZION",
+     "mouth"
+    ],
+    [
+     "IVINS AND SANTA CLARA",
+     "ivins"
+    ],
+    [
+     "AT THE FOOT OF RED CLIFFS",
+     "foot"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "h05.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "h06.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "ivins"
+    },
+    {
+     "still": "h07.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "west"
+    },
+    {
+     "still": "h06.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "foot"
+    }
+   ],
+   "pause": 0.7
+  },
+  {
+   "id": "b05",
+   "vo": "In St. George, the region's largest city, and in Little Valley, a St. George neighborhood. And right here in Washington City, my home town, including Coral Canyon, a golf community.",
+   "to_next": "circle-open",
+   "kinetic": [
+    [
+     "ST. GEORGE",
+     "st.",
+     0,
+     1.4
+    ],
+    [
+     "THE REGION'S LARGEST CITY",
+     "region's"
+    ],
+    [
+     "LITTLE VALLEY",
+     "little",
+     0,
+     1.5
+    ],
+    [
+     "A ST. GEORGE NEIGHBORHOOD",
+     "neighborhood",
+     0,
+     1.4
+    ],
+    [
+     "WASHINGTON CITY",
+     "washington",
+     0,
+     1.5
+    ],
+    [
+     "MY HOME TOWN",
+     "home",
+     -0.37
+    ],
+    [
+     "CORAL CANYON",
+     "coral",
+     0.2
+    ]
+   ],
+   "shots": [
+    {
+     "still": "h07.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "h08.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "little"
+    },
+    {
+     "still": "h02.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "washington"
+    },
+    {
+     "still": "h09.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "coral"
+    }
+   ],
+   "pause": 0.5
+  },
+  {
+   "id": "b06",
+   "vo": "I offer AI services with SEO built in: content, media, and interactive websites. I also do SEO services, Google Ads, WordPress and web development, field service software, and AI coaching.",
+   "to_next": "push-left",
+   "kinetic": [
+    [
+     "CONTENT, MEDIA, WEBSITES",
+     "content"
+    ]
+   ],
+   "shots": [
+    {
+     "still": "t_ai.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "s_svc.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "content"
+    },
+    {
+     "still": "t_c1.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "also"
+    },
+    {
+     "still": "t_c2.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "wordpress"
+    },
+    {
+     "still": "t_c3.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "field"
+    },
+    {
+     "still": "t_c4.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "coaching"
+    }
+   ],
+   "pause": 0.8
+  },
+  {
+   "id": "b07",
+   "vo": "I work with businesses across the region, and with businesses anywhere through my monthly plans. So let's start with a call about your business... Seth Shoultes dot com.",
+   "to_next": "push-right",
+   "kinetic": [
+    [
+     "ACROSS THE REGION",
+     "across",
+     0,
+     2.0
+    ],
+    [
+     "ANYWHERE: MONTHLY PLANS",
+     "anywhere",
+     0,
+     2.3
+    ]
+   ],
+   "shots": [
+    {
+     "still": "h07.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "h01.png",
+     "at": "monthly",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ]
+    },
+    {
+     "still": "t_call.png",
+     "cam": [
+      [
+       0,
+       1.0,
+       0.5,
+       0.5
+      ],
+      [
+       1,
+       1.08,
+       0.5,
+       0.5
+      ]
+     ],
+     "at": "let's"
+    },
+    {
+     "still": "proc:endcard",
+     "at": "seth"
+    }
+   ]
+  }
+ ],
+ "anchor_first": true,
+ "srt_end_pad": 0.15
+}
